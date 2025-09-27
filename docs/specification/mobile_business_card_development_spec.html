@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지플랫 모바일 명함 서비스 - 개발 명세서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .version-info {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        nav {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        nav a {
+            color: #555;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: block;
+            transition: all 0.3s;
+        }
+        
+        nav a:hover {
+            background: #f0f4ff;
+            color: #667eea;
+            transform: translateX(5px);
+        }
+        
+        .section {
+            background: white;
+            padding: 40px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e8eaff;
+        }
+        
+        h3 {
+            font-size: 1.5em;
+            color: #444;
+            margin: 30px 0 20px;
+            padding-left: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h4 {
+            font-size: 1.2em;
+            color: #555;
+            margin: 20px 0 15px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-card {
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e8eaff;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.1);
+        }
+        
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e8eaff;
+        }
+        
+        tr:hover {
+            background: #f8f9ff;
+        }
+        
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+        }
+        
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .tech-item {
+            background: linear-gradient(135deg, #f5f7ff 0%, #e8eaff 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .tech-item h5 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .timeline {
+            margin: 30px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 35px;
+            top: 45px;
+            bottom: -30px;
+            width: 2px;
+            background: #e8eaff;
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        
+        .timeline-date {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-right: 30px;
+            height: fit-content;
+            min-width: 120px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .badge-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .badge-success {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ed8936;
+            color: white;
+        }
+        
+        .alert {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .alert-info {
+            background: #e6f4ff;
+            border-left: 4px solid #1890ff;
+            color: #0050b3;
+        }
+        
+        .alert-warning {
+            background: #fff7e6;
+            border-left: 4px solid #fa8c16;
+            color: #ad4e00;
+        }
+        
+        .screen-mockup {
+            background: #f5f7fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #e8eaff;
+        }
+        
+        .screen-mockup h5 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .api-endpoint {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        
+        .api-method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+        
+        .method-get { background: #61affe; color: white; }
+        .method-post { background: #49cc90; color: white; }
+        .method-put { background: #fca130; color: white; }
+        .method-delete { background: #f93e3e; color: white; }
+        
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: white;
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            nav ul {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media print {
+            nav {
+                position: static;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>지플랫 모바일 명함 서비스</h1>
+            <p class="subtitle">개발 명세서 및 프로젝트 계획서</p>
+            <div class="version-info">
+                <strong>프로젝트 기간:</strong> 3개월 | <strong>문서 버전:</strong> 1.0 | <strong>작성일:</strong> 2025년 1월
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav>
+            <h2>📑 목차</h2>
+            <ul>
+                <li><a href="#overview">프로젝트 개요</a></li>
+                <li><a href="#features">핵심 기능 명세</a></li>
+                <li><a href="#user-features">사용자 기능 상세</a></li>
+                <li><a href="#admin-features">관리자 기능</a></li>
+                <li><a href="#tech-stack">기술 스택</a></li>
+                <li><a href="#database">데이터베이스 설계</a></li>
+                <li><a href="#api">API 명세</a></li>
+                <li><a href="#ui-design">UI/UX 설계</a></li>
+                <li><a href="#timeline">개발 일정</a></li>
+                <li><a href="#deliverables">산출물</a></li>
+            </ul>
+        </nav>
+
+        <!-- 프로젝트 개요 -->
+        <section id="overview" class="section">
+            <h2>📋 프로젝트 개요</h2>
+            
+            <h3>1.1 서비스 소개</h3>
+            <p>
+                <strong>지플랫(G-Plat)</strong>은 개인 부업 포트폴리오를 통합 관리하고 홍보할 수 있는 모바일 명함 웹 빌더 서비스입니다.
+                사용자가 쉽게 모바일 명함을 생성하고, 다양한 부업 정보를 등록하여 개인화된 한글 도메인 기반의 모바일 명함을 통해 비즈니스를 확장할 수 있습니다.
+            </p>
+
+            <h3>1.2 프로젝트 목표</h3>
+            <ul>
+                <li>직관적이고 사용하기 쉬운 모바일 명함 생성 플랫폼 구축</li>
+                <li>한글 도메인을 활용한 개인 브랜딩 강화</li>
+                <li>통화 종료 후 자동 SMS 발송 시스템(콜백) 구현</li>
+                <li>부업 카드 관리 및 홍보 기능 제공</li>
+                <li>실시간 통계 및 분석 대시보드 제공</li>
+            </ul>
+
+            <h3>1.3 타겟 사용자</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>주요 타겟</h4>
+                    <ul>
+                        <li>25-45세 직장인 및 프리랜서</li>
+                        <li>부수입 창출에 관심 있는 N잡러</li>
+                        <li>네트워킹이 활발한 영업/마케팅 종사자</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>세부 타겟</h4>
+                    <ul>
+                        <li>대학생 및 취업준비생</li>
+                        <li>자영업자 및 소상공인</li>
+                        <li>온라인 비즈니스 운영자</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <strong>💡 핵심 차별점:</strong> 기존 명함 서비스와 달리 부업 포트폴리오 관리, 한글 도메인, 콜백 자동화 기능을 통합 제공합니다.
+            </div>
+        </section>
+
+        <!-- 핵심 기능 명세 -->
+        <section id="features" class="section">
+            <h2>🚀 핵심 기능 명세</h2>
+
+            <h3>2.1 간편한 온보딩 프로세스</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Step 1: 회원가입 (30초)</h4>
+                    <ul>
+                        <li>이메일 또는 소셜 로그인</li>
+                        <li>기본 정보 입력</li>
+                        <li>한글 도메인 자동 생성</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Step 2: 명함 설정 (1분)</h4>
+                    <ul>
+                        <li>프로필 사진 업로드</li>
+                        <li>직업 및 회사 정보</li>
+                        <li>자기소개 작성</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Step 3: 부업 선택 (2분)</h4>
+                    <ul>
+                        <li>관심 카테고리 선택</li>
+                        <li>부업 카드 생성</li>
+                        <li>즉시 활성화</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>2.2 한글 개인 도메인</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>도메인 유형</th>
+                        <th>형식</th>
+                        <th>예시</th>
+                        <th>특징</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>기본 도메인</td>
+                        <td>https://[이름].한국</td>
+                        <td>https://김성근.한국</td>
+                        <td>자동 생성, 기억하기 쉬움</td>
+                    </tr>
+                    <tr>
+                        <td>커스텀 도메인</td>
+                        <td>https://[닉네임].한국</td>
+                        <td>https://마케팅전문가.한국</td>
+                        <td>개인화 가능, 브랜딩 강화</td>
+                    </tr>
+                    <tr>
+                        <td>서브 도메인</td>
+                        <td>https://[이름].지플랫.한국</td>
+                        <td>https://김성근.지플랫.한국</td>
+                        <td>무료 제공, 안정적</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>2.3 콜백 자동화 시스템</h3>
+            <div class="screen-mockup">
+                <h5>📱 Zero-Touch 콜백 프로세스</h5>
+                <div class="code-block">
+[통화 종료] → [번호 자동 감지] → [SMS 템플릿 선택] → [자동 발송] → [방문 추적]
+                </div>
+                <ul>
+                    <li><strong>즉시 발송:</strong> 통화 종료 직후 자동 발송</li>
+                    <li><strong>지연 발송:</strong> 설정한 시간 후 발송 (5분, 10분, 30분)</li>
+                    <li><strong>스마트 발송:</strong> AI가 최적 시간 판단</li>
+                    <li><strong>메시지 개인화:</strong> 고객명, 상담내용 자동 삽입</li>
+                </ul>
+            </div>
+
+            <h3>2.4 부업 카드 관리</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>카드 생성</h4>
+                    <ul>
+                        <li>드래그 앤 드롭 에디터</li>
+                        <li>100+ 템플릿 제공</li>
+                        <li>실시간 미리보기</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>카드 구성 요소</h4>
+                    <ul>
+                        <li>제목 및 설명</li>
+                        <li>이미지/동영상</li>
+                        <li>CTA 버튼</li>
+                        <li>가격 정보</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>카드 관리</h4>
+                    <ul>
+                        <li>순서 변경 (드래그)</li>
+                        <li>활성/비활성 토글</li>
+                        <li>통계 확인</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 사용자 기능 상세 -->
+        <section id="user-features" class="section">
+            <h2>👤 사용자 기능 상세</h2>
+
+            <h3>3.1 개인 명함 페이지</h3>
+            <div class="screen-mockup">
+                <h5>페이지 구조</h5>
+                <pre style="background: white; padding: 20px; border-radius: 8px;">
+https://홍길동.한국
+│
+├── 📱 헤더 섹션
+│   ├── 프로필 이미지
+│   ├── 이름 및 직함
+│   ├── 회사 정보
+│   └── 연락처 버튼 (전화, 메시지, 이메일)
+│
+├── 💼 소개 섹션
+│   ├── 자기소개
+│   ├── 경력 하이라이트
+│   └── 핵심 역량 태그
+│
+├── 🔗 SNS 연동 섹션
+│   ├── 인스타그램
+│   ├── 링크드인
+│   ├── 유튜브
+│   └── 블로그/웹사이트
+│
+├── 📊 부업 포트폴리오 섹션
+│   ├── 부업 카드 리스트
+│   ├── 카테고리 필터
+│   └── 추천 상품 하이라이트
+│
+└── 🎯 하단 액션 섹션
+    ├── 명함 저장하기
+    ├── 공유하기
+    └── 1:1 문의하기
+                </pre>
+            </div>
+
+            <h3>3.2 대시보드</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>📈 오늘의 요약</h4>
+                    <ul>
+                        <li>페이지 방문자 수</li>
+                        <li>신규 문의/상담 요청</li>
+                        <li>카드별 클릭 수</li>
+                        <li>전환율 통계</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>⚡ 빠른 액션</h4>
+                    <ul>
+                        <li>콜백 메시지 발송</li>
+                        <li>새 부업 카드 추가</li>
+                        <li>명함 정보 수정</li>
+                        <li>통계 리포트 확인</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>🔔 실시간 알림</h4>
+                    <ul>
+                        <li>새로운 방문자 알림</li>
+                        <li>상담 요청 알림</li>
+                        <li>카드 클릭 알림</li>
+                        <li>메시지 수신 알림</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>3.3 통계 및 분석</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>분석 항목</th>
+                        <th>세부 지표</th>
+                        <th>제공 기간</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>방문자 분석</td>
+                        <td>UV, PV, 체류시간, 이탈률</td>
+                        <td>일/주/월/연</td>
+                    </tr>
+                    <tr>
+                        <td>유입 경로</td>
+                        <td>직접, SNS, 콜백, QR코드</td>
+                        <td>실시간</td>
+                    </tr>
+                    <tr>
+                        <td>부업 카드 성과</td>
+                        <td>조회수, 클릭률, 전환율</td>
+                        <td>일/주/월</td>
+                    </tr>
+                    <tr>
+                        <td>고객 행동</td>
+                        <td>클릭 히트맵, 스크롤 깊이</td>
+                        <td>실시간</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3.4 고객 관리 (CRM)</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>연락처 관리</h4>
+                    <ul>
+                        <li>자동 저장 (콜백 발송 시)</li>
+                        <li>태그 및 메모 기능</li>
+                        <li>상담 이력 관리</li>
+                        <li>그룹 분류</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>팔로우업 관리</h4>
+                    <ul>
+                        <li>알림 설정</li>
+                        <li>자동 메시지 예약</li>
+                        <li>상담 단계 관리</li>
+                        <li>성과 추적</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 관리자 기능 -->
+        <section id="admin-features" class="section">
+            <h2>⚙️ 관리자 기능</h2>
+
+            <h3>4.1 사용자 관리</h3>
+            <ul>
+                <li>전체 회원 목록 조회 및 검색</li>
+                <li>개별 사용자 정보 및 활동 내역 확인</li>
+                <li>계정 상태 관리 (활성/비활성/정지)</li>
+                <li>사용자별 통계 확인</li>
+            </ul>
+
+            <h3>4.2 콘텐츠 관리</h3>
+            <ul>
+                <li>부업 카드 템플릿 관리</li>
+                <li>부적절한 콘텐츠 신고 처리</li>
+                <li>공지사항 및 이벤트 관리</li>
+                <li>FAQ 및 도움말 관리</li>
+            </ul>
+
+            <h3>4.3 시스템 모니터링</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>서비스 현황</h4>
+                    <ul>
+                        <li>실시간 사용자 수</li>
+                        <li>서버 상태 모니터링</li>
+                        <li>API 응답 시간</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>통계 대시보드</h4>
+                    <ul>
+                        <li>가입자 증가 추이</li>
+                        <li>활성 사용자 비율</li>
+                        <li>인기 부업 카테고리</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 기술 스택 -->
+        <section id="tech-stack" class="section">
+            <h2>💻 기술 스택</h2>
+
+            <div class="alert alert-info">
+                <strong>🔥 Supabase 기반 아키텍처:</strong> 백엔드 인프라를 Supabase로 구축하여 개발 속도와 안정성을 확보합니다.
+            </div>
+
+            <h3>5.1 Frontend</h3>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <h5>Framework</h5>
+                    <p>Next.js 14.x<br>React 18.x</p>
+                </div>
+                <div class="tech-item">
+                    <h5>Language</h5>
+                    <p>TypeScript 5.x</p>
+                </div>
+                <div class="tech-item">
+                    <h5>Styling</h5>
+                    <p>Tailwind CSS 3.x<br>Shadcn/ui</p>
+                </div>
+                <div class="tech-item">
+                    <h5>State Management</h5>
+                    <p>Zustand<br>React Query</p>
+                </div>
+            </div>
+
+            <h3>5.2 Backend (Supabase)</h3>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <h5>Database</h5>
+                    <p>PostgreSQL<br>(Supabase DB)</p>
+                </div>
+                <div class="tech-item">
+                    <h5>Authentication</h5>
+                    <p>Supabase Auth<br>OAuth 2.0</p>
+                </div>
+                <div class="tech-item">
+                    <h5>Realtime</h5>
+                    <p>Supabase Realtime<br>WebSocket</p>
+                </div>
+                <div class="tech-item">
+                    <h5>Storage</h5>
+                    <p>Supabase Storage<br>CDN</p>
+                </div>
+                <div class="tech-item">
+                    <h5>Functions</h5>
+                    <p>Edge Functions<br>Deno Runtime</p>
+                </div>
+                <div class="tech-item">
+                    <h5>API</h5>
+                    <p>REST API<br>GraphQL (PostgREST)</p>
+                </div>
+            </div>
+
+            <h3>5.3 Infrastructure</h3>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <h5>Hosting</h5>
+                    <p>Vercel<br>Edge Network</p>
+                </div>
+                <div class="tech-item">
+                    <h5>Domain</h5>
+                    <p>한글 도메인<br>SSL 인증서</p>
+                </div>
+                <div class="tech-item">
+                    <h5>SMS</h5>
+                    <p>Twilio API<br>알리고 API</p>
+                </div>
+                <div class="tech-item">
+                    <h5>Monitoring</h5>
+                    <p>Sentry<br>Google Analytics</p>
+                </div>
+            </div>
+
+            <h3>5.4 개발 도구</h3>
+            <ul>
+                <li><strong>버전 관리:</strong> Git, GitHub</li>
+                <li><strong>CI/CD:</strong> GitHub Actions, Vercel</li>
+                <li><strong>코드 품질:</strong> ESLint, Prettier, Husky</li>
+                <li><strong>테스트:</strong> Jest, React Testing Library, Cypress</li>
+                <li><strong>문서화:</strong> Storybook, Swagger</li>
+            </ul>
+        </section>
+
+        <!-- 데이터베이스 설계 -->
+        <section id="database" class="section">
+            <h2>🗄️ 데이터베이스 설계</h2>
+
+            <h3>6.1 주요 테이블 구조</h3>
+            
+            <h4>Users 테이블</h4>
+            <div class="code-block">
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(20) UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    nickname VARCHAR(50) UNIQUE,
+    domain_name VARCHAR(100) UNIQUE,
+    profile_image_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Supabase RLS (Row Level Security) 정책
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own profile" 
+    ON users FOR SELECT 
+    USING (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile" 
+    ON users FOR UPDATE 
+    USING (auth.uid() = id);
+            </div>
+
+            <h4>Business Cards 테이블</h4>
+            <div class="code-block">
+CREATE TABLE business_cards (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    company VARCHAR(255),
+    position VARCHAR(100),
+    bio TEXT,
+    theme JSONB DEFAULT '{}',
+    social_links JSONB DEFAULT '{}',
+    callback_settings JSONB DEFAULT '{}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 인덱스 생성
+CREATE INDEX idx_business_cards_user_id ON business_cards(user_id);
+            </div>
+
+            <h4>Side Job Cards 테이블</h4>
+            <div class="code-block">
+CREATE TABLE side_job_cards (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_url TEXT,
+    category VARCHAR(100),
+    cta_text VARCHAR(100),
+    cta_url TEXT,
+    display_order INT DEFAULT 0,
+    is_active BOOLEAN DEFAULT true,
+    view_count INT DEFAULT 0,
+    click_count INT DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 복합 인덱스
+CREATE INDEX idx_side_job_cards_user_active 
+    ON side_job_cards(user_id, is_active);
+            </div>
+
+            <h3>6.2 Supabase 특화 기능</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>Realtime Subscriptions</h4>
+                    <ul>
+                        <li>방문자 실시간 추적</li>
+                        <li>메시지 실시간 알림</li>
+                        <li>통계 실시간 업데이트</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Edge Functions</h4>
+                    <ul>
+                        <li>콜백 SMS 발송</li>
+                        <li>이미지 리사이징</li>
+                        <li>통계 집계</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>Storage Buckets</h4>
+                    <ul>
+                        <li>프로필 이미지</li>
+                        <li>부업 카드 이미지</li>
+                        <li>템플릿 리소스</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- API 명세 -->
+        <section id="api" class="section">
+            <h2>🔌 API 명세</h2>
+
+            <h3>7.1 인증 API</h3>
+            <div class="api-endpoint">
+                <span class="api-method method-post">POST</span>
+                <code>/auth/signup</code> - 회원가입
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-post">POST</span>
+                <code>/auth/signin</code> - 로그인
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-post">POST</span>
+                <code>/auth/signout</code> - 로그아웃
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-post">POST</span>
+                <code>/auth/reset-password</code> - 비밀번호 재설정
+            </div>
+
+            <h3>7.2 사용자 API</h3>
+            <div class="api-endpoint">
+                <span class="api-method method-get">GET</span>
+                <code>/api/users/profile</code> - 프로필 조회
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-put">PUT</span>
+                <code>/api/users/profile</code> - 프로필 수정
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-post">POST</span>
+                <code>/api/users/domain/check</code> - 도메인 중복 확인
+            </div>
+
+            <h3>7.3 명함 API</h3>
+            <div class="api-endpoint">
+                <span class="api-method method-get">GET</span>
+                <code>/api/cards</code> - 명함 목록 조회
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-post">POST</span>
+                <code>/api/cards</code> - 명함 생성
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-put">PUT</span>
+                <code>/api/cards/:id</code> - 명함 수정
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-delete">DELETE</span>
+                <code>/api/cards/:id</code> - 명함 삭제
+            </div>
+
+            <h3>7.4 부업 카드 API</h3>
+            <div class="api-endpoint">
+                <span class="api-method method-get">GET</span>
+                <code>/api/sidejobs</code> - 부업 카드 목록
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-post">POST</span>
+                <code>/api/sidejobs</code> - 부업 카드 생성
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-put">PUT</span>
+                <code>/api/sidejobs/:id</code> - 부업 카드 수정
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-put">PUT</span>
+                <code>/api/sidejobs/reorder</code> - 순서 변경
+            </div>
+
+            <h3>7.5 통계 API</h3>
+            <div class="api-endpoint">
+                <span class="api-method method-get">GET</span>
+                <code>/api/analytics/visitors</code> - 방문자 통계
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-get">GET</span>
+                <code>/api/analytics/cards</code> - 카드 성과 분석
+            </div>
+            <div class="api-endpoint">
+                <span class="api-method method-get">GET</span>
+                <code>/api/analytics/conversion</code> - 전환율 분석
+            </div>
+        </section>
+
+        <!-- UI/UX 설계 -->
+        <section id="ui-design" class="section">
+            <h2>🎨 UI/UX 설계</h2>
+
+            <h3>8.1 디자인 원칙</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>모바일 퍼스트</h4>
+                    <ul>
+                        <li>반응형 디자인</li>
+                        <li>터치 최적화 (44px 최소)</li>
+                        <li>스와이프 제스처</li>
+                        <li>PWA 지원</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>직관적 인터페이스</h4>
+                    <ul>
+                        <li>카드형 레이아웃</li>
+                        <li>드래그 앤 드롭</li>
+                        <li>원클릭 액션</li>
+                        <li>실시간 미리보기</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>일관된 경험</h4>
+                    <ul>
+                        <li>디자인 시스템</li>
+                        <li>컴포넌트 재사용</li>
+                        <li>통일된 색상/타이포</li>
+                        <li>예측 가능한 동작</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>8.2 주요 화면 구성</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>화면</th>
+                        <th>주요 기능</th>
+                        <th>우선순위</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>랜딩 페이지</td>
+                        <td>서비스 소개, 회원가입 유도</td>
+                        <td><span class="badge badge-primary">필수</span></td>
+                    </tr>
+                    <tr>
+                        <td>온보딩</td>
+                        <td>초기 설정, 튜토리얼</td>
+                        <td><span class="badge badge-primary">필수</span></td>
+                    </tr>
+                    <tr>
+                        <td>대시보드</td>
+                        <td>통계, 빠른 액션, 알림</td>
+                        <td><span class="badge badge-primary">필수</span></td>
+                    </tr>
+                    <tr>
+                        <td>명함 편집</td>
+                        <td>프로필, 테마, 레이아웃</td>
+                        <td><span class="badge badge-primary">필수</span></td>
+                    </tr>
+                    <tr>
+                        <td>부업 카드 관리</td>
+                        <td>CRUD, 순서 변경, 통계</td>
+                        <td><span class="badge badge-primary">필수</span></td>
+                    </tr>
+                    <tr>
+                        <td>모바일 명함 뷰</td>
+                        <td>공개 프로필 페이지</td>
+                        <td><span class="badge badge-primary">필수</span></td>
+                    </tr>
+                    <tr>
+                        <td>통계 분석</td>
+                        <td>상세 분석, 리포트</td>
+                        <td><span class="badge badge-success">중요</span></td>
+                    </tr>
+                    <tr>
+                        <td>고객 관리</td>
+                        <td>CRM, 메시징</td>
+                        <td><span class="badge badge-success">중요</span></td>
+                    </tr>
+                    <tr>
+                        <td>설정</td>
+                        <td>계정, 알림, 결제</td>
+                        <td><span class="badge badge-warning">보통</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>8.3 반응형 브레이크포인트</h3>
+            <div class="code-block">
+/* Tailwind CSS 기준 */
+- Mobile: 320px ~ 639px (sm)
+- Tablet: 640px ~ 1023px (md, lg) 
+- Desktop: 1024px ~ (xl, 2xl)
+
+/* 주요 컴포넌트 그리드 */
+- Mobile: 1 column
+- Tablet: 2 columns
+- Desktop: 3-4 columns
+            </div>
+        </section>
+
+        <!-- 개발 일정 -->
+        <section id="timeline" class="section">
+            <h2>📅 개발 일정 (3개월)</h2>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ 중요:</strong> 각 단계별 산출물은 고객 검토 후 다음 단계로 진행됩니다.
+            </div>
+
+            <h3>개발 단계별 일정</h3>
+            <div class="timeline">
+                <!-- 1차 스프린트 -->
+                <div class="timeline-item">
+                    <div class="timeline-date">1~2주차</div>
+                    <div class="timeline-content">
+                        <h4>🚀 프로젝트 셋업 및 기초 구축</h4>
+                        <ul>
+                            <li>개발 환경 구성 (Next.js, Supabase)</li>
+                            <li>프로젝트 구조 설계</li>
+                            <li>Supabase 프로젝트 생성 및 설정</li>
+                            <li>기본 UI 컴포넌트 라이브러리 구축</li>
+                            <li>디자인 시스템 구축</li>
+                        </ul>
+                        <p><strong>산출물:</strong> 개발 환경, 기초 프로젝트 구조</p>
+                    </div>
+                </div>
+
+                <!-- 2차 스프린트 -->
+                <div class="timeline-item">
+                    <div class="timeline-date">3~4주차</div>
+                    <div class="timeline-content">
+                        <h4>🔐 인증 시스템 및 사용자 관리</h4>
+                        <ul>
+                            <li>Supabase Auth 통합</li>
+                            <li>회원가입/로그인 구현</li>
+                            <li>소셜 로그인 (카카오, 네이버)</li>
+                            <li>사용자 프로필 CRUD</li>
+                            <li>비밀번호 재설정</li>
+                        </ul>
+                        <p><strong>산출물:</strong> 완성된 인증 시스템</p>
+                    </div>
+                </div>
+
+                <!-- 3차 스프린트 -->
+                <div class="timeline-item">
+                    <div class="timeline-date">5~6주차</div>
+                    <div class="timeline-content">
+                        <h4>💳 명함 기능 구현</h4>
+                        <ul>
+                            <li>명함 생성/편집 페이지</li>
+                            <li>한글 도메인 시스템 구현</li>
+                            <li>테마 및 레이아웃 선택</li>
+                            <li>이미지 업로드 (Supabase Storage)</li>
+                            <li>공개 명함 페이지 구현</li>
+                        </ul>
+                        <p><strong>산출물:</strong> 명함 생성 및 관리 기능</p>
+                    </div>
+                </div>
+
+                <!-- 4차 스프린트 -->
+                <div class="timeline-item">
+                    <div class="timeline-date">7~8주차</div>
+                    <div class="timeline-content">
+                        <h4>📊 부업 카드 시스템</h4>
+                        <ul>
+                            <li>부업 카드 CRUD 구현</li>
+                            <li>드래그 앤 드롭 순서 변경</li>
+                            <li>카드 템플릿 시스템</li>
+                            <li>카테고리 및 필터링</li>
+                            <li>활성/비활성 토글</li>
+                        </ul>
+                        <p><strong>산출물:</strong> 부업 카드 관리 시스템</p>
+                    </div>
+                </div>
+
+                <!-- 5차 스프린트 -->
+                <div class="timeline-item">
+                    <div class="timeline-date">9주차</div>
+                    <div class="timeline-content">
+                        <h4>📱 콜백 자동화 시스템</h4>
+                        <ul>
+                            <li>SMS API 통합 (Twilio/알리고)</li>
+                            <li>콜백 설정 페이지</li>
+                            <li>메시지 템플릿 관리</li>
+                            <li>발송 이력 관리</li>
+                            <li>Edge Function 구현</li>
+                        </ul>
+                        <p><strong>산출물:</strong> 콜백 자동화 기능</p>
+                    </div>
+                </div>
+
+                <!-- 6차 스프린트 -->
+                <div class="timeline-item">
+                    <div class="timeline-date">10주차</div>
+                    <div class="timeline-content">
+                        <h4>📈 통계 및 분석</h4>
+                        <ul>
+                            <li>방문자 추적 시스템</li>
+                            <li>실시간 대시보드</li>
+                            <li>카드별 성과 분석</li>
+                            <li>차트 및 그래프 구현</li>
+                            <li>데이터 export 기능</li>
+                        </ul>
+                        <p><strong>산출물:</strong> 통계 대시보드</p>
+                    </div>
+                </div>
+
+                <!-- 7차 스프린트 -->
+                <div class="timeline-item">
+                    <div class="timeline-date">11주차</div>
+                    <div class="timeline-content">
+                        <h4>🔧 관리자 페이지 및 부가 기능</h4>
+                        <ul>
+                            <li>관리자 대시보드</li>
+                            <li>사용자 관리 기능</li>
+                            <li>공지사항 시스템</li>
+                            <li>신고 관리</li>
+                            <li>시스템 모니터링</li>
+                        </ul>
+                        <p><strong>산출물:</strong> 관리자 시스템</p>
+                    </div>
+                </div>
+
+                <!-- 8차 스프린트 -->
+                <div class="timeline-item">
+                    <div class="timeline-date">12주차</div>
+                    <div class="timeline-content">
+                        <h4>✅ 테스트 및 최종 배포</h4>
+                        <ul>
+                            <li>통합 테스트</li>
+                            <li>성능 최적화</li>
+                            <li>보안 점검</li>
+                            <li>배포 환경 구성</li>
+                            <li>문서화 완료</li>
+                        </ul>
+                        <p><strong>산출물:</strong> 완성된 서비스, 운영 문서</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3>마일스톤</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>단계</th>
+                        <th>기간</th>
+                        <th>주요 목표</th>
+                        <th>검수 항목</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1차</strong></td>
+                        <td>1개월차</td>
+                        <td>기본 시스템 구축</td>
+                        <td>회원가입, 로그인, 기본 명함 생성</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2차</strong></td>
+                        <td>2개월차</td>
+                        <td>핵심 기능 완성</td>
+                        <td>부업 카드, 콜백, 통계</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3차</strong></td>
+                        <td>3개월차</td>
+                        <td>배포 및 안정화</td>
+                        <td>관리자, 테스트, 최종 배포</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 산출물 -->
+        <section id="deliverables" class="section">
+            <h2>📦 산출물</h2>
+
+            <h3>10.1 개발 산출물</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>소스 코드</h4>
+                    <ul>
+                        <li>Frontend 소스 (Next.js)</li>
+                        <li>Backend 로직 (Edge Functions)</li>
+                        <li>데이터베이스 스키마</li>
+                        <li>배포 스크립트</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>문서</h4>
+                    <ul>
+                        <li>기능 명세서</li>
+                        <li>API 문서</li>
+                        <li>사용자 매뉴얼</li>
+                        <li>관리자 매뉴얼</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h4>테스트</h4>
+                    <ul>
+                        <li>단위 테스트 코드</li>
+                        <li>통합 테스트 시나리오</li>
+                        <li>테스트 결과 보고서</li>
+                        <li>성능 테스트 결과</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>10.2 배포 환경</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>구분</th>
+                        <th>서비스</th>
+                        <th>용도</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Frontend</td>
+                        <td>Vercel</td>
+                        <td>Next.js 애플리케이션 호스팅</td>
+                    </tr>
+                    <tr>
+                        <td>Backend</td>
+                        <td>Supabase</td>
+                        <td>Database, Auth, Storage, Functions</td>
+                    </tr>
+                    <tr>
+                        <td>Domain</td>
+                        <td>가비아/.한국</td>
+                        <td>한글 도메인 관리</td>
+                    </tr>
+                    <tr>
+                        <td>CDN</td>
+                        <td>Cloudflare</td>
+                        <td>정적 리소스 캐싱</td>
+                    </tr>
+                    <tr>
+                        <td>Monitoring</td>
+                        <td>Sentry</td>
+                        <td>에러 추적 및 모니터링</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>10.3 인수인계 사항</h3>
+            <ul>
+                <li>✅ 전체 소스 코드 및 저장소 접근 권한</li>
+                <li>✅ Supabase 프로젝트 소유권 이전</li>
+                <li>✅ 도메인 및 SSL 인증서</li>
+                <li>✅ 외부 API 계정 정보 (SMS, 결제 등)</li>
+                <li>✅ 배포 및 운영 가이드</li>
+                <li>✅ 1개월 무상 유지보수</li>
+            </ul>
+
+            <div class="alert alert-info">
+                <strong>📌 유지보수 정책:</strong> 
+                납품 후 1개월간 무상 유지보수를 제공하며, 이후 별도 계약을 통해 유지보수 서비스를 제공합니다.
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>지플랫 모바일 명함 서비스</strong></p>
+            <p>개발 명세서 v1.0 | 2025년 1월</p>
+            <p>© 2025 G-Plat. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>

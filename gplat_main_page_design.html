@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지플랫 - 모바일 명함으로 시작하는 부업 플랫폼</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #0077be;
+            --primary-dark: #005a8b;
+            --primary-light: #00a8e6;
+            --accent-color: #ff6b6b;
+            --text-dark: #2c3e50;
+            --text-light: #5a6c7d;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #00a8e6 0%, #0077be 100%);
+            --gradient-accent: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.16);
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+        
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+        }
+        
+        nav.scrolled {
+            padding: 10px 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8em;
+            font-weight: 800;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        
+        .nav-menu a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            color: var(--primary-color);
+        }
+        
+        .cta-button {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0, 168, 230, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 168, 230, 0.4);
+        }
+        
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-dark);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 3px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 120px 20px 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-50px, -50px); }
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5em;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero-content h1 span {
+            background: linear-gradient(90deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-content p {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease 0.2s;
+            animation-fill-mode: both;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            animation: fadeInUp 0.8s ease 0.4s;
+            animation-fill-mode: both;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: var(--primary-color);
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 15px 35px;
+            border: 2px solid white;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary-color);
+        }
+        
+        .hero-image {
+            position: relative;
+            animation: fadeInRight 0.8s ease 0.6s;
+            animation-fill-mode: both;
+        }
+        
+        .phone-mockup {
+            width: 300px;
+            height: 600px;
+            background: white;
+            border-radius: 30px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .mockup-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(0);
+            animation: floatCard 3s ease-in-out infinite;
+        }
+        
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 20px;
+            background: var(--bg-light);
+        }
+        
+        .section-header {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        
+        .section-header p {
+            font-size: 1.2em;
+            color: var(--text-light);
+        }
+        
+        .features-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-secondary);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 25px;
+            background: var(--gradient-secondary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5em;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+        
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            padding: 100px 20px;
+            background: white;
+        }
+        
+        .steps-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .step {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-bottom: 100px;
+        }
+        
+        .step:nth-child(even) {
+            direction: rtl;
+        }
+        
+        .step:nth-child(even) .step-content {
+            direction: ltr;
+        }
+        
+        .step-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .step-content h3 {
+            font-size: 2em;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        
+        .step-content p {
+            font-size: 1.1em;
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        
+        .step-image {
+            background: var(--bg-light);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        
+        /* Pricing Section */
+        .pricing {
+            padding: 100px 20px;
+            background: var(--bg-light);
+        }
+        
+        .pricing-cards {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .pricing-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .pricing-card.featured {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .pricing-card.featured::before {
+            content: '인기';
+            position: absolute;
+            top: -15px;
+            right: 30px;
+            background: var(--accent-color);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-10px);
+        }
+        
+        .pricing-card h3 {
+            font-size: 1.8em;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+        
+        .price {
+            font-size: 3em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .price span {
+            font-size: 0.5em;
+            color: var(--text-light);
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin: 30px 0;
+        }
+        
+        .pricing-features li {
+            padding: 10px 0;
+            color: var(--text-light);
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .pricing-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        /* Domain Preview Section */
+        .domain-preview {
+            padding: 100px 20px;
+            background: white;
+            text-align: center;
+        }
+        
+        .domain-demo {
+            max-width: 600px;
+            margin: 60px auto;
+            background: var(--bg-light);
+            border-radius: 50px;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .domain-demo span {
+            font-size: 1.5em;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .domain-input {
+            background: transparent;
+            border: none;
+            font-size: 1.5em;
+            color: var(--text-dark);
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            width: 150px;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 20px;
+            background: var(--gradient-primary);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 2px, transparent 2px);
+            background-size: 40px 40px;
+            animation: float 15s linear infinite reverse;
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .cta-content h2 {
+            font-size: 3em;
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .cta-content p {
+            font-size: 1.3em;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: white;
+            padding: 60px 20px 30px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-brand h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            background: var(--gradient-secondary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer-brand p {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.8;
+        }
+        
+        .footer-links h4 {
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            line-height: 2;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.5);
+        }
+        
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(0,0,0,0.4);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: var(--shadow-md);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .menu-toggle {
+                display: flex;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .step {
+                grid-template-columns: 1fr;
+            }
+            
+            .step:nth-child(even) {
+                direction: ltr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+        /* Scroll Animations */
+        .scroll-fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .scroll-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">지플랫</div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#features">주요 기능</a></li>
+                <li><a href="#how-it-works">이용 방법</a></li>
+                <li><a href="#pricing">요금제</a></li>
+                <li><a href="#contact">문의하기</a></li>
+            </ul>
+            <a href="#" class="cta-button">무료로 시작하기</a>
+            <div class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>모바일 명함으로<br><span>부업을 시작하세요</span></h1>
+                <p>개인 부업 포트폴리오를 한 곳에서 관리하고<br>한글 도메인으로 쉽게 공유하세요</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-primary">지금 시작하기</a>
+                    <a href="#" class="btn-secondary">데모 보기</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="mockup-card">
+                            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; margin-right: 15px;"></div>
+                                <div>
+                                    <div style="font-weight: 600; color: #2c3e50;">김성근</div>
+                                    <div style="font-size: 0.9em; color: #5a6c7d;">마케팅 매니저</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.85em; color: #5a6c7d; margin-bottom: 10px;">
+                                ABC 컴퍼니 | 010-1234-5678
+                            </div>
+                            <div style="background: #f8f9fa; padding: 10px; border-radius: 10px; font-size: 0.8em; color: #0077be;">
+                                https://김성근.한국
+                            </div>
+                        </div>
+                        <div class="mockup-card" style="animation-delay: 0.5s;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">🏠 정수기 렌탈</div>
+                            <div style="font-size: 0.85em; color: #5a6c7d;">월 29,900원부터</div>
+                        </div>
+                        <div class="mockup-card" style="animation-delay: 1s;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">🚗 자동차 보험</div>
+                            <div style="font-size: 0.85em; color: #5a6c7d;">최대 30% 할인</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header scroll-fade-in">
+            <h2>지플랫만의 특별한 기능</h2>
+            <p>복잡한 설정 없이 바로 시작할 수 있습니다</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card scroll-fade-in">
+                <div class="feature-icon">📱</div>
+                <h3>간편한 등록</h3>
+                <p>게시판 작성하듯 직관적인 인터페이스로 3분 만에 명함 완성</p>
+            </div>
+            <div class="feature-card scroll-fade-in">
+                <div class="feature-icon">🌐</div>
+                <h3>한글 도메인</h3>
+                <p>https://이름.한국 형태의 기억하기 쉬운 개인 URL 제공</p>
+            </div>
+            <div class="feature-card scroll-fade-in">
+                <div class="feature-icon">📲</div>
+                <h3>콜백 자동화</h3>
+                <p>통화 종료 후 자동으로 명함 URL을 전송하는 스마트 기능</p>
+            </div>
+            <div class="feature-card scroll-fade-in">
+                <div class="feature-icon">💼</div>
+                <h3>부업 카드 관리</h3>
+                <p>드래그 앤 드롭으로 쉽게 부업 정보를 관리하고 순서 변경</p>
+            </div>
+            <div class="feature-card scroll-fade-in">
+                <div class="feature-icon">📊</div>
+                <h3>실시간 통계</h3>
+                <p>방문자 수, 클릭률 등 상세한 통계를 실시간으로 확인</p>
+            </div>
+            <div class="feature-card scroll-fade-in">
+                <div class="feature-icon">🔗</div>
+                <h3>SNS 연동</h3>
+                <p>인스타그램, 페이스북, 유튜브 등 다양한 SNS 계정 연결</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-header scroll-fade-in">
+            <h2>이렇게 간단합니다</h2>
+            <p>3단계로 완성하는 나만의 모바일 명함</p>
+        </div>
+        <div class="steps-container">
+            <div class="step scroll-fade-in">
+                <div class="step-content">
+                    <div class="step-number">1</div>
+                    <h3>회원가입 및 기본 설정</h3>
+                    <p>이메일이나 SNS 계정으로 간편하게 가입하고, 이름과 연락처만 입력하면 자동으로 한글 도메인이 생성됩니다.</p>
+                    <a href="#" class="cta-button">30초 만에 시작하기</a>
+                </div>
+                <div class="step-image">
+                    <div style="background: linear-gradient(135deg, #667eea, #764ba2); width: 100%; height: 300px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
+                        ✍️
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step scroll-fade-in">
+                <div class="step-content">
+                    <div class="step-number">2</div>
+                    <h3>명함 정보 입력</h3>
+                    <p>프로필 사진, 직업, 회사 정보를 추가하고 원하는 테마를 선택해 나만의 명함을 꾸며보세요.</p>
+                    <a href="#" class="cta-button">템플릿 둘러보기</a>
+                </div>
+                <div class="step-image">
+                    <div style="background: linear-gradient(135deg, #00a8e6, #0077be); width: 100%; height: 300px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
+                        🎨
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step scroll-fade-in">
+                <div class="step-content">
+                    <div class="step-number">3</div>
+                    <h3>부업 카드 등록</h3>
+                    <p>관심 있는 부업을 선택하고 카드를 만들어 포트폴리오를 완성하세요. 언제든지 수정 가능합니다.</p>
+                    <a href="#" class="cta-button">부업 둘러보기</a>
+                </div>
+                <div class="step-image">
+                    <div style="background: linear-gradient(135deg, #f093fb, #f5576c); width: 100%; height: 300px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3em;">
+                        💳
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Domain Preview Section -->
+    <section class="domain-preview">
+        <div class="section-header scroll-fade-in">
+            <h2>나만의 한글 도메인을 만들어보세요</h2>
+            <p>기억하기 쉽고 전달하기 편한 한글 주소</p>
+        </div>
+        <div class="domain-demo scroll-fade-in">
+            <span>https://</span>
+            <input type="text" class="domain-input" placeholder="홍길동" id="domainInput">
+            <span>.한국</span>
+        </div>
+        <p style="color: var(--text-light); font-size: 1.1em;" class="scroll-fade-in">
+            위 도메인으로 고객이 바로 접속할 수 있습니다
+        </p>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header scroll-fade-in">
+            <h2>합리적인 요금제</h2>
+            <p>필요에 따라 선택할 수 있는 다양한 플랜</p>
+        </div>
+        <div class="pricing-cards">
+            <div class="pricing-card scroll-fade-in">
+                <h3>무료</h3>
+                <div class="price">0<span>원/월</span></div>
+                <ul class="pricing-features">
+                    <li>기본 명함 기능</li>
+                    <li>부업 카드 3개</li>
+                    <li>월 100회 콜백</li>
+                    <li>기본 통계</li>
+                    <li>지플랫 서브도메인</li>
+                </ul>
+                <a href="#" class="cta-button" style="width: 100%;">무료로 시작</a>
+            </div>
+            
+            <div class="pricing-card featured scroll-fade-in">
+                <h3>프리미엄</h3>
+                <div class="price">9,900<span>원/월</span></div>
+                <ul class="pricing-features">
+                    <li>무제한 부업 카드</li>
+                    <li>무제한 콜백 발송</li>
+                    <li>고급 통계 분석</li>
+                    <li>커스텀 한글 도메인</li>
+                    <li>우선 고객 지원</li>
+                    <li>광고 제거</li>
+                </ul>
+                <a href="#" class="cta-button" style="width: 100%;">프리미엄 시작</a>
+            </div>
+            
+            <div class="pricing-card scroll-fade-in">
+                <h3>비즈니스</h3>
+                <div class="price">29,900<span>원/월</span></div>
+                <ul class="pricing-features">
+                    <li>프리미엄 기능 전체</li>
+                    <li>팀 계정 5명</li>
+                    <li>API 연동</li>
+                    <li>전담 매니저</li>
+                    <li>맞춤형 교육</li>
+                    <li>우선 기술 지원</li>
+                </ul>
+                <a href="#" class="cta-button" style="width: 100%;">문의하기</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-content scroll-fade-in">
+            <h2>지금 바로 시작하세요</h2>
+            <p>3분이면 충분합니다. 복잡한 절차 없이 바로 명함을 만들어보세요.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn-primary">무료로 시작하기</a>
+                <a href="#" class="btn-secondary">문의하기</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>지플랫</h3>
+                <p>개인 부업 포트폴리오 모바일 명함 웹 빌더<br>
+                누구나 쉽게 시작할 수 있는 부업 플랫폼</p>
+            </div>
+            <div class="footer-links">
+                <h4>서비스</h4>
+                <ul>
+                    <li><a href="#">주요 기능</a></li>
+                    <li><a href="#">요금제</a></li>
+                    <li><a href="#">템플릿</a></li>
+                    <li><a href="#">API</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>지원</h4>
+                <ul>
+                    <li><a href="#">도움말</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">문의하기</a></li>
+                    <li><a href="#">블로그</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>회사</h4>
+                <ul>
+                    <li><a href="#">회사 소개</a></li>
+                    <li><a href="#">이용약관</a></li>
+                    <li><a href="#">개인정보처리방침</a></li>
+                    <li><a href="#">파트너</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 지플랫. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Floating Action Button -->
+    <div class="fab" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        ↑
+    </div>
+
+    <script>
+        // Navigation scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        menuToggle.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Domain input animation
+        const domainInput = document.getElementById('domainInput');
+        const names = ['홍길동', '김영희', '이철수', '박민수'];
+        let nameIndex = 0;
+
+        setInterval(() => {
+            if (!domainInput.matches(':focus')) {
+                domainInput.placeholder = names[nameIndex];
+                nameIndex = (nameIndex + 1) % names.length;
+            }
+        }, 2000);
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Add typing effect to hero title
+        const heroTitle = document.querySelector('.hero-content h1');
+        if (heroTitle) {
+            const text = heroTitle.innerHTML;
+            heroTitle.innerHTML = '';
+            let index = 0;
+            
+            function type() {
+                if (index < text.length) {
+                    heroTitle.innerHTML = text.slice(0, index + 1);
+                    index++;
+                    setTimeout(type, 50);
+                }
+            }
+            
+            setTimeout(type, 500);
+        }
+    </script>
+</body>
+</html>

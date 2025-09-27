@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대시보드 - 지플랫</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --gradient: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --radius: 0.5rem;
+            --radius-lg: 1rem;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
+        
+        /* Layout */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--white);
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .sidebar-nav {
+            flex: 1;
+            padding: 1rem;
+        }
+        
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+        
+        .nav-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+            padding: 0 0.75rem;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            color: var(--gray-700);
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+        }
+        
+        .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+        
+        .nav-item.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .nav-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: var(--white);
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .user-email {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .header-btn {
+            position: relative;
+            padding: 0.5rem;
+            border: none;
+            background: none;
+            color: var(--gray-600);
+            cursor: pointer;
+            border-radius: var(--radius);
+            transition: all 0.2s;
+        }
+        
+        .header-btn:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+        
+        .notification-dot {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-title {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .stat-icon.primary {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+        
+        .stat-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .stat-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .stat-icon.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--info);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+        }
+        
+        .stat-change.positive {
+            color: var(--success);
+        }
+        
+        .stat-change.negative {
+            color: var(--danger);
+        }
+        
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+        
+        .chart-options {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chart-option {
+            padding: 0.25rem 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            background: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .chart-option.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .chart-placeholder {
+            height: 300px;
+            background: var(--gradient);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 1.125rem;
+            opacity: 0.1;
+        }
+        
+        /* Business Cards List */
+        .cards-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .business-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .business-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .card-image {
+            height: 120px;
+            background: var(--gradient);
+            position: relative;
+        }
+        
+        .card-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--white);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .card-badge.active {
+            background: var(--success);
+            color: var(--white);
+        }
+        
+        .card-content {
+            padding: 1.5rem;
+        }
+        
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-description {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
+        }
+        
+        .card-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .card-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-end;
+        }
+        
+        .fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: var(--white);
+            box-shadow: var(--shadow-lg);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 1.5rem;
+        }
+        
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .fab-menu {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            padding: 0.5rem;
+            display: none;
+        }
+        
+        .fab-menu.show {
+            display: block;
+        }
+        
+        .fab-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            color: var(--gray-700);
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .fab-item:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                height: 100%;
+                z-index: 1000;
+                transition: left 0.3s;
+            }
+            
+            .sidebar.show {
+                left: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>🎯</span>
+                    <span>지플랫</span>
+                </a>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-title">메인</div>
+                    <a href="#" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        <span>대시보드</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">💳</span>
+                        <span>내 명함</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">💼</span>
+                        <span>부업 카드</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">관리</div>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        <span>통계 분석</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">👥</span>
+                        <span>고객 관리</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">📲</span>
+                        <span>콜백 설정</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        <span>메시지</span>
+                        <span class="nav-badge">5</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-title">설정</div>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        <span>계정 설정</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">💳</span>
+                        <span>결제 관리</span>
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">김</div>
+                    <div class="user-info">
+                        <div class="user-name">김대리</div>
+                        <div class="user-email">kim@example.com</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <h1 class="header-title">대시보드</h1>
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" placeholder="검색...">
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <button class="header-btn">
+                        <span>🔔</span>
+                        <span class="notification-dot"></span>
+                    </button>
+                    <button class="header-btn">
+                        <span>💬</span>
+                    </button>
+                    <a href="card-edit.html" class="btn btn-primary">
+                        <span>+</span>
+                        <span>명함 편집</span>
+                    </a>
+                </div>
+            </header>
+            
+            <!-- Content -->
+            <div class="content">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">오늘 방문자</span>
+                            <div class="stat-icon primary">👀</div>
+                        </div>
+                        <div class="stat-value">128</div>
+                        <div class="stat-change positive">
+                            <span>↑</span>
+                            <span>12% 증가</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">신규 문의</span>
+                            <div class="stat-icon success">💬</div>
+                        </div>
+                        <div class="stat-value">24</div>
+                        <div class="stat-change positive">
+                            <span>↑</span>
+                            <span>8% 증가</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">카드 클릭</span>
+                            <div class="stat-icon warning">👆</div>
+                        </div>
+                        <div class="stat-value">456</div>
+                        <div class="stat-change negative">
+                            <span>↓</span>
+                            <span>3% 감소</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-title">전환율</span>
+                            <div class="stat-icon info">📊</div>
+                        </div>
+                        <div class="stat-value">18.7%</div>
+                        <div class="stat-change positive">
+                            <span>↑</span>
+                            <span>2.3% 증가</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h2 class="chart-title">방문자 추이</h2>
+                            <div class="chart-options">
+                                <button class="chart-option active">일간</button>
+                                <button class="chart-option">주간</button>
+                                <button class="chart-option">월간</button>
+                            </div>
+                        </div>
+                        <div class="chart-placeholder">차트 영역</div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h2 class="chart-title">인기 부업 카드</h2>
+                        </div>
+                        <div style="padding: 1rem 0;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-200);">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="font-size: 1.25rem;">🏠</span>
+                                    <div>
+                                        <div style="font-weight: 600;">정수기 렌탈</div>
+                                        <div style="font-size: 0.875rem; color: var(--gray-500);">523 클릭</div>
+                                    </div>
+                                </div>
+                                <span style="color: var(--success);">↑ 15%</span>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--gray-200);">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="font-size: 1.25rem;">🚗</span>
+                                    <div>
+                                        <div style="font-weight: 600;">자동차 보험</div>
+                                        <div style="font-size: 0.875rem; color: var(--gray-500);">412 클릭</div>
+                                    </div>
+                                </div>
+                                <span style="color: var(--success);">↑ 8%</span>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0;">
+                                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                    <span style="font-size: 1.25rem;">📚</span>
+                                    <div>
+                                        <div style="font-weight: 600;">온라인 강의</div>
+                                        <div style="font-size: 0.875rem; color: var(--gray-500);">287 클릭</div>
+                                    </div>
+                                </div>
+                                <span style="color: var(--danger);">↓ 3%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Business Cards -->
+                <div class="cards-section">
+                    <div class="section-header">
+                        <h2 class="section-title">내 부업 카드</h2>
+                        <a href="#" class="btn btn-primary">
+                            <span>+</span>
+                            <span>카드 추가</span>
+                        </a>
+                    </div>
+                    
+                    <div class="cards-grid">
+                        <div class="business-card">
+                            <div class="card-image">
+                                <span class="card-badge active">활성</span>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">정수기 렌탈</h3>
+                                <p class="card-description">월 29,900원부터 시작하는 프리미엄 정수기</p>
+                                <div class="card-stats">
+                                    <div class="card-stat">
+                                        <span>👀</span>
+                                        <span>523</span>
+                                    </div>
+                                    <div class="card-stat">
+                                        <span>👆</span>
+                                        <span>45</span>
+                                    </div>
+                                    <div class="card-stat">
+                                        <span>💬</span>
+                                        <span>12</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="business-card">
+                            <div class="card-image" style="background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);">
+                                <span class="card-badge active">활성</span>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">자동차 보험</h3>
+                                <p class="card-description">최대 30% 할인 가능한 맞춤형 자동차 보험</p>
+                                <div class="card-stats">
+                                    <div class="card-stat">
+                                        <span>👀</span>
+                                        <span>412</span>
+                                    </div>
+                                    <div class="card-stat">
+                                        <span>👆</span>
+                                        <span>38</span>
+                                    </div>
+                                    <div class="card-stat">
+                                        <span>💬</span>
+                                        <span>8</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="business-card">
+                            <div class="card-image" style="background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);">
+                                <span class="card-badge active">활성</span>
+                            </div>
+                            <div class="card-content">
+                                <h3 class="card-title">온라인 강의</h3>
+                                <p class="card-description">실무 중심 마케팅 전문가 과정</p>
+                                <div class="card-stats">
+                                    <div class="card-stat">
+                                        <span>👀</span>
+                                        <span>287</span>
+                                    </div>
+                                    <div class="card-stat">
+                                        <span>👆</span>
+                                        <span>22</span>
+                                    </div>
+                                    <div class="card-stat">
+                                        <span>💬</span>
+                                        <span>5</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <div class="fab-menu" id="fabMenu">
+            <a href="#" class="fab-item">
+                <span>💳</span>
+                <span>명함 편집</span>
+            </a>
+            <a href="#" class="fab-item">
+                <span>➕</span>
+                <span>부업 카드 추가</span>
+            </a>
+            <a href="#" class="fab-item">
+                <span>📲</span>
+                <span>콜백 발송</span>
+            </a>
+            <a href="#" class="fab-item">
+                <span>📊</span>
+                <span>통계 보기</span>
+            </a>
+        </div>
+        <button class="fab" id="fabButton">
+            <span>+</span>
+        </button>
+    </div>
+    
+    <script>
+        // FAB Menu Toggle
+        const fabButton = document.getElementById('fabButton');
+        const fabMenu = document.getElementById('fabMenu');
+        
+        fabButton.addEventListener('click', function() {
+            fabMenu.classList.toggle('show');
+            this.style.transform = fabMenu.classList.contains('show') ? 'rotate(45deg)' : 'rotate(0)';
+        });
+        
+        // Close FAB menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!fabButton.contains(e.target) && !fabMenu.contains(e.target)) {
+                fabMenu.classList.remove('show');
+                fabButton.style.transform = 'rotate(0)';
+            }
+        });
+        
+        // Mobile Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        
+        // Add mobile menu toggle button functionality if needed
+    </script>
+</body>
+</html>

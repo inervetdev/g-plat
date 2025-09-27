@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지플랫 - 모바일 명함으로 시작하는 부업 플랫폼</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --white: #ffffff;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --radius: 0.5rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 9999px;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-900);
+            background: var(--white);
+            overflow-x: hidden;
+        }
+        
+        /* Utility Classes */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-gradient {
+            background: var(--gradient-2);
+            color: var(--white);
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+        }
+        
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .navbar.scrolled {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-link {
+            color: var(--gray-700);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+        
+        .mobile-menu-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--gray-700);
+            transition: all 0.3s;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 8rem 0 4rem;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: var(--gradient-2);
+            opacity: 0.1;
+            border-radius: 50%;
+            filter: blur(100px);
+        }
+        
+        .hero-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        .hero-image {
+            position: relative;
+        }
+        
+        .mockup-container {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .phone-mockup {
+            width: 100%;
+            background: var(--white);
+            border-radius: 2rem;
+            padding: 0.5rem;
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+        }
+        
+        .phone-screen {
+            background: var(--gray-100);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            min-height: 600px;
+        }
+        
+        .mockup-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+        }
+        
+        .mockup-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .mockup-info h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .mockup-info p {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+        
+        .mockup-card {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+        }
+        
+        .mockup-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .floating-card {
+            position: absolute;
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .floating-card-1 {
+            top: 20%;
+            left: -20%;
+            animation-delay: 0s;
+        }
+        
+        .floating-card-2 {
+            bottom: 20%;
+            right: -20%;
+            animation-delay: 1s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+        }
+        
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .section-header p {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--gradient-2);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
+        }
+        
+        .feature-card p {
+            color: var(--gray-600);
+            line-height: 1.8;
+        }
+        
+        /* Process Section */
+        .process {
+            padding: 5rem 0;
+            background: var(--gray-100);
+        }
+        
+        .process-timeline {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            position: relative;
+        }
+        
+        .process-timeline::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            z-index: 0;
+        }
+        
+        .process-step {
+            position: relative;
+            text-align: center;
+            z-index: 1;
+        }
+        
+        .step-number {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: var(--white);
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .process-step h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        
+        .process-step p {
+            color: var(--gray-600);
+        }
+        
+        /* Pricing Section */
+        .pricing {
+            padding: 5rem 0;
+        }
+        
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .pricing-card {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .pricing-card.featured::before {
+            content: '인기';
+            position: absolute;
+            top: -12px;
+            right: 2rem;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.25rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+        
+        .pricing-plan {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .pricing-price span {
+            font-size: 1rem;
+            color: var(--gray-600);
+            font-weight: 400;
+        }
+        
+        .pricing-desc {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+        
+        .pricing-features li {
+            padding: 0.75rem 0;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 5rem 0;
+            background: var(--gradient-2);
+            text-align: center;
+            color: var(--white);
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        
+        .cta p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .btn-white {
+            background: var(--white);
+            color: var(--primary);
+        }
+        
+        .btn-white:hover {
+            background: var(--gray-100);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 3rem 0 2rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-brand h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer-brand p {
+            color: var(--gray-400);
+            line-height: 1.8;
+        }
+        
+        .footer-links h4 {
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            display: block;
+            padding: 0.25rem 0;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--white);
+        }
+        
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--gray-800);
+            text-align: center;
+            color: var(--gray-400);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .features-grid,
+            .pricing-cards,
+            .process-timeline {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .process-timeline::before {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: flex;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .features-grid,
+            .pricing-cards,
+            .process-timeline,
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .floating-card {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="/" class="nav-logo">
+                <span>🎯</span>
+                <span>지플랫</span>
+            </a>
+            
+            <ul class="nav-menu">
+                <li><a href="#features" class="nav-link">주요 기능</a></li>
+                <li><a href="#process" class="nav-link">이용 방법</a></li>
+                <li><a href="#pricing" class="nav-link">요금제</a></li>
+                <li><a href="#about" class="nav-link">회사 소개</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-secondary">로그인</a>
+                <a href="signup.html" class="btn btn-primary">무료 시작</a>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1>모바일 명함으로<br>부업을 시작하세요</h1>
+                <p>3분 만에 완성하는 나만의 모바일 명함<br>한글 도메인으로 쉽게 공유하고 부업을 관리하세요</p>
+                
+                <div class="hero-buttons">
+                    <a href="signup.html" class="btn btn-gradient btn-lg">
+                        🚀 무료로 시작하기
+                    </a>
+                    <a href="demo.html" class="btn btn-secondary btn-lg">
+                        👀 데모 보기
+                    </a>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">10K+</div>
+                        <div class="stat-label">활성 사용자</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">50+</div>
+                        <div class="stat-label">파트너사</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">99.9%</div>
+                        <div class="stat-label">서비스 가용성</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <div class="mockup-container">
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <div class="mockup-header">
+                                <div class="mockup-avatar">김</div>
+                                <div class="mockup-info">
+                                    <h3>김대리</h3>
+                                    <p>마케팅 매니저 · ABC컴퍼니</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mockup-card">
+                                <h4>🏠 정수기 렌탈</h4>
+                                <p>월 29,900원부터 · 무료설치</p>
+                            </div>
+                            
+                            <div class="mockup-card">
+                                <h4>🚗 자동차 보험</h4>
+                                <p>최대 30% 할인 · 실시간 견적</p>
+                            </div>
+                            
+                            <div class="mockup-card">
+                                <h4>📚 온라인 강의</h4>
+                                <p>마케팅 실무 · 수료증 발급</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="floating-card floating-card-1">
+                        <div class="badge badge-success">자동 콜백</div>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem;">통화 후 자동 전송</p>
+                    </div>
+                    
+                    <div class="floating-card floating-card-2">
+                        <div class="badge badge-primary">한글도메인</div>
+                        <p style="margin-top: 0.5rem; font-size: 0.875rem;">김대리.한국</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>지플랫만의 특별한 기능</h2>
+                <p>복잡한 설정 없이 바로 시작할 수 있는 강력한 기능들</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>3분 완성</h3>
+                    <p>직관적인 인터페이스로 누구나 쉽게 명함을 만들 수 있습니다</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>한글 도메인</h3>
+                    <p>이름.한국 형태의 기억하기 쉬운 개인 URL을 제공합니다</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📲</div>
+                    <h3>자동 콜백</h3>
+                    <p>통화 종료 후 자동으로 명함 URL을 전송합니다</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💼</div>
+                    <h3>부업 관리</h3>
+                    <p>여러 부업을 카드 형태로 쉽게 관리할 수 있습니다</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>실시간 통계</h3>
+                    <p>방문자, 클릭률 등 상세한 통계를 실시간으로 확인합니다</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <h3>SNS 연동</h3>
+                    <p>인스타그램, 유튜브 등 다양한 SNS를 연결할 수 있습니다</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Process Section -->
+    <section class="process" id="process">
+        <div class="container">
+            <div class="section-header">
+                <h2>간단한 3단계로 시작하세요</h2>
+                <p>복잡한 과정 없이 빠르게 나만의 명함을 만들어보세요</p>
+            </div>
+            
+            <div class="process-timeline">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3>회원가입</h3>
+                    <p>이메일 또는 SNS로 간편하게 가입하고 한글 도메인을 받으세요</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3>명함 제작</h3>
+                    <p>템플릿을 선택하고 정보를 입력하여 명함을 완성하세요</p>
+                </div>
+                
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3>부업 등록</h3>
+                    <p>관심 있는 부업을 선택하고 카드로 만들어 공유하세요</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>합리적인 요금제</h2>
+                <p>필요에 따라 선택할 수 있는 다양한 플랜</p>
+            </div>
+            
+            <div class="pricing-cards">
+                <div class="pricing-card">
+                    <div class="pricing-plan">무료</div>
+                    <div class="pricing-price">0<span>원/월</span></div>
+                    <div class="pricing-desc">개인 사용자를 위한 기본 플랜</div>
+                    <ul class="pricing-features">
+                        <li>기본 명함 기능</li>
+                        <li>부업 카드 3개</li>
+                        <li>월 100회 콜백</li>
+                        <li>기본 통계</li>
+                        <li>지플랫 서브도메인</li>
+                    </ul>
+                    <a href="signup.html" class="btn btn-secondary btn-lg" style="width: 100%;">무료로 시작</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <div class="pricing-plan">프리미엄</div>
+                    <div class="pricing-price">9,900<span>원/월</span></div>
+                    <div class="pricing-desc">전문가를 위한 프리미엄 플랜</div>
+                    <ul class="pricing-features">
+                        <li>무제한 부업 카드</li>
+                        <li>무제한 콜백 발송</li>
+                        <li>고급 통계 분석</li>
+                        <li>커스텀 한글 도메인</li>
+                        <li>우선 고객 지원</li>
+                        <li>광고 제거</li>
+                    </ul>
+                    <a href="signup.html" class="btn btn-gradient btn-lg" style="width: 100%;">프리미엄 시작</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="pricing-plan">비즈니스</div>
+                    <div class="pricing-price">29,900<span>원/월</span></div>
+                    <div class="pricing-desc">팀과 기업을 위한 비즈니스 플랜</div>
+                    <ul class="pricing-features">
+                        <li>프리미엄 기능 전체</li>
+                        <li>팀 계정 5명</li>
+                        <li>API 연동</li>
+                        <li>전담 매니저</li>
+                        <li>맞춤형 교육</li>
+                        <li>우선 기술 지원</li>
+                    </ul>
+                    <a href="contact.html" class="btn btn-secondary btn-lg" style="width: 100%;">문의하기</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>지금 바로 시작하세요</h2>
+            <p>3분이면 충분합니다. 복잡한 절차 없이 바로 명함을 만들어보세요.</p>
+            <div class="cta-buttons">
+                <a href="signup.html" class="btn btn-white btn-lg">🚀 무료로 시작하기</a>
+                <a href="demo.html" class="btn btn-secondary btn-lg" style="border-color: white; color: white;">📞 상담 신청</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>지플랫</h3>
+                    <p>개인 부업 포트폴리오 모바일 명함 웹 빌더<br>
+                    누구나 쉽게 시작할 수 있는 부업 플랫폼</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>서비스</h4>
+                    <ul>
+                        <li><a href="#">주요 기능</a></li>
+                        <li><a href="#">요금제</a></li>
+                        <li><a href="#">템플릿</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>지원</h4>
+                    <ul>
+                        <li><a href="#">도움말</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">문의하기</a></li>
+                        <li><a href="#">블로그</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>회사</h4>
+                    <ul>
+                        <li><a href="#">회사 소개</a></li>
+                        <li><a href="#">이용약관</a></li>
+                        <li><a href="#">개인정보처리방침</a></li>
+                        <li><a href="#">파트너</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>© 2025 지플랫. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

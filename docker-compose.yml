@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Tomcat + JSP 서버
+  web:
+    image: tomcat:9.0-jdk11
+    container_name: gplat-web
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./webapps:/usr/local/tomcat/webapps
+      - ./logs:/usr/local/tomcat/logs
+    environment:
+      - CATALINA_OPTS=-Dfile.encoding=UTF-8 -Duser.timezone=Asia/Seoul
+      - JAVA_OPTS=-Xms512m -Xmx1024m
+    networks:
+      - gplat-network
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  # MySQL 데이터베이스
+  db:
+    image: mysql:8.0
+    container_name: gplat-db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: gplat2024!
+      MYSQL_DATABASE: gplat
+      MYSQL_USER: gplat_user
+      MYSQL_PASSWORD: gplat_pass
+      TZ: Asia/Seoul
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - gplat-network
+    restart: unless-stopped
+
+  # Redis 캐시
+  redis:
+    image: redis:7-alpine
+    container_name: gplat-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - gplat-network
+    restart: unless-stopped
+
+  # phpMyAdmin (DB 관리 툴)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: gplat-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: gplat2024!
+    networks:
+      - gplat-network
+    depends_on:
+      - db
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+  redis-data:
+
+networks:
+  gplat-network:
+    driver: bridge

@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지플랫 모바일 명함 서비스 - 기능 명세서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #00a8e6 0%, #0077be 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+        
+        .project-info {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        nav {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        nav h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #0077be;
+        }
+        
+        nav ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+        
+        nav a {
+            color: #555;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            display: block;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        nav a:hover {
+            background: #e6f4ff;
+            color: #0077be;
+            border-color: #00a8e6;
+        }
+        
+        .section {
+            background: white;
+            padding: 40px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            font-size: 2em;
+            color: #0077be;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e6f4ff;
+        }
+        
+        h3 {
+            font-size: 1.5em;
+            color: #333;
+            margin: 30px 0 20px;
+            padding-left: 15px;
+            border-left: 4px solid #00a8e6;
+        }
+        
+        h4 {
+            font-size: 1.2em;
+            color: #555;
+            margin: 20px 0 15px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+            color: #555;
+        }
+        
+        li {
+            margin-bottom: 10px;
+        }
+        
+        .feature-box {
+            background: #f8fbff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e6f4ff;
+            margin: 20px 0;
+        }
+        
+        .feature-box h4 {
+            color: #0077be;
+            margin-bottom: 15px;
+        }
+        
+        .service-point {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .point-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e6f4ff;
+            transition: all 0.3s;
+        }
+        
+        .point-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 168, 230, 0.15);
+            border-color: #00a8e6;
+        }
+        
+        .point-number {
+            background: #00a8e6;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .point-card h4 {
+            color: #0077be;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th {
+            background: #0077be;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e6f4ff;
+        }
+        
+        tr:hover {
+            background: #f8fbff;
+        }
+        
+        .page-structure {
+            background: #f8fbff;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-line;
+            line-height: 2;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        
+        .menu-item {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e6f4ff;
+        }
+        
+        .menu-item h4 {
+            color: #0077be;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .callback-flow {
+            background: #f8fbff;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .step-number {
+            background: #00a8e6;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .admin-section {
+            background: #fff5f5;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #ffe0e0;
+            margin: 20px 0;
+        }
+        
+        .admin-section h4 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+        
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        .badge-primary {
+            background: #e6f4ff;
+            color: #0077be;
+            border: 1px solid #00a8e6;
+        }
+        
+        .badge-success {
+            background: #e6ffe6;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        
+        .timeline {
+            margin: 30px 0;
+        }
+        
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 67px;
+            top: 45px;
+            bottom: -30px;
+            width: 2px;
+            background: #e6f4ff;
+        }
+        
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        
+        .timeline-date {
+            background: #0077be;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-right: 30px;
+            font-weight: 600;
+            min-width: 135px;
+            text-align: center;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            background: #f8fbff;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #00a8e6;
+        }
+        
+        .timeline-content h4 {
+            color: #0077be;
+            margin-bottom: 15px;
+        }
+        
+        .deliverable-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .deliverable-card {
+            background: #f8fbff;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e6f4ff;
+        }
+        
+        .deliverable-card h4 {
+            color: #0077be;
+            margin-bottom: 15px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background: white;
+            border-radius: 12px;
+            margin-top: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .section {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+            
+            nav ul {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline-item {
+                flex-direction: column;
+            }
+            
+            .timeline-item::before {
+                display: none;
+            }
+            
+            .timeline-date {
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media print {
+            nav {
+                position: static;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>지플랫 모바일 명함 서비스</h1>
+            <p class="subtitle">"개인 부업 포트폴리오 모바일 명함 웹 빌더"</p>
+            <div class="project-info">
+                <strong>프로젝트 기간:</strong> 3개월 | <strong>문서 버전:</strong> 1.0 | <strong>작성일:</strong> 2025년 1월
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav>
+            <h2>📑 목차</h2>
+            <ul>
+                <li><a href="#overview">프로젝트 개요</a></li>
+                <li><a href="#service-points">서비스 차별화 포인트</a></li>
+                <li><a href="#structure">서비스 구조</a></li>
+                <li><a href="#features">주요 기능</a></li>
+                <li><a href="#callback">콜백 기능 상세</a></li>
+                <li><a href="#admin">관리자 기능</a></li>
+                <li><a href="#tech">기술 스택 (Supabase)</a></li>
+                <li><a href="#timeline">개발 일정 (3개월)</a></li>
+                <li><a href="#deliverables">산출물</a></li>
+            </ul>
+        </nav>
+
+        <!-- 프로젝트 개요 -->
+        <section id="overview" class="section">
+            <h2>📋 프로젝트 개요</h2>
+            
+            <h3>1. 서비스 소개</h3>
+            <p>
+                개인이 선택한 다양한 부업을 통합 관리하고 홍보할 수 있는 모바일 명함 서비스입니다.<br>
+                사용자가 게시판 작성하듯 쉽게 부업 정보를 등록하면, 개인화된 한글 도메인 기반의 모바일 명함이 자동으로 생성 및 관리됩니다.
+            </p>
+
+            <h3>2. 타겟 고객</h3>
+            <ul>
+                <li><strong>연령대:</strong> 대학생부터 회사원, 자영업자까지 다양</li>
+                <li><strong>성별:</strong> 구분 없음</li>
+                <li><strong>관심사:</strong> 본업 홍보 및 부수입 창출을 위한 부업 홍보와 고객 확보</li>
+            </ul>
+
+            <h3>3. 핵심 목표</h3>
+            <ul>
+                <li>쉽고 편한 부업 선택과 연동으로 추가적인 매출 증대</li>
+                <li>기존 명함에서 확장된 명함 정보 전달과 본업의 홍보</li>
+                <li>다양한 렌탈 서비스 홍보를 통한 추가 수입과 대상 고객 확보</li>
+            </ul>
+        </section>
+
+        <!-- 서비스 차별화 포인트 -->
+        <section id="service-points" class="section">
+            <h2>✨ 서비스 차별화 포인트</h2>
+            
+            <div class="service-point">
+                <div class="point-card">
+                    <div class="point-number">1</div>
+                    <h4>간편한 등록 방식</h4>
+                    <ul>
+                        <li>게시판 작성하듯 직관적인 인터페이스</li>
+                        <li>복잡한 커스터마이징 없이 필수 정보만 입력</li>
+                    </ul>
+                </div>
+                
+                <div class="point-card">
+                    <div class="point-number">2</div>
+                    <h4>한글 개인 도메인</h4>
+                    <ul>
+                        <li>https://김성근.한국 형태의 기억하기 쉬운 URL</li>
+                        <li>한글 도메인 전환 서비스 연동</li>
+                    </ul>
+                </div>
+                
+                <div class="point-card">
+                    <div class="point-number">3</div>
+                    <h4>모바일 최적화</h4>
+                    <ul>
+                        <li>스마트폰에서 보기 편한 카드형 레이아웃</li>
+                        <li>터치 친화적 UI/UX 설계</li>
+                    </ul>
+                </div>
+                
+                <div class="point-card">
+                    <div class="point-number">4</div>
+                    <h4>콜백 기능</h4>
+                    <ul>
+                        <li>통화/SMS 종료 후 자동으로 개인 URL 발송</li>
+                        <li>별도 조작 없이 원클릭 고객 연결</li>
+                    </ul>
+                </div>
+                
+                <div class="point-card">
+                    <div class="point-number">5</div>
+                    <h4>즉시 반영</h4>
+                    <ul>
+                        <li>등록 즉시 개인 페이지에 실시간 반영</li>
+                        <li>실시간 수정 및 관리 가능</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 서비스 구조 -->
+        <section id="structure" class="section">
+            <h2>🏗️ 서비스 구조</h2>
+            
+            <h3>1. 개인 모바일 페이지 구성</h3>
+            <div class="page-structure">
+https://사용자명.한국
+├── 헤더 - 명함 섹션
+│   └── 사각형 명함 카드 (이름, 직업, 회사명, 연락처)
+├── 명함 상세 정보
+│   ├── 상세 연락처 (이름, 직업, 회사명, 연락처, 주소, 이메일, 홈페이지)
+│   ├── QR코드 (개인별 URL)
+│   └── 추가 정보
+├── SNS 연동 버튼
+│   └── 인스타그램, 페이스북, 유튜브, 블로그
+└── 하단 네비게이션 메뉴
+    ├── 소개 (서비스 소개)
+    ├── 이벤트 (협력 업체 이벤트)
+    ├── 작성 (부업 카드 관리)
+    ├── 공유 (다양한 공유 기능)
+    └── 프로필 (개인 정보 관리)
+            </div>
+
+            <h3>2. 하단 네비게이션 메뉴 상세</h3>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <h4>1. 소개 메뉴</h4>
+                    <ul>
+                        <li>서비스 개요 및 특징 소개</li>
+                        <li>단계별 사용법 가이드</li>
+                        <li>주요 기능 설명 및 예시</li>
+                        <li>실제 사용자 후기</li>
+                    </ul>
+                </div>
+                
+                <div class="menu-item">
+                    <h4>2. 이벤트 메뉴</h4>
+                    <ul>
+                        <li>협력 업체 이벤트 리스트</li>
+                        <li>이벤트 상세 정보 및 참여 방법</li>
+                        <li>부업 종류별 카테고리 필터</li>
+                        <li>관심 이벤트 즐겨찾기</li>
+                    </ul>
+                </div>
+                
+                <div class="menu-item">
+                    <h4>3. 작성 메뉴 (핵심 기능)</h4>
+                    <ul>
+                        <li>부업 카드 등록: 제목, 이미지, 설명, URL 입력</li>
+                        <li>부업 카드 관리: 수정, 삭제, 활성/비활성 설정</li>
+                        <li>통계 조회: 부업별 조회수, 클릭수 확인</li>
+                        <li>순서 변경: 드래그 앤 드롭으로 순서 조정</li>
+                    </ul>
+                </div>
+                
+                <div class="menu-item">
+                    <h4>4. 공유 메뉴</h4>
+                    <ul>
+                        <li>즉시 공유: 문자, 카카오톡, 이메일 등</li>
+                        <li>SNS 공유: 인스타그램, 페이스북 등</li>
+                        <li>콜백 기능: 자동 URL 발송 시스템</li>
+                        <li>QR코드 공유: QR코드 이미지 다운로드</li>
+                    </ul>
+                </div>
+                
+                <div class="menu-item">
+                    <h4>5. 프로필 메뉴</h4>
+                    <ul>
+                        <li>개인 정보 수정 (이름, 직업, 연락처, 소개글)</li>
+                        <li>명함 이미지 설정 (프로필 사진, 배경, 레이아웃)</li>
+                        <li>상세 정보 관리 (주소, 이메일, SNS 계정 연결)</li>
+                        <li>회원 추천 기능 (개인 추천 링크를 통한 회원 가입 기능)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 주요 기능 -->
+        <section id="features" class="section">
+            <h2>⚙️ 주요 기능</h2>
+            
+            <h3>1. 개인 모바일 페이지 구성</h3>
+            <div class="feature-box">
+                <h4>헤더 - 명함 섹션</h4>
+                <ul>
+                    <li>사각형 명함 카드 (이름, 직업, 회사명, 연락처)</li>
+                </ul>
+                
+                <h4>명함 상세 정보</h4>
+                <ul>
+                    <li>상세 연락처 (이름, 직업, 회사명, 연락처, 주소, 이메일, 홈페이지)</li>
+                    <li>QR코드 (개인별 URL)</li>
+                    <li>추가 정보</li>
+                </ul>
+                
+                <h4>SNS 연동 버튼</h4>
+                <ul>
+                    <li>인스타그램, 페이스북, 유튜브, 블로그</li>
+                </ul>
+                
+                <h4>하단 네비게이션 메뉴</h4>
+                <ul>
+                    <li>소개 (서비스 소개)</li>
+                    <li>이벤트 (협력 업체 이벤트)</li>
+                    <li>작성 (부업 카드 관리)</li>
+                    <li>공유 (다양한 공유 기능)</li>
+                    <li>프로필 (개인 정보 관리)</li>
+                </ul>
+            </div>
+
+            <h3>2. 작성 메뉴 (핵심 기능)</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>기능</th>
+                        <th>상세 내용</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>부업 카드 등록</td>
+                        <td>제목, 이미지, 설명, URL 입력</td>
+                    </tr>
+                    <tr>
+                        <td>부업 카드 관리</td>
+                        <td>수정, 삭제, 활성/비활성 설정</td>
+                    </tr>
+                    <tr>
+                        <td>통계 조회</td>
+                        <td>부업별 조회수, 클릭수 확인</td>
+                    </tr>
+                    <tr>
+                        <td>순서 변경</td>
+                        <td>드래그 앤 드롭으로 순서 조정</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>3. 공유 메뉴</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>공유 방법</th>
+                        <th>지원 채널</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>즉시 공유</td>
+                        <td>문자, 카카오톡, 이메일 등</td>
+                    </tr>
+                    <tr>
+                        <td>SNS 공유</td>
+                        <td>인스타그램, 페이스북 등</td>
+                    </tr>
+                    <tr>
+                        <td>콜백 기능</td>
+                        <td>자동 URL 발송 시스템</td>
+                    </tr>
+                    <tr>
+                        <td>QR코드 공유</td>
+                        <td>QR코드 이미지 다운로드</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 콜백 기능 상세 -->
+        <section id="callback" class="section">
+            <h2>📱 콜백 기능 상세</h2>
+            
+            <h3>1. 동작 원리</h3>
+            <div class="callback-flow">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div>사용자가 고객과 통화나 SMS 종료 시</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div>시스템이 자동으로 해당 고객 번호를 감지</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div>고객에게 https://김성근.한국 SMS 자동 발송</div>
+                </div>
+            </div>
+
+            <h3>2. 기술적 특징</h3>
+            <div class="feature-box">
+                <ul>
+                    <li><strong>Zero-Touch:</strong> 사용자 별도 조작 불필요</li>
+                    <li><strong>즉시성:</strong> 상담 종료와 동시에 URL 발송</li>
+                    <li><strong>자동화:</strong> 통화/SMS 앱 연동을 통한 완전 자동화</li>
+                </ul>
+            </div>
+
+            <h3>3. 콜백 기능 상세</h3>
+            <div class="feature-box">
+                <h4>동작 원리</h4>
+                <ol>
+                    <li>사용자가 고객과 통화나 SMS 종료 시</li>
+                    <li>시스템이 자동으로 해당 고객 번호를 감지</li>
+                    <li>고객에게 https://김성근.한국 SMS 자동 발송</li>
+                </ol>
+                
+                <h4>기술적 특징</h4>
+                <ul>
+                    <li>Zero-Touch: 사용자 별도 조작 불필요</li>
+                    <li>즉시성: 상담 종료와 동시에 URL 발송</li>
+                    <li>자동화: 통화/SMS 앱 연동을 통한 완전 자동화</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 관리자 기능 -->
+        <section id="admin" class="section">
+            <h2>🔧 관리자 기능</h2>
+            
+            <div class="admin-section">
+                <h4>1. 사용자 관리</h4>
+                <ul>
+                    <li>전체 회원 목록 조회</li>
+                    <li>개별 사용자 정보 및 활동 내역</li>
+                    <li>추천 회원 관리 (사용자 별 추천 링크를 통한 가입 회원 관리)</li>
+                    <li>계정 상태 관리 (활성/비활성/정지)</li>
+                </ul>
+            </div>
+
+            <div class="admin-section">
+                <h4>2. 콘텐츠 관리</h4>
+                <ul>
+                    <li>부적절한 콘텐츠 신고 처리</li>
+                    <li>간단한 서비스 이용 현황 및 분석 대시보드</li>
+                    <li>부업 카드 홍보 리스트 등록</li>
+                    <li>등록 부업 카드의 수정, 삭제, 활성/비활성 설정</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 기술 스택 -->
+        <section id="tech" class="section">
+            <h2>💻 기술 스택 (Supabase 기반)</h2>
+            
+            <h3>Frontend</h3>
+            <div class="tech-badges">
+                <span class="badge badge-primary">Next.js 14</span>
+                <span class="badge badge-primary">React 18</span>
+                <span class="badge badge-primary">TypeScript</span>
+                <span class="badge badge-primary">Tailwind CSS</span>
+                <span class="badge badge-primary">PWA</span>
+            </div>
+
+            <h3>Backend (Supabase)</h3>
+            <div class="tech-badges">
+                <span class="badge badge-success">Supabase Database (PostgreSQL)</span>
+                <span class="badge badge-success">Supabase Auth</span>
+                <span class="badge badge-success">Supabase Storage</span>
+                <span class="badge badge-success">Supabase Realtime</span>
+                <span class="badge badge-success">Edge Functions</span>
+            </div>
+
+            <h3>기타</h3>
+            <div class="tech-badges">
+                <span class="badge badge-primary">한글 도메인 (.한국)</span>
+                <span class="badge badge-primary">SMS API (알리고/Twilio)</span>
+                <span class="badge badge-primary">Vercel Hosting</span>
+            </div>
+        </section>
+
+        <!-- 개발 일정 -->
+        <section id="timeline" class="section">
+            <h2>📅 개발 일정 (3개월)</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">1-2주차</div>
+                    <div class="timeline-content">
+                        <h4>프로젝트 초기 설정</h4>
+                        <ul>
+                            <li>개발 환경 구성 (Next.js, Supabase)</li>
+                            <li>프로젝트 구조 설계</li>
+                            <li>Supabase 프로젝트 생성 및 초기 설정</li>
+                            <li>디자인 시스템 구축</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">3-4주차</div>
+                    <div class="timeline-content">
+                        <h4>사용자 인증 및 기본 기능</h4>
+                        <ul>
+                            <li>Supabase Auth 통합</li>
+                            <li>회원가입/로그인 구현</li>
+                            <li>사용자 프로필 관리</li>
+                            <li>한글 도메인 시스템 구현</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">5-6주차</div>
+                    <div class="timeline-content">
+                        <h4>명함 기능 개발</h4>
+                        <ul>
+                            <li>명함 생성/수정 기능</li>
+                            <li>명함 템플릿 시스템</li>
+                            <li>QR코드 생성 기능</li>
+                            <li>모바일 명함 페이지 구현</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">7-8주차</div>
+                    <div class="timeline-content">
+                        <h4>부업 카드 시스템</h4>
+                        <ul>
+                            <li>부업 카드 CRUD 기능</li>
+                            <li>드래그 앤 드롭 순서 변경</li>
+                            <li>카드 활성/비활성 토글</li>
+                            <li>통계 조회 기능</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">9주차</div>
+                    <div class="timeline-content">
+                        <h4>콜백 기능 구현</h4>
+                        <ul>
+                            <li>SMS API 연동</li>
+                            <li>콜백 자동화 시스템</li>
+                            <li>메시지 템플릿 관리</li>
+                            <li>발송 이력 관리</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">10주차</div>
+                    <div class="timeline-content">
+                        <h4>공유 및 SNS 기능</h4>
+                        <ul>
+                            <li>SNS 공유 기능</li>
+                            <li>카카오톡, 문자 공유</li>
+                            <li>QR코드 다운로드</li>
+                            <li>이메일 공유</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">11주차</div>
+                    <div class="timeline-content">
+                        <h4>관리자 기능</h4>
+                        <ul>
+                            <li>관리자 대시보드</li>
+                            <li>사용자 관리</li>
+                            <li>콘텐츠 관리</li>
+                            <li>통계 및 분석</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-date">12주차</div>
+                    <div class="timeline-content">
+                        <h4>테스트 및 배포</h4>
+                        <ul>
+                            <li>통합 테스트</li>
+                            <li>성능 최적화</li>
+                            <li>보안 점검</li>
+                            <li>프로덕션 배포</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 산출물 -->
+        <section id="deliverables" class="section">
+            <h2>📦 산출물</h2>
+            
+            <div class="deliverable-grid">
+                <div class="deliverable-card">
+                    <h4>소스 코드</h4>
+                    <ul>
+                        <li>Frontend 소스 코드 (Next.js)</li>
+                        <li>Backend 로직 (Edge Functions)</li>
+                        <li>데이터베이스 스키마</li>
+                        <li>배포 스크립트</li>
+                    </ul>
+                </div>
+                
+                <div class="deliverable-card">
+                    <h4>문서</h4>
+                    <ul>
+                        <li>기능 명세서</li>
+                        <li>API 문서</li>
+                        <li>사용자 매뉴얼</li>
+                        <li>관리자 가이드</li>
+                    </ul>
+                </div>
+                
+                <div class="deliverable-card">
+                    <h4>운영 환경</h4>
+                    <ul>
+                        <li>Supabase 프로젝트</li>
+                        <li>Vercel 배포 환경</li>
+                        <li>한글 도메인 설정</li>
+                        <li>SMS API 연동</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>인수인계 항목</h3>
+            <ul>
+                <li>✅ 전체 소스 코드 및 GitHub 저장소 접근 권한</li>
+                <li>✅ Supabase 프로젝트 소유권 이전</li>
+                <li>✅ 도메인 및 SSL 인증서</li>
+                <li>✅ 외부 API 계정 정보 (SMS 등)</li>
+                <li>✅ 배포 및 운영 가이드</li>
+                <li>✅ 1개월 무상 유지보수</li>
+            </ul>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>지플랫 모바일 명함 서비스</strong></p>
+            <p>기능 명세서 v1.0 | 2025년 1월</p>
+            <p>© 2025 G-Plat. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
