@@ -325,15 +325,18 @@
 
 ## 7. 기술 아키텍처
 
-### 7.1 기술 스택 (최종 결정)
+### 7.1 기술 스택 (현재 구현)
 #### Frontend
-- **Framework**: Next.js 14.x (App Router)
+- **Framework**: React 18.x with Vite
 - **Language**: TypeScript 5.x
 - **Styling**: Tailwind CSS 3.x
 - **State Management**: Zustand
-- **UI Components**: Shadcn/ui
+- **UI Components**: shadcn/ui
+- **Routing**: React Router v6
+- **Charts**: Recharts
+- **QR Generation**: qrcode.js
 
-*결정 사유: Supabase와의 완벽한 통합, PRD 요구사항과 100% 일치, 우수한 성능 최적화*
+*선택 사유: 빠른 개발 속도, Vite의 우수한 HMR, 유연한 아키텍처, MVP 검증 후 Next.js 마이그레이션 가능*
 
 #### Backend (Supabase 기반)
 - **Database**: PostgreSQL (Supabase DB)
@@ -343,17 +346,18 @@
 - **Functions**: Edge Functions (Deno)
 
 #### Infrastructure
-- **Hosting**: Vercel
+- **Hosting**: Vercel/Netlify (React SPA optimized)
 - **CDN**: Cloudflare
-- **Domain**: 가비아 (.한국 도메인)
-- **SMS**: Twilio / 알리고
+- **Domain**: 가비아 (.한국 도메인 - 계획)
+- **SMS**: Twilio / 알리고 (계획)
 - **Monitoring**: Sentry, Google Analytics
+- **URL Shortener**: Custom short URLs for QR tracking
 
 ### 7.2 시스템 아키텍처
 ```
 ┌─────────────── Frontend ───────────────┐
-│         Next.js Application            │
-│         (Vercel Edge Network)          │
+│         React SPA (Vite)               │
+│     (Vercel/Netlify Hosting)           │
 └────────────────┬────────────────────────┘
                  │
                  ↓
@@ -416,33 +420,39 @@
 **목표**: 핵심 기능 구현 및 기본 시스템 구축
 
 #### 주요 개발 항목
-- [ ] 프로젝트 셋업 (Next.js + Supabase) - **진행 예정**
-- [ ] 인증 시스템 구현
-- [ ] 기본 명함 생성/편집 기능
-- [ ] 한글 도메인 시스템
-- [ ] 모바일 반응형 UI
+- [x] 프로젝트 셋업 (React + Vite + Supabase) - **완료**
+- [x] 인증 시스템 구현 (Supabase Auth) - **완료**
+- [x] 기본 명함 생성/편집 기능 - **완료**
+- [x] 커스텀 URL 시스템 (중복 체크 포함) - **완료**
+- [x] 모바일 반응형 UI - **완료**
+- [ ] 한글 도메인 시스템 - **진행 예정**
 
-#### 현재 상태 (2025년 1월)
-- 기존 JSP/Node.js 이중 구조 분석 완료
-- Next.js 14 + TypeScript + Supabase로 기술 스택 결정
-- 마이그레이션 로드맵 수립
+#### 현재 상태 (2025년 1월 30일)
+- React 18 + TypeScript + Vite로 개발 환경 구성 완료
+- Supabase 통합 (Auth, Database, Realtime) 완료
+- 명함 CRUD 기능 구현 완료
+- 커스텀 URL 검증 시스템 구현 완료
+- 부업 카드 관리 시스템 구현 완료
+- 방문자 통계 대시보드 구현 완료
+- QR 코드 생성 기능 개발 예정 (동적 QR, 추적 기능 포함)
 
 #### 마일스톤
-- Week 1-2: 개발 환경 구성, 인증 시스템
-- Week 3-4: 명함 CRUD, 한글 도메인
+- Week 1-2: ✅ 개발 환경 구성, 인증 시스템
+- Week 3-4: ✅ 명함 CRUD, 진행 중: 한글 도메인
 
 ### Phase 2: 핵심 기능 완성 (2개월차)
 **목표**: 차별화 기능 구현 및 사용자 경험 개선
 
 #### 주요 개발 항목
-- [ ] 부업 카드 시스템
-- [ ] 콜백 자동화 기능
-- [ ] 실시간 통계 대시보드
-- [ ] 고객 관리 (CRM) 기능
+- [x] 부업 카드 시스템 - **완료**
+- [x] 실시간 통계 대시보드 - **완료**
+- [ ] 콜백 자동화 기능 - **진행 예정**
+- [ ] 고객 관리 (CRM) 기능 - **진행 예정**
+- [ ] QR 코드 생성 - **진행 예정**
 
 #### 마일스톤
-- Week 5-6: 부업 카드 CRUD, 드래그 앤 드롭
-- Week 7-8: 콜백 시스템, SMS 연동
+- Week 5-6: ✅ 부업 카드 CRUD, 드래그 앤 드롭
+- Week 7-8: 진행 예정: 콜백 시스템, SMS 연동
 
 ### Phase 3: 출시 및 안정화 (3개월차)
 **목표**: 서비스 출시 및 운영 안정화
@@ -508,11 +518,13 @@
 
 ---
 
-*문서 버전: 1.1*
+*문서 버전: 1.3*
 *작성일: 2025년 1월*
-*최종 수정일: 2025년 1월 27일*
+*최종 수정일: 2025년 1월 30일*
 *다음 검토일: 2025년 2월*
 
 ### 변경 이력
+- v1.3 (2025.01.30): 기술 스택을 React + Vite로 변경, QR 코드 동적 기능 및 추적 요구사항 추가
+- v1.2 (2025.01.30): Phase 1, 2 개발 항목 업데이트, React 앱 개발 완료 사항 반영
 - v1.1 (2025.01.27): 기술 스택 최종 결정 (Next.js 14 + Supabase), 마이그레이션 계획 수립
 - v1.0 (2025.01): 초기 문서 작성

@@ -61,3 +61,6 @@ backup/
 
 # Session files
 sessions/
+
+# Claude Code settings (contains tokens)
+.claude/settings.local.json

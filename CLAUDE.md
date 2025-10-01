@@ -8,7 +8,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-### Node.js Development
+### React App Development (Primary)
+```bash
+# Navigate to React app directory
+cd react-app
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+# App runs on http://localhost:5173
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+### Node.js Development (Legacy)
 ```bash
 # Install dependencies
 npm install
@@ -59,28 +78,48 @@ setup-ngrok.ps1        # PowerShell ngrok setup
 
 ## Architecture
 
-### Migration Decision
-**Chosen Stack**: Next.js 14 + TypeScript + Supabase
-- Evaluated alternatives: Ruby on Rails, Remix, SvelteKit
-- Selected for optimal Supabase integration and PRD alignment
-- Migration timeline: 4-6 weeks for complete transition
+### Technology Decision
+**Current Stack**: React 18 + TypeScript + Vite + Supabase
+- Fast development with Vite's HMR and build optimization
+- Flexible architecture without Next.js constraints
+- Direct Supabase integration for real-time features
+- Future migration to Next.js 14 possible after MVP validation
 
 ### Current State
-The project has two parallel implementations:
+The project has three parallel implementations:
 
-1. **Node.js/Express Server** (`standalone-server.js`)
+1. **React App (Primary Development)** (`react-app/`)
+   - React 18 + TypeScript + Vite development environment
+   - Supabase integration for auth and database
+   - Main active development path
+   - Features implemented:
+     - User authentication with Supabase Auth
+     - Business card CRUD operations
+     - Custom URL validation and duplicate checking
+     - Sidejob cards management system
+     - Visitor statistics and analytics dashboard
+     - Real-time data synchronization
+     - Dashboard with metrics display
+
+2. **Node.js/Express Server** (`standalone-server.js`) - Legacy
    - Simple Express server serving static HTML
    - Simulates JSP functionality by replacing template variables
-   - Main entry point for local development
+   - To be deprecated
 
-2. **JSP/Tomcat Application** (webapps/ROOT/)
+3. **JSP/Tomcat Application** (webapps/ROOT/) - Legacy
    - Traditional JSP architecture
    - Designed for Docker deployment
    - Multiple card templates (simple, professional, trendy, apple themes)
    - Admin dashboards for each theme
+   - To be deprecated
 
 ### Directory Structure
-- `webapps/ROOT/` - JSP web application
+- `react-app/` - React application (Primary)
+  - `src/pages/` - Page components (Dashboard, CreateCard, EditCard, SideJobCards, Stats, etc.)
+  - `src/components/` - Reusable UI components
+  - `src/lib/` - Utilities and Supabase client
+  - `src/types/` - TypeScript type definitions
+- `webapps/ROOT/` - JSP web application (Legacy)
   - `card/` - Mobile business card pages (multiple themes)
   - `admin/` - Dashboard pages (matching themes)
   - `WEB-INF/` - Java web configuration
@@ -89,10 +128,14 @@ The project has two parallel implementations:
 - Static HTML prototypes in root (gplat_*.html files)
 
 ### Key Technologies
-- **Frontend**: JSP pages with embedded JavaScript, planning migration to Next.js
-- **Backend**: Currently Node.js/Express for dev, Tomcat for production
-- **Database**: MySQL 8.0 with Redis cache
-- **Planned Stack**: Next.js 14 + TypeScript + Supabase (per PRD)
+- **Frontend (Current)**: React 18 + TypeScript + Vite + Tailwind CSS
+- **Backend (Current)**: Supabase (PostgreSQL, Auth, Realtime, Storage)
+- **State Management**: Zustand for global state
+- **UI Library**: shadcn/ui components
+- **Charts**: Recharts for analytics
+- **Frontend (Legacy)**: JSP pages with embedded JavaScript
+- **Backend (Legacy)**: Node.js/Express for dev, Tomcat for production
+- **Database (Legacy)**: MySQL 8.0 with Redis cache
 
 ## Important Context
 
@@ -109,35 +152,49 @@ The project has two parallel implementations:
 4. Callback automation system
 5. Real-time analytics dashboard
 
-### Migration Roadmap
-**Phase 1 (Week 1)**: Project Setup
-- Next.js 14 project initialization
-- Supabase integration (Auth, Database, Storage)
-- TypeScript configuration
-- Tailwind CSS + Shadcn/ui setup
+### Development Roadmap
+**Phase 1 (Completed)**: MVP Foundation
+- ✅ React 18 + Vite project setup
+- ✅ Supabase integration (Auth, Database, Storage)
+- ✅ TypeScript configuration
+- ✅ Tailwind CSS + shadcn/ui components
+- ✅ User authentication system
+- ✅ Business card CRUD operations
+- ✅ Custom URL validation
+- ✅ Mobile-responsive UI
 
-**Phase 2 (Weeks 2-3)**: Core Features
-- User authentication system
-- Business card CRUD operations
-- Korean domain system implementation
-- Mobile-responsive UI
+**Phase 2 (In Progress)**: Core Features
+- ✅ Sidejob cards management
+- ✅ Real-time analytics dashboard
+- 🚧 QR code generation with tracking
+- ⏳ Callback automation system
+- ⏳ Korean domain system implementation
 
-**Phase 3 (Weeks 4-5)**: Advanced Features
-- Side business card management
-- Callback automation system
-- Real-time analytics dashboard
-- Edge functions for SMS integration
+**Phase 3 (Planned)**: Advanced Features
+- Payment integration
+- SMS automation (Twilio/Aligo)
+- Advanced templates
+- Team collaboration features
 
-### Current Issues and Decisions
-- npm dependencies not installed (express, nodemon missing)
-- No Git repository initialized
-- Dual architecture (JSP + Node.js) needs consolidation
-- **Decision Made**: Migrate to Next.js 14 + TypeScript + Supabase (aligns with PRD)
-- **Rationale**:
-  - Perfect match with PRD specifications
-  - Superior Supabase integration
-  - Modern React ecosystem
-  - Built-in optimizations
+### Current Development Status
+- **Active Development**: React app with Supabase integration
+- **Completed Features**:
+  - ✅ User authentication (Supabase Auth)
+  - ✅ Business card CRUD with custom URL
+  - ✅ Custom URL validation and duplicate checking
+  - ✅ Sidejob cards management (CRUD, ordering)
+  - ✅ Visitor statistics dashboard (Recharts)
+  - ✅ Real-time data synchronization
+  - ✅ RLS policies for security
+  - ✅ Dashboard with dynamic metrics
+- **Pending Features**:
+  - QR code generation
+  - Callback log system
+  - SMS automation (Twilio/Aligo)
+  - Payment integration (Premium/Business tiers)
+  - Korean domain (.한국) system
+  - Additional card templates
+- **Technology Strategy**: Continue with React for rapid MVP development, evaluate Next.js migration based on user feedback and scaling needs
 
 ## Database Schema
 The MySQL database (`gplat`) includes tables for users, business cards, side business cards, analytics, and callback management. Schema initialization is in `sql/init.sql`.
@@ -148,13 +205,16 @@ The MySQL database (`gplat`) includes tables for users, business cards, side bus
 - Database passwords are hardcoded in docker-compose.yml
 - No secrets management system in place yet
 
-## Technical Stack (Confirmed)
+## Technical Stack (Current)
 ### Frontend
-- **Framework**: Next.js 14.x with App Router
+- **Framework**: React 18.x with Vite
 - **Language**: TypeScript 5.x
 - **Styling**: Tailwind CSS 3.x
-- **UI Components**: Shadcn/ui
+- **UI Components**: shadcn/ui
 - **State Management**: Zustand
+- **Routing**: React Router v6
+- **Charts**: Recharts
+- **QR Code**: qrcode.js
 
 ### Backend (Supabase)
 - **Database**: PostgreSQL (Supabase DB)
@@ -162,9 +222,11 @@ The MySQL database (`gplat`) includes tables for users, business cards, side bus
 - **Storage**: Supabase Storage
 - **Realtime**: Supabase Realtime subscriptions
 - **Functions**: Edge Functions (Deno runtime)
+- **RLS**: Row Level Security policies
 
 ### Infrastructure
-- **Hosting**: Vercel (optimal for Next.js)
+- **Hosting**: Vercel/Netlify (optimized for React SPA)
 - **CDN**: Cloudflare
-- **SMS**: Twilio/Aligo for callback system
-- **Monitoring**: Sentry, Vercel Analytics
+- **SMS**: Twilio/Aligo for callback system (planned)
+- **Monitoring**: Sentry, Google Analytics
+- **Domain**: Gabia (.한국 domains planned)
