@@ -81,7 +81,7 @@ export default function QRCodeGenerator({
         ? url // Development: use direct URL
         : `https://anwwjowwrxdygqyhhckr.supabase.co/functions/v1/qr-redirect/${shortCode}`
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('qr_codes')
         .insert({
           user_id: user.id,

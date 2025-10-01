@@ -8,7 +8,6 @@ function DashboardPage() {
   const [user, setUser] = useState<User | null>(null)
   const [userData, setUserData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [profileData, setProfileData] = useState<any>(null)
   const [businessCards, setBusinessCards] = useState<any[]>([])
   const [cardCount, setCardCount] = useState(0)
   const [sideJobCount, setSideJobCount] = useState(0)
@@ -42,14 +41,13 @@ function DashboardPage() {
           .single()
 
         if (profile) {
-          setProfileData(profile)
           if (profile.theme) {
             setTheme(profile.theme)
           }
         }
 
         // 명함 데이터 가져오기
-        const { data: cards, count } = await supabase
+        const { data: cards } = await supabase
           .from('business_cards')
           .select('*', { count: 'exact' })
           .eq('user_id', user.id)
@@ -68,7 +66,7 @@ function DashboardPage() {
         }
 
         // 부가명함(사이드잡) 데이터 가져오기
-        const { data: sideJobCards, count: sideJobCount } = await supabase
+        const { data: sideJobCards } = await supabase
           .from('sidejob_cards')
           .select('*', { count: 'exact' })
           .eq('user_id', user.id)

@@ -57,7 +57,7 @@ function LoginPage() {
         setMessage({ type: 'error', text: errorMessage })
       } else if (data.user) {
         // 사용자 프로필이 없는 경우 생성 (첫 로그인 시)
-        const { data: userData, error: userError } = await supabase
+        const { error: userError } = await supabase
           .from('users')
           .select('id')
           .eq('id', data.user.id)

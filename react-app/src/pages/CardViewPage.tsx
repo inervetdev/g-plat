@@ -22,7 +22,7 @@ export default function CardViewPage() {
     }
   }, [userId])
 
-  const recordVisitorStats = async (cardUserId: string, cardId: string) => {
+  const recordVisitorStats = async (cardUserId: string) => {
     try {
       // 방문자 정보 수집
       const visitorData = {
@@ -58,7 +58,7 @@ export default function CardViewPage() {
         setCardId(cardByUrl.id)
 
         // 방문 통계 기록
-        await recordVisitorStats(cardByUrl.user_id, cardByUrl.id)
+        await recordVisitorStats(cardByUrl.user_id)
 
         // 조회수 증가
         await supabase
@@ -84,7 +84,7 @@ export default function CardViewPage() {
         setCardId(cardById.id)
 
         // 방문 통계 기록
-        await recordVisitorStats(cardById.user_id, cardById.id)
+        await recordVisitorStats(cardById.user_id)
 
         // 조회수 증가
         await supabase

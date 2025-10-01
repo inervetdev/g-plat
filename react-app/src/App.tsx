@@ -23,7 +23,7 @@ const QRStatsPage = lazy(() => import('./pages/QRStatsPage'))
 
 function App() {
   const [isReady, setIsReady] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error] = useState<string | null>(null)
 
   useEffect(() => {
     console.log('✅ App component mounted')
@@ -163,7 +163,8 @@ function LoadingSpinner() {
   )
 }
 
-// 임시 간단한 페이지 컴포넌트
+// 임시 간단한 페이지 컴포넌트 (미사용)
+/*
 function SimplePage({ title }: { title: string }) {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -180,5 +181,6 @@ function SimplePage({ title }: { title: string }) {
     </div>
   )
 }
+*/
 
 export default App

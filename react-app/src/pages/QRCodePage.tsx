@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import QRCodeGenerator from '../components/QRCodeGenerator'
-import { ArrowLeft, Share2, Download, Eye } from 'lucide-react'
+import { ArrowLeft, Eye } from 'lucide-react'
 
 interface BusinessCard {
   id: string

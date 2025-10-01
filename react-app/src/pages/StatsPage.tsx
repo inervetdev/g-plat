@@ -3,16 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
-interface VisitorStat {
-  id: string
-  user_id: string
-  visitor_ip: string | null
-  user_agent: string | null
-  referrer: string | null
-  page_visited: string
-  created_at: string
-}
-
 interface StatsSummary {
   totalViews: number
   todayViews: number
@@ -233,12 +223,12 @@ export default function StatsPage() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {stats.deviceStats.map((entry, index) => (
+                    {stats.deviceStats.map((_entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
