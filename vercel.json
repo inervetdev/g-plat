@@ -1,0 +1,24 @@
+{
+  "buildCommand": "cd react-app && npm run build",
+  "outputDirectory": "react-app/dist",
+  "devCommand": "cd react-app && npm run dev",
+  "installCommand": "cd react-app && npm install",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
