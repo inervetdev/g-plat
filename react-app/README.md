@@ -1,4 +1,52 @@
-# React + TypeScript + Vite
+# G-Plat React App
+
+지플랫(G-Plat) 모바일 명함 서비스 - React 18 + TypeScript + Vite + Supabase
+
+## Project Status - ✅ Phase 1 & 2 Complete
+
+### Completed Features (프로덕션 배포 완료)
+- ✅ React 18 + TypeScript + Vite development environment
+- ✅ Supabase integration (Auth, Database, Realtime, Storage, Edge Functions)
+- ✅ User authentication system
+- ✅ Business card CRUD with custom URL
+- ✅ Sidejob cards management (drag-and-drop ordering)
+- ✅ Visitor statistics dashboard (Recharts)
+- ✅ QR code generation and tracking system
+- ✅ **QR code redirect Edge Function (PRODUCTION DEPLOYED)**
+  - Edge Function URL: `https://anwwjowwrxdygqyhhckr.supabase.co/functions/v1/qr-redirect/{short_code}`
+  - Status: ACTIVE, Version 1
+  - Device/Browser/OS detection
+  - Scan analytics tracking
+- ✅ **Production database schema deployed**
+  - qr_codes, qr_scans tables (with browser, os columns)
+  - 8 RLS security policies
+  - 7 performance indexes
+  - qr_code_analytics view
+  - auto-update triggers
+- ✅ Multiple card themes (Trendy, Apple, Professional, Simple, Default)
+- ✅ Supabase local development environment
+- ✅ Playwright E2E testing setup
+
+## Tech Stack
+
+### Frontend
+- **Framework**: React 18.x with Vite
+- **Language**: TypeScript 5.x
+- **Styling**: Tailwind CSS 3.x
+- **UI Components**: shadcn/ui
+- **State Management**: Zustand
+- **Routing**: React Router v6
+- **Charts**: Recharts
+- **QR Code**: qrcode.js
+
+### Backend (Supabase)
+- **Database**: PostgreSQL
+- **Authentication**: Supabase Auth
+- **Storage**: Supabase Storage
+- **Realtime**: Supabase Realtime subscriptions
+- **Functions**: Edge Functions (Deno runtime)
+
+## React + Vite Template
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

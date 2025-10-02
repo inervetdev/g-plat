@@ -67,6 +67,47 @@ docker exec -it gplat-db mysql -u root -pgplat2024!
 # User: gplat_user / gplat_pass
 ```
 
+### Supabase Local Development
+```bash
+# Navigate to React app directory
+cd react-app
+
+# Start Supabase local services
+npx supabase start
+# Services:
+# - API: http://127.0.0.1:54321
+# - Studio: http://127.0.0.1:54323
+# - Database: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+
+# Stop Supabase services
+npx supabase stop
+
+# Reset database (reapply migrations)
+npx supabase db reset
+
+# Serve Edge Functions locally
+npx supabase functions serve qr-redirect --no-verify-jwt
+# Function URL: http://127.0.0.1:54321/functions/v1/qr-redirect
+
+# Deploy Edge Functions to production
+npx supabase functions deploy qr-redirect
+```
+
+### Testing
+```bash
+# Navigate to React app directory
+cd react-app
+
+# Run Playwright E2E tests
+npx playwright test
+
+# Run specific test file
+npx playwright test tests/gplat-production.spec.ts
+
+# View test report
+npx playwright show-report
+```
+
 ### Public Access Setup
 ```bash
 # Windows batch scripts available:
@@ -119,11 +160,19 @@ The project has three parallel implementations:
   - `src/components/` - Reusable UI components
   - `src/lib/` - Utilities and Supabase client
   - `src/types/` - TypeScript type definitions
+  - `supabase/` - Supabase configuration and migrations
+    - `config.toml` - Supabase local development configuration
+    - `migrations/` - Database migration files
+    - `functions/` - Edge Functions (Deno)
+      - `qr-redirect/` - QR code redirect and scan tracking function
+  - `tests/` - Playwright E2E tests
+  - `playwright.config.ts` - Playwright configuration
 - `webapps/ROOT/` - JSP web application (Legacy)
   - `card/` - Mobile business card pages (multiple themes)
   - `admin/` - Dashboard pages (matching themes)
   - `WEB-INF/` - Java web configuration
-- `sql/init.sql` - Database initialization script
+- `supabase/functions/` - Root Edge Functions directory
+- `sql/init.sql` - Database initialization script (Legacy)
 - `assets/` - Static resources
 - Static HTML prototypes in root (gplat_*.html files)
 
@@ -133,6 +182,10 @@ The project has three parallel implementations:
 - **State Management**: Zustand for global state
 - **UI Library**: shadcn/ui components
 - **Charts**: Recharts for analytics
+- **QR Code**: qrcode.js for generation
+- **Edge Functions**: Deno runtime on Supabase
+- **Testing**: Playwright for E2E tests
+- **CLI Tools**: Supabase CLI, Playwright CLI
 - **Frontend (Legacy)**: JSP pages with embedded JavaScript
 - **Backend (Legacy)**: Node.js/Express for dev, Tomcat for production
 - **Database (Legacy)**: MySQL 8.0 with Redis cache
@@ -163,12 +216,12 @@ The project has three parallel implementations:
 - ✅ Custom URL validation
 - ✅ Mobile-responsive UI
 
-**Phase 2 (In Progress)**: Core Features
+**Phase 2 (Completed)**: Core Features
 - ✅ Sidejob cards management
 - ✅ Real-time analytics dashboard
-- 🚧 QR code generation with tracking
-- ⏳ Callback automation system
-- ⏳ Korean domain system implementation
+- ✅ QR code generation with tracking
+- ✅ QR code Edge Function with scan tracking
+- ✅ Supabase local development environment setup
 
 **Phase 3 (Planned)**: Advanced Features
 - Payment integration
@@ -185,6 +238,8 @@ The project has three parallel implementations:
   - ✅ All critical features tested (registration, login, card creation)
   - ✅ TypeScript build errors resolved
   - ✅ Mobile-responsive UI verified
+  - ✅ QR Edge Function deployed to production (ACTIVE status)
+  - ✅ Production database schema applied (qr_codes, qr_scans tables)
 - **Completed Features (Phase 1 & 2)**:
   - ✅ User authentication (Supabase Auth)
   - ✅ Business card CRUD with custom URL
@@ -194,13 +249,18 @@ The project has three parallel implementations:
   - ✅ Real-time data synchronization
   - ✅ RLS policies for security
   - ✅ Dashboard with dynamic metrics
-  - ✅ QR code generation with tracking (basic implementation)
+  - ✅ QR code generation with tracking (full implementation)
+  - ✅ QR code redirect Edge Function with scan tracking (PRODUCTION DEPLOYED)
+  - ✅ Device/Browser/OS detection for scans
+  - ✅ Scan analytics (referrer, IP, user-agent tracking)
+  - ✅ Production QR system database schema (8 RLS policies, 7 indexes, analytics view)
   - ✅ Multiple card themes (Trendy, Apple, Professional, Simple, Default)
   - ✅ Analytics dashboard with charts and visitor tracking
   - ✅ Profile image and company logo upload
-- **In Progress (Phase 2)**:
-  - 🚧 QR code analytics enhancement
-  - 🚧 Advanced visitor behavior tracking
+  - ✅ Supabase local development environment
+  - ✅ Database migrations for QR system
+  - ✅ Playwright E2E testing setup
+  - ✅ Supabase MCP integration
 - **Pending Features (Phase 3)**:
   - ⏳ Callback automation system
   - ⏳ SMS automation (Twilio/Aligo integration)

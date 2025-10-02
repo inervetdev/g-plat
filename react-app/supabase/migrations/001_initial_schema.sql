@@ -1,9 +1,6 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Enable RLS (Row Level Security)
-ALTER DATABASE postgres SET "app.jwt_secret" TO 'your-jwt-secret';
-
 -- Create custom types
 CREATE TYPE subscription_tier AS ENUM ('FREE', 'PREMIUM', 'BUSINESS');
 CREATE TYPE callback_status AS ENUM ('PENDING', 'SENT', 'FAILED');

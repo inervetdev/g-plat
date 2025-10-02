@@ -67,6 +67,47 @@ docker exec -it gplat-db mysql -u root -pgplat2024!
 # User: gplat_user / gplat_pass
 ```
 
+### Supabase 로컬 개발
+```bash
+# React 앱 디렉토리로 이동
+cd react-app
+
+# Supabase 로컬 서비스 시작
+npx supabase start
+# 서비스:
+# - API: http://127.0.0.1:54321
+# - Studio: http://127.0.0.1:54323
+# - Database: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+
+# Supabase 서비스 중지
+npx supabase stop
+
+# 데이터베이스 리셋 (마이그레이션 재적용)
+npx supabase db reset
+
+# Edge Function 로컬 실행
+npx supabase functions serve qr-redirect --no-verify-jwt
+# Function URL: http://127.0.0.1:54321/functions/v1/qr-redirect
+
+# Edge Function 프로덕션 배포
+npx supabase functions deploy qr-redirect
+```
+
+### 테스팅
+```bash
+# React 앱 디렉토리로 이동
+cd react-app
+
+# Playwright E2E 테스트 실행
+npx playwright test
+
+# 특정 테스트 파일 실행
+npx playwright test tests/gplat-production.spec.ts
+
+# 테스트 리포트 보기
+npx playwright show-report
+```
+
 ### 공개 접속 설정
 ```bash
 # Windows 배치 스크립트 사용 가능:
@@ -112,11 +153,19 @@ setup-ngrok.ps1        # PowerShell ngrok 설정
   - `src/components/` - 재사용 가능한 UI 컴포넌트
   - `src/lib/` - 유틸리티 및 Supabase 클라이언트
   - `src/types/` - TypeScript 타입 정의
+  - `supabase/` - Supabase 설정 및 마이그레이션
+    - `config.toml` - Supabase 로컬 개발 설정
+    - `migrations/` - 데이터베이스 마이그레이션 파일
+    - `functions/` - Edge Functions (Deno)
+      - `qr-redirect/` - QR 코드 리다이렉트 및 스캔 추적 함수
+  - `tests/` - Playwright E2E 테스트
+  - `playwright.config.ts` - Playwright 설정
 - `webapps/ROOT/` - JSP 웹 애플리케이션 (레거시)
   - `card/` - 모바일 명함 페이지 (여러 테마)
   - `admin/` - 대시보드 페이지 (일치하는 테마)
   - `WEB-INF/` - Java 웹 구성
-- `sql/init.sql` - 데이터베이스 초기화 스크립트
+- `supabase/functions/` - 루트 Edge Functions 디렉토리
+- `sql/init.sql` - 데이터베이스 초기화 스크립트 (레거시)
 - `assets/` - 정적 리소스
 - 루트의 정적 HTML 프로토타입 (gplat_*.html 파일)
 
@@ -126,7 +175,10 @@ setup-ngrok.ps1        # PowerShell ngrok 설정
 - **상태 관리**: Zustand를 통한 전역 상태 관리
 - **UI 라이브러리**: shadcn/ui 컴포넌트
 - **차트**: Recharts를 통한 분석 시각화
-- **QR 코드**: qrcode.js 라이브러리
+- **QR 코드**: qrcode.js 생성 라이브러리
+- **Edge Functions**: Supabase의 Deno 런타임
+- **테스팅**: Playwright E2E 테스트
+- **CLI 도구**: Supabase CLI, Playwright CLI
 - **프론트엔드 (레거시)**: 임베디드 JavaScript가 포함된 JSP 페이지
 - **백엔드 (레거시)**: 개발용 Node.js/Express, 프로덕션용 Tomcat
 - **데이터베이스 (레거시)**: Redis 캐시를 포함한 MySQL 8.0
@@ -164,13 +216,17 @@ setup-ngrok.ps1        # PowerShell ngrok 설정
   - ✅ 실시간 데이터 동기화
   - ✅ 보안을 위한 RLS 정책
   - ✅ 동적 메트릭이 있는 대시보드
-  - ✅ QR 코드 생성 및 추적 (기본 구현)
+  - ✅ QR 코드 생성 및 추적 (전체 구현)
+  - ✅ QR 코드 리다이렉트 Edge Function (스캔 추적 포함)
+  - ✅ 디바이스/브라우저/OS 감지
+  - ✅ 스캔 분석 (referrer, IP, user-agent 추적)
   - ✅ 다양한 카드 테마 (Trendy, Apple, Professional, Simple, Default)
   - ✅ 차트와 방문자 추적이 있는 분석 대시보드
   - ✅ 프로필 이미지 및 회사 로고 업로드
-- **진행 중 (Phase 2)**:
-  - 🚧 QR 코드 분석 기능 향상
-  - 🚧 고급 방문자 행동 추적
+  - ✅ Supabase 로컬 개발 환경
+  - ✅ QR 시스템을 위한 데이터베이스 마이그레이션
+  - ✅ Playwright E2E 테스트 설정
+  - ✅ Supabase MCP 통합
 - **대기 중인 기능 (Phase 3)**:
   - ⏳ 콜백 자동화 시스템
   - ⏳ SMS 자동화 (Twilio/Aligo 통합)

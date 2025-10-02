@@ -336,7 +336,6 @@
 - **Charts**: Recharts
 - **QR Generation**: qrcode.js
 
-*선택 사유: 빠른 개발 속도, Vite의 우수한 HMR, 유연한 아키텍처, MVP 검증 후 Next.js 마이그레이션 가능*
 
 #### Backend (Supabase 기반)
 - **Database**: PostgreSQL (Supabase DB)
@@ -346,14 +345,46 @@
 - **Functions**: Edge Functions (Deno)
 
 #### Infrastructure
-- **Hosting**: Vercel/Netlify (React SPA optimized)
+- **Hosting**: Vercel (React SPA optimized)
 - **CDN**: Cloudflare
 - **Domain**: 가비아 (.한국 도메인 - 계획)
 - **SMS**: Twilio / 알리고 (계획)
 - **Monitoring**: Sentry, Google Analytics
 - **URL Shortener**: Custom short URLs for QR tracking
 
-### 7.2 시스템 아키텍처
+### 7.2 인프라 운영 비용 (2025 기준)
+
+#### Vercel 요금제
+| 플랜 | 월 비용 | 특징 | 제한사항 |
+|------|---------|------|----------|
+| **Hobby (무료)** | $0 | - 무제한 프로젝트<br>- 100GB Fast Data Transfer<br>- 자동 HTTPS/SSL<br>- Git 통합, CI/CD | - **개인/비상업용만 가능**<br>- 한도 초과시 30일 대기 |
+| **Pro** | **$20/월/사용자** | - $20 크레딧 포함<br>- 1TB Fast Data Transfer<br>- 팀 협업 기능<br>- 고급 분석<br>- 사용량 기반 추가 과금 | - 비즈니스 사용 권장 |
+| **Enterprise** | 맞춤형 | 대기업용 커스텀 솔루션 | 별도 문의 |
+
+#### Supabase 요금제
+| 플랜 | 월 비용 | 특징 | 제한사항 |
+|------|---------|------|----------|
+| **Free** | $0 | - 2개 프로젝트<br>- 500MB DB<br>- 1GB Storage<br>- 50,000 MAU | - 7일 미사용시 프로젝트 일시정지 |
+| **Pro** | **$25/월** | - 무제한 프로젝트<br>- 8GB DB<br>- 100GB Storage<br>- 100,000 MAU<br>- $10 컴퓨팅 크레딧 | - 초과 사용량:<br>&nbsp;&nbsp;• $0.00325/MAU<br>&nbsp;&nbsp;• $2/100만 Edge Function 호출 |
+| **Team** | $599/월 | 팀용 고급 기능 | 대규모 팀용 |
+| **Enterprise** | 맞춤형 | HIPAA 규정 준수 등 | 별도 문의 |
+
+#### 운영 단계별 예상 비용
+| 단계 | 사용자 수 | Vercel | Supabase | 월 총 비용 | 비고 |
+|------|----------|--------|----------|-----------|------|
+| **MVP** | ~100명 | Pro $20 | Free $0 | **$20** | Vercel은 비상업용 제한으로 Pro 필수 |
+| **초기 성장** | ~1,000명 | Pro $20 | Pro $25 | **$45** | 100K MAU 포함으로 여유 |
+| **안정 성장** | ~5,000명 | Pro $20 | Pro $25 | **$45** | 여전히 한도 내 |
+| **성공 단계** | ~50,000명 | Pro $20-50 | Pro $25 | **$55-75** | 트래픽 증가로 추가 비용 |
+| **스케일업** | ~200,000명 | Pro $70-120 | Pro $350 | **$420-470** | MAU 초과 요금 발생 |
+
+#### 비용 최적화 전략
+- 이미지 최적화 (CDN 캐싱)
+- Edge Function 호출 최소화
+- DB 쿼리 최적화 (인덱싱 완료 ✅)
+- 적절한 캐싱 전략
+
+### 7.3 시스템 아키텍처
 ```
 ┌─────────────── Frontend ───────────────┐
 │         React SPA (Vite)               │
@@ -427,17 +458,28 @@
 - [x] 모바일 반응형 UI - **완료**
 - [ ] 한글 도메인 시스템 - **진행 예정**
 
-#### 현재 상태 (2025년 10월 1일) - **✅ Phase 1 & 2 완료, 프로덕션 배포 완료**
+#### 현재 상태 (2025년 10월 2일) - **✅ Phase 1 & 2 완료, 프로덕션 배포 완료**
 - ✅ React 18 + TypeScript + Vite로 개발 환경 구성 완료
-- ✅ Supabase 통합 (Auth, Database, Realtime, Storage) 완료
+- ✅ Supabase 통합 (Auth, Database, Realtime, Storage, Edge Functions) 완료
 - ✅ 명함 CRUD 기능 구현 완료
 - ✅ 커스텀 URL 검증 시스템 구현 완료
 - ✅ 부업 카드 관리 시스템 구현 완료 (드래그 앤 드롭 포함)
 - ✅ 방문자 통계 대시보드 구현 완료
-- ✅ QR 코드 생성 및 추적 기능 구현 완료 (기본)
+- ✅ QR 코드 생성 및 추적 기능 구현 완료 (전체)
+- ✅ QR 코드 리다이렉트 Edge Function 구현 완료 (스캔 추적 포함)
+- ✅ QR Edge Function 프로덕션 배포 완료 (ACTIVE 상태)
+- ✅ 프로덕션 QR 시스템 데이터베이스 스키마 적용 완료
+  - qr_codes, qr_scans 테이블 생성
+  - 8개 RLS 보안 정책 적용
+  - 7개 성능 인덱스 생성
+  - qr_code_analytics 뷰 생성
+  - auto-update 트리거 설정
+- ✅ 디바이스/브라우저/OS 감지 및 분석 기능 구현 완료
 - ✅ 다중 카드 테마 지원 (Trendy, Apple, Professional, Simple, Default)
 - ✅ Vercel 프로덕션 배포 완료 (커스텀 도메인 연결)
 - ✅ GitHub 저장소 연동 완료
+- ✅ Supabase 로컬 개발 환경 설정 완료
+- ✅ Playwright E2E 테스트 설정 완료
 - ✅ 회원가입, 로그인, 명함 생성 테스트 완료
 - 🚧 한글 도메인 시스템 - **Phase 3로 이관**
 
@@ -453,14 +495,31 @@
 #### 주요 개발 항목
 - [x] 부업 카드 시스템 - **완료**
 - [x] 실시간 통계 대시보드 - **완료**
-- [x] QR 코드 생성 및 기본 추적 - **완료**
+- [x] QR 코드 생성 및 전체 추적 시스템 - **완료**
+- [x] QR 코드 리다이렉트 Edge Function - **완료**
+- [x] QR Edge Function 프로덕션 배포 - **완료**
+  - Edge Function URL: `https://anwwjowwrxdygqyhhckr.supabase.co/functions/v1/qr-redirect/{short_code}`
+  - Status: ACTIVE, Version 1
+  - Deployed: 2025-10-01 16:28:43 UTC
+- [x] 프로덕션 데이터베이스 스키마 배포 - **완료**
+  - qr_codes 테이블 (scan_count 컬럼 포함)
+  - qr_scans 테이블 (browser, os 컬럼 포함)
+  - 8개 RLS 정책 (사용자별 접근 제어)
+  - 7개 인덱스 (성능 최적화)
+  - qr_code_analytics 뷰 (통합 분석)
+  - auto-update 트리거
+- [x] 스캔 분석 (디바이스, 브라우저, OS, referrer) - **완료**
 - [x] 프로덕션 배포 및 도메인 연결 - **완료**
+- [x] Supabase 로컬 개발 환경 - **완료**
+- [x] Playwright E2E 테스트 설정 - **완료**
 - [ ] 콜백 자동화 기능 - **Phase 3로 이관**
 - [ ] 고객 관리 (CRM) 기능 - **Phase 3로 이관**
 
 #### 마일스톤
 - Week 5-6: ✅ 부업 카드 CRUD, 드래그 앤 드롭
 - Week 7-8: ✅ 통계 시스템, QR 코드, 프로덕션 배포 완료
+- Week 9: ✅ QR Edge Function, 스캔 추적, 로컬 개발 환경, E2E 테스트
+- Week 9-10: ✅ QR 시스템 프로덕션 배포 (Edge Function + DB Schema)
 
 ### Phase 3: 고급 기능 및 확장 (3개월차) - **진행 예정**
 **목표**: 차별화 기능 완성 및 서비스 확장
@@ -548,12 +607,27 @@
 
 ---
 
-*문서 버전: 1.4*
+*문서 버전: 1.5*
 *작성일: 2025년 1월*
-*최종 수정일: 2025년 10월 1일*
+*최종 수정일: 2025년 10월 2일*
 *다음 검토일: 2025년 11월*
 
 ### 변경 이력
+- v1.6 (2025.10.02): QR 시스템 프로덕션 배포 완료
+  - QR Edge Function 프로덕션 배포 완료 (ACTIVE 상태)
+  - 프로덕션 데이터베이스 스키마 배포 완료
+    - qr_codes, qr_scans 테이블 생성 (browser, os 컬럼 포함)
+    - 8개 RLS 정책, 7개 인덱스, 분석 뷰 생성
+  - Edge Function URL: https://anwwjowwrxdygqyhhckr.supabase.co/functions/v1/qr-redirect/{short_code}
+  - 수동 SQL 배포 스크립트 작성 (deploy-qr-tables.sql)
+  - 조건부 컬럼 추가 로직 구현 (기존 테이블 호환성)
+- v1.5 (2025.10.02): Phase 2 완전 완료, QR 시스템 고도화, 개발 환경 완성
+  - QR 코드 리다이렉트 Edge Function 구현 완료 (Deno 런타임)
+  - 스캔 추적 시스템 (디바이스, 브라우저, OS, referrer, IP) 구현 완료
+  - Supabase 로컬 개발 환경 설정 완료
+  - Playwright E2E 테스트 환경 구축 완료
+  - 데이터베이스 마이그레이션 시스템 확립
+  - Supabase MCP 통합 완료
 - v1.4 (2025.10.01): Phase 1 & 2 완료, 프로덕션 배포 완료, Phase 3 계획 수립
   - Vercel 프로덕션 배포 완료 (커스텀 도메인 연결)
   - QR 코드 생성 및 추적 기능 구현 완료
