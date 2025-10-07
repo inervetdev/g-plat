@@ -1,4 +1,3 @@
-import React from 'react'
 import { SimpleCard } from './themes/SimpleCard'
 import { ProfessionalCard } from './themes/ProfessionalCard'
 import { TrendyCard } from './themes/TrendyCard'

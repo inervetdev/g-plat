@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { useTheme } from '../contexts/ThemeContext'
 import type { User } from '@supabase/supabase-js'
-import type { ThemeName } from '../contexts/ThemeContext'
 import CardWithSideJobs from '../components/CardWithSideJobs'
 
 function DashboardPage() {
@@ -15,7 +14,7 @@ function DashboardPage() {
   const [sideJobCards, setSideJobCards] = useState<any[]>([])
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
-  const { theme, setTheme} = useTheme()
+  const { setTheme } = useTheme()
 
   useEffect(() => {
     checkUser()
@@ -98,36 +97,6 @@ function DashboardPage() {
   const handleLogout = async () => {
     await supabase.auth.signOut()
     window.location.href = '/'
-  }
-
-  const handleThemeChange = async (newTheme: ThemeName) => {
-    setTheme(newTheme)
-
-    // 대표 명함의 테마 업데이트
-    if (user && businessCards.length > 0) {
-      const primaryCard = businessCards.find(card => card.is_primary) || businessCards[0]
-
-      if (primaryCard) {
-        await supabase
-          .from('business_cards')
-          .update({
-            theme: newTheme,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', primaryCard.id)
-      }
-    }
-
-    // 사용자 프로필에도 저장
-    if (user) {
-      await supabase
-        .from('user_profiles')
-        .upsert({
-          user_id: user.id,
-          theme: newTheme,
-          updated_at: new Date().toISOString()
-        })
-    }
   }
 
   if (loading) {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ThemePreviewModal from '../components/ThemePreviewModal'
+import type { ThemeName } from '../contexts/ThemeContext'
 
 export function EditCardPage() {
   const { cardId } = useParams()
@@ -9,7 +10,29 @@ export function EditCardPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string
+    title: string
+    company: string
+    department: string
+    phone: string
+    email: string
+    website: string
+    address: string
+    linkedin: string
+    instagram: string
+    facebook: string
+    twitter: string
+    youtube: string
+    github: string
+    introduction: string
+    services: string
+    skills: string
+    theme: ThemeName
+    custom_url: string
+    is_primary: boolean
+    is_active: boolean
+  }>({
     name: '',
     title: '',
     company: '',
@@ -217,7 +240,7 @@ export function EditCardPage() {
                       name="theme"
                       value={theme.value}
                       checked={formData.theme === theme.value}
-                      onChange={(e) => setFormData({ ...formData, theme: e.target.value })}
+                      onChange={(e) => setFormData({ ...formData, theme: e.target.value as ThemeName })}
                       className="sr-only"
                     />
                     <span className="text-center block">{theme.label}</span>

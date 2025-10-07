@@ -4,12 +4,13 @@ import { AppleCard } from './themes/AppleCard'
 import { ProfessionalCard } from './themes/ProfessionalCard'
 import { SimpleCard } from './themes/SimpleCard'
 import { DefaultCard } from './themes/DefaultCard'
+import type { ThemeName } from '../contexts/ThemeContext'
 
 interface ThemePreviewModalProps {
   isOpen: boolean
   onClose: () => void
-  currentTheme: string
-  onSelectTheme: (theme: string) => void
+  currentTheme: ThemeName
+  onSelectTheme: (theme: ThemeName) => void
 }
 
 const themes = [
@@ -78,8 +79,8 @@ export default function ThemePreviewModal({ isOpen, onClose, currentTheme, onSel
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      setSelectedTheme(theme.id)
-                      setPreviewTheme(theme.id)
+                      setSelectedTheme(theme.id as ThemeName)
+                      setPreviewTheme(theme.id as ThemeName)
                     }}
                     className={`w-full text-left p-3 rounded-lg border-2 transition-all ${
                       selectedTheme === theme.id

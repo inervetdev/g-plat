@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { useTheme } from '../contexts/ThemeContext'
+import { useTheme, type ThemeName } from '../contexts/ThemeContext'
 import ThemePreviewModal from '../components/ThemePreviewModal'
 
 export default function CreateCardPage() {
@@ -11,7 +11,27 @@ export default function CreateCardPage() {
   const [urlAvailable, setUrlAvailable] = useState<boolean | null>(null)
   const [checkingUrl, setCheckingUrl] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string
+    title: string
+    company: string
+    department: string
+    phone: string
+    email: string
+    website: string
+    address: string
+    linkedin: string
+    instagram: string
+    facebook: string
+    twitter: string
+    youtube: string
+    github: string
+    introduction: string
+    services: string
+    skills: string
+    theme: ThemeName
+    custom_url: string
+  }>({
     name: '',
     title: '',
     company: '',
@@ -468,7 +488,7 @@ export default function CreateCardPage() {
         isOpen={showPreview}
         onClose={() => setShowPreview(false)}
         currentTheme={formData.theme}
-        onSelectTheme={(theme) => setFormData(prev => ({ ...prev, theme }))}
+        onSelectTheme={(theme: ThemeName) => setFormData(prev => ({ ...prev, theme }))}
       />
     </div>
   )
