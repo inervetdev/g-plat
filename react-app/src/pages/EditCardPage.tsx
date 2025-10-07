@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import ThemePreviewModal from '../components/ThemePreviewModal'
 
 export function EditCardPage() {
   const { cardId } = useParams()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -178,15 +180,29 @@ export function EditCardPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Theme Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                테마 선택
-              </label>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  테마 선택
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowPreview(true)}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 text-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  테마 미리보기
+                </button>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { value: 'trendy', label: '트렌디' },
                   { value: 'apple', label: '애플' },
                   { value: 'professional', label: '프로페셔널' },
-                  { value: 'simple', label: '심플' }
+                  { value: 'simple', label: '심플' },
+                  { value: 'default', label: '기본' }
                 ].map(theme => (
                   <label
                     key={theme.value}
@@ -457,6 +473,14 @@ export function EditCardPage() {
           </form>
         </div>
       </div>
+
+      {/* Theme Preview Modal */}
+      <ThemePreviewModal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        currentTheme={formData.theme}
+        onSelectTheme={(theme) => setFormData({ ...formData, theme })}
+      />
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useTheme } from '../contexts/ThemeContext'
 import type { User } from '@supabase/supabase-js'
 import type { ThemeName } from '../contexts/ThemeContext'
+import CardWithSideJobs from '../components/CardWithSideJobs'
 
 function DashboardPage() {
   const [user, setUser] = useState<User | null>(null)
@@ -11,7 +12,10 @@ function DashboardPage() {
   const [businessCards, setBusinessCards] = useState<any[]>([])
   const [cardCount, setCardCount] = useState(0)
   const [sideJobCount, setSideJobCount] = useState(0)
-  const { theme, setTheme } = useTheme()
+  const [sideJobCards, setSideJobCards] = useState<any[]>([])
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
+  const [showPreviewModal, setShowPreviewModal] = useState(false)
+  const { theme, setTheme} = useTheme()
 
   useEffect(() => {
     checkUser()
@@ -66,13 +70,20 @@ function DashboardPage() {
         }
 
         // 부가명함(사이드잡) 데이터 가져오기
-        const { data: sideJobCards } = await supabase
+        const { data: sideJobCardsData } = await supabase
           .from('sidejob_cards')
           .select('*', { count: 'exact' })
           .eq('user_id', user.id)
+          .order('display_order', { ascending: true })
 
-        if (sideJobCards) {
-          setSideJobCount(sideJobCards.length)
+        if (sideJobCardsData) {
+          setSideJobCards(sideJobCardsData)
+          setSideJobCount(sideJobCardsData.length)
+        }
+
+        // 첫 번째 명함을 기본 선택
+        if (cards && cards.length > 0) {
+          setSelectedCardId(cards[0].id)
         }
       } else {
         window.location.href = '/login'
@@ -166,9 +177,9 @@ function DashboardPage() {
             <p className="text-3xl font-bold text-blue-600">{cardCount}</p>
             <p className="text-gray-600 text-sm mt-1">등록된 명함</p>
             <button
-              onClick={() => window.location.href = '/create-card'}
+              onClick={() => window.location.href = '/card-manage'}
               className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
-              명함 만들기
+              명함 관리
             </button>
           </div>
 
@@ -213,149 +224,124 @@ function DashboardPage() {
           </div>
         </div>
 
-        {/* Business Cards Management */}
-        {businessCards.length > 0 && (
-          <div className="bg-white rounded-lg shadow p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">내 명함 목록</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {businessCards.map(card => (
-                <div key={card.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h4 className="font-semibold text-gray-900">{card.name}</h4>
-                      <p className="text-sm text-gray-600">{card.title}</p>
-                      <p className="text-xs text-gray-500">{card.company}</p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {card.is_primary && (
-                        <span className="bg-green-100 text-green-600 text-xs px-2 py-1 rounded">대표</span>
-                      )}
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        card.theme === 'trendy' ? 'bg-cyan-100 text-cyan-600' :
-                        card.theme === 'apple' ? 'bg-gray-100 text-gray-600' :
-                        card.theme === 'professional' ? 'bg-blue-100 text-blue-600' :
-                        'bg-purple-100 text-purple-600'
-                      }`}>
-                        {card.theme === 'trendy' ? '트렌디' :
-                         card.theme === 'apple' ? '애플' :
-                         card.theme === 'professional' ? '프로페셔널' : '심플'}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="text-sm text-gray-600 mb-3">
-                    <p>📞 {card.phone}</p>
-                    <p>✉️ {card.email}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <a
-                      href={`/card/${card.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 bg-blue-50 text-blue-600 text-center py-2 rounded hover:bg-blue-100 transition text-sm"
-                    >
-                      보기
-                    </a>
-                    <button
-                      onClick={() => window.location.href = `/qr/${card.id}`}
-                      className="flex-1 bg-purple-50 text-purple-600 text-center py-2 rounded hover:bg-purple-100 transition text-sm"
-                    >
-                      QR
-                    </button>
-                    <button
-                      onClick={() => window.location.href = `/edit-card/${card.id}`}
-                      className="flex-1 bg-green-50 text-green-600 text-center py-2 rounded hover:bg-green-100 transition text-sm"
-                    >
-                      수정
-                    </button>
-                    <button
-                      onClick={async () => {
-                        if (confirm('정말 이 명함을 삭제하시겠습니까?')) {
-                          const { error } = await supabase
-                            .from('business_cards')
-                            .delete()
-                            .eq('id', card.id)
-                            .eq('user_id', user?.id)
 
-                          if (!error) {
-                            alert('명함이 삭제되었습니다')
-                            checkUser()
-                          }
-                        }
-                      }}
-                      className="flex-1 bg-red-50 text-red-600 text-center py-2 rounded hover:bg-red-100 transition text-sm"
-                    >
-                      삭제
-                    </button>
+        {/* Card Preview with SideJobs - Card Grid */}
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">내 명함 미리보기</h3>
+
+          {businessCards.length === 0 ? (
+            <div className="text-center py-12 text-gray-500">
+              <p className="mb-4">등록된 명함이 없습니다.</p>
+              <button
+                onClick={() => window.location.href = '/create-card'}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+              >
+                첫 명함 만들기
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {businessCards.map((card) => (
+                <button
+                  key={card.id}
+                  onClick={() => {
+                    setSelectedCardId(card.id)
+                    setShowPreviewModal(true)
+                  }}
+                  className="group relative p-6 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all text-left"
+                >
+                  {/* 명함 썸네일 */}
+                  <div className="flex items-center gap-3 mb-3">
+                    {card.profile_image && (
+                      <img
+                        src={card.profile_image}
+                        alt={card.name}
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-gray-900 truncate">{card.name}</h4>
+                      {card.title && (
+                        <p className="text-sm text-gray-500 truncate">{card.title}</p>
+                      )}
+                    </div>
                   </div>
-                </div>
+
+                  {/* 테마 및 부가명함 개수 */}
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-600">
+                      테마: {card.theme === 'trendy' ? '트렌디' : card.theme === 'apple' ? '애플' : card.theme === 'professional' ? '프로페셔널' : card.theme === 'simple' ? '심플' : '기본'}
+                    </span>
+                    <span className="text-blue-600 font-medium">
+                      {sideJobCards.filter(sj => !sj.business_card_id || sj.business_card_id === card.id).length}개 부가명함
+                    </span>
+                  </div>
+
+                  {/* 호버 시 미리보기 아이콘 */}
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  </div>
+                </button>
               ))}
+            </div>
+          )}
+        </div>
+
+        {/* Preview Modal */}
+        {showPreviewModal && selectedCardId && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {businessCards.find(c => c.id === selectedCardId)?.name} 명함 미리보기
+                </h3>
+                <button
+                  onClick={() => setShowPreviewModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6">
+                <CardWithSideJobs
+                  businessCard={businessCards.find(c => c.id === selectedCardId)!}
+                  sideJobCards={sideJobCards.filter(sj =>
+                    !sj.business_card_id || sj.business_card_id === selectedCardId
+                  )}
+                />
+              </div>
+
+              {/* Modal Footer */}
+              <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 rounded-b-2xl">
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => window.location.href = `/card/${selectedCardId}`}
+                    className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    실제 명함 보기
+                  </button>
+                  <button
+                    onClick={() => window.location.href = `/edit-card/${selectedCardId}`}
+                    className="flex-1 bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                  >
+                    명함 수정
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  💡 부가명함을 연결하려면 <a href="/sidejob-cards" className="text-blue-600 underline">부가명함 관리</a>로 이동하세요.
+                </p>
+              </div>
             </div>
           </div>
         )}
-
-        {/* Theme Selection */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">명함 테마 선택</h3>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {[
-              { id: 'trendy', name: '트렌디', emoji: '✨', color: 'from-green-400 to-cyan-400' },
-              { id: 'apple', name: '애플', emoji: '🍎', color: 'from-gray-400 to-gray-600' },
-              { id: 'professional', name: '프로페셔널', emoji: '💼', color: 'from-blue-900 to-blue-700' },
-              { id: 'simple', name: '심플', emoji: '⚪', color: 'from-blue-200 to-purple-200' },
-              { id: 'default', name: '기본', emoji: '🎨', color: 'from-purple-400 to-pink-400' }
-            ].map((t) => (
-              <button
-                key={t.id}
-                onClick={() => handleThemeChange(t.id as ThemeName)}
-                className={`relative p-4 rounded-xl border-2 transition-all ${
-                  theme === t.id
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                {theme === t.id && (
-                  <div className="absolute top-2 right-2 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
-                    ✓
-                  </div>
-                )}
-                <div className={`w-full h-20 bg-gradient-to-br ${t.color} rounded-lg mb-3 flex items-center justify-center text-2xl`}>
-                  {t.emoji}
-                </div>
-                <p className="text-sm font-medium text-gray-700">{t.name}</p>
-              </button>
-            ))}
-          </div>
-          <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-700">
-              💡 현재 선택된 테마: <strong>{theme === 'trendy' ? '트렌디' : theme === 'apple' ? '애플' : theme === 'professional' ? '프로페셔널' : theme === 'simple' ? '심플' : '기본'}</strong>
-            </p>
-            {user && businessCards.length > 0 && (
-              <div className="flex flex-wrap gap-2 mt-2">
-                {businessCards.map(card => (
-                  <a
-                    key={card.id}
-                    href={`/card/${card.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-600 hover:text-blue-800 underline"
-                  >
-                    {card.name} 명함 보기 →
-                  </a>
-                ))}
-              </div>
-            )}
-            {user && businessCards.length === 0 && (
-              <a
-                href={`/card/${user.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-blue-600 hover:text-blue-800 underline"
-              >
-                내 명함 미리보기 →
-              </a>
-            )}
-          </div>
-        </div>
 
         {/* Quick Actions */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">

@@ -122,9 +122,9 @@ export function ProfessionalCard({ userId }: { userId: string }) {
       className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100"
       style={{ fontFamily: '"Apple SD Gothic Neo", -apple-system, BlinkMacSystemFont, sans-serif' }}
     >
-      {/* Header with Navy Background */}
-      <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2c4a6f] text-white">
-        <div className="max-w-md mx-auto px-6 py-8">
+      <div className="max-w-md mx-auto">
+        {/* Header with Navy Background */}
+        <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2c4a6f] text-white px-6 py-8">
           {/* Company Badge */}
           {cardData.company && (
             <div className="inline-flex items-center gap-2 bg-[#c9a961] text-[#1e3a5f] px-4 py-1 rounded-full text-sm font-medium mb-6">
@@ -154,10 +154,9 @@ export function ProfessionalCard({ userId }: { userId: string }) {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-md mx-auto px-6 py-6">
+        {/* Main Content */}
+        <div className="px-6 py-6">
         {/* Introduction Card */}
         {cardData.introduction && (
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-[#c9a961]">
@@ -277,6 +276,7 @@ END:VCARD`
             <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-5 h-5 opacity-50" />
             <span className="text-xs">Powered by G-PLAT Business</span>
           </div>
+        </div>
         </div>
       </div>
     </div>

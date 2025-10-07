@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useTheme } from '../contexts/ThemeContext'
+import ThemePreviewModal from '../components/ThemePreviewModal'
 
 export default function CreateCardPage() {
   const navigate = useNavigate()
@@ -9,6 +10,7 @@ export default function CreateCardPage() {
   const [loading, setLoading] = useState(false)
   const [urlAvailable, setUrlAvailable] = useState<boolean | null>(null)
   const [checkingUrl, setCheckingUrl] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -368,17 +370,31 @@ export default function CreateCardPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     테마
                   </label>
-                  <select
-                    name="theme"
-                    value={formData.theme}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="trendy">트렌디</option>
-                    <option value="apple">애플</option>
-                    <option value="professional">프로페셔널</option>
-                    <option value="simple">심플</option>
-                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      name="theme"
+                      value={formData.theme}
+                      onChange={handleChange}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="trendy">트렌디</option>
+                      <option value="apple">애플</option>
+                      <option value="professional">프로페셔널</option>
+                      <option value="simple">심플</option>
+                      <option value="default">기본</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setShowPreview(true)}
+                      className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      미리보기
+                    </button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -446,6 +462,14 @@ export default function CreateCardPage() {
           </form>
         </div>
       </div>
+
+      {/* Theme Preview Modal */}
+      <ThemePreviewModal
+        isOpen={showPreview}
+        onClose={() => setShowPreview(false)}
+        currentTheme={formData.theme}
+        onSelectTheme={(theme) => setFormData(prev => ({ ...prev, theme }))}
+      />
     </div>
   )
 }

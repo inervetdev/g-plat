@@ -212,6 +212,11 @@ setup-ngrok.ps1        # PowerShell ngrok 설정
   - ✅ 커스텀 URL과 함께 명함 CRUD
   - ✅ URL 중복 체크 및 실시간 검증
   - ✅ 부업 카드 관리 (CRUD, 순서 변경, 드래그 앤 드롭)
+  - ✅ 부업 카드와 명함 연결 (다대다 지원)
+  - ✅ 명함 + 부업 카드 통합 미리보기
+  - ✅ 부업 카드 이미지 Supabase Storage 업로드
+  - ✅ Storage RLS 정책으로 안전한 파일 업로드
+  - ✅ 대시보드 카드 미리보기 모달 (통합 뷰)
   - ✅ 방문자 통계 대시보드 (Recharts)
   - ✅ 실시간 데이터 동기화
   - ✅ 보안을 위한 RLS 정책
@@ -221,12 +226,14 @@ setup-ngrok.ps1        # PowerShell ngrok 설정
   - ✅ 디바이스/브라우저/OS 감지
   - ✅ 스캔 분석 (referrer, IP, user-agent 추적)
   - ✅ 다양한 카드 테마 (Trendy, Apple, Professional, Simple, Default)
+  - ✅ 테마 미리보기 모달 (실시간 프리뷰)
   - ✅ 차트와 방문자 추적이 있는 분석 대시보드
   - ✅ 프로필 이미지 및 회사 로고 업로드
   - ✅ Supabase 로컬 개발 환경
   - ✅ QR 시스템을 위한 데이터베이스 마이그레이션
   - ✅ Playwright E2E 테스트 설정
   - ✅ Supabase MCP 통합
+  - ✅ 소셜 로그인 UI (Google, Kakao, Apple) - OAuth 설정 대기
 - **대기 중인 기능 (Phase 3)**:
   - ⏳ 콜백 자동화 시스템
   - ⏳ SMS 자동화 (Twilio/Aligo 통합)

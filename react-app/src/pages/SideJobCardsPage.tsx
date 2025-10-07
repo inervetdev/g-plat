@@ -11,7 +11,8 @@ interface SideJobCard {
   image_url: string | null
   price: string | null
   cta_text: string | null
-  cta_url: string | null  // 데이터베이스와 일치하도록 변경
+  cta_url: string | null
+  business_card_id: string | null
   display_order: number
   is_active: boolean
   view_count: number
@@ -23,21 +24,53 @@ interface SideJobCard {
 export default function SideJobCardsPage() {
   const navigate = useNavigate()
   const [cards, setCards] = useState<SideJobCard[]>([])
+  const [businessCards, setBusinessCards] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingCard, setEditingCard] = useState<SideJobCard | null>(null)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    image_url: '',
     price: '',
     cta_text: '',
-    cta_url: '',  // 변경
+    cta_url: '',
+    business_card_ids: [] as string[],
     is_active: true
   })
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
-    fetchSideJobCards()
+    fetchData()
   }, [])
+
+  const fetchData = async () => {
+    await Promise.all([fetchSideJobCards(), fetchBusinessCards()])
+  }
+
+  const fetchBusinessCards = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      const { data, error } = await supabase
+        .from('business_cards')
+        .select('id, name')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching business cards:', error)
+      } else {
+        setBusinessCards(data || [])
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error)
+    }
+  }
 
   const fetchSideJobCards = async () => {
     try {
@@ -66,6 +99,62 @@ export default function SideJobCardsPage() {
     }
   }
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const uploadImage = async (file: File, userId: string): Promise<string | null> => {
+    try {
+      setUploading(true)
+      console.log('📤 Starting image upload...')
+      console.log('File:', file.name, 'Size:', file.size, 'Type:', file.type)
+      console.log('User ID:', userId)
+
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${userId}/${Date.now()}.${fileExt}`
+      const filePath = `sidejob-images/${fileName}`
+
+      console.log('Upload path:', filePath)
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('sidejob-cards')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (uploadError) {
+        console.error('❌ Upload error:', uploadError)
+        console.error('Error details:', JSON.stringify(uploadError, null, 2))
+        alert(`이미지 업로드 실패: ${uploadError.message}`)
+        throw uploadError
+      }
+
+      console.log('✅ Upload successful:', uploadData)
+
+      const { data } = supabase.storage
+        .from('sidejob-cards')
+        .getPublicUrl(filePath)
+
+      console.log('📍 Public URL:', data.publicUrl)
+      return data.publicUrl
+    } catch (error) {
+      console.error('💥 Error uploading image:', error)
+      alert(`이미지 업로드 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
+      return null
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -77,48 +166,88 @@ export default function SideJobCardsPage() {
         return
       }
 
-      const cardData = {
-        user_id: user.id,
-        title: formData.title,
-        description: formData.description || null,
-        price: formData.price || null,
-        cta_text: formData.cta_text || null,
-        cta_url: formData.cta_url || null,  // 변경
-        is_active: formData.is_active,
-        display_order: editingCard ? editingCard.display_order : cards.length
+      // Upload image if selected
+      let imageUrl = formData.image_url
+      if (imageFile) {
+        const uploadedUrl = await uploadImage(imageFile, user.id)
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl
+        }
       }
 
-      let result
+      // 선택된 명함이 없으면 business_card_id를 null로 (모든 명함에 표시)
+      const selectedCardIds = formData.business_card_ids.length > 0
+        ? formData.business_card_ids
+        : [null]
+
       if (editingCard) {
-        result = await supabase
+        // 수정 시: 기존 카드 업데이트
+        const cardData = {
+          user_id: user.id,
+          title: formData.title,
+          description: formData.description || null,
+          image_url: imageUrl || null,
+          price: formData.price || null,
+          cta_text: formData.cta_text || null,
+          cta_url: formData.cta_url || null,
+          is_active: formData.is_active,
+          business_card_id: selectedCardIds[0] // 첫 번째 선택된 명함 사용
+        }
+
+        const result = await supabase
           .from('sidejob_cards')
           .update(cardData)
           .eq('id', editingCard.id)
           .select()
+
+        if (result.error) {
+          console.error('Error updating card:', result.error)
+          alert(`수정 중 오류가 발생했습니다: ${result.error.message}`)
+          return
+        }
       } else {
-        result = await supabase
+        // 새로 생성 시: 선택된 각 명함에 대해 부가명함 생성
+        const cardsToInsert = selectedCardIds.map(cardId => ({
+          user_id: user.id,
+          title: formData.title,
+          description: formData.description || null,
+          image_url: imageUrl || null,
+          price: formData.price || null,
+          cta_text: formData.cta_text || null,
+          cta_url: formData.cta_url || null,
+          is_active: formData.is_active,
+          business_card_id: cardId,
+          display_order: cards.length
+        }))
+
+        const result = await supabase
           .from('sidejob_cards')
-          .insert(cardData)
+          .insert(cardsToInsert)
           .select()
+
+        if (result.error) {
+          console.error('Error creating cards:', result.error)
+          alert(`생성 중 오류가 발생했습니다: ${result.error.message}`)
+          return
+        }
       }
 
-      if (result.error) {
-        console.error('Error saving card:', result.error)
-        alert(`저장 중 오류가 발생했습니다: ${result.error.message}`)
-      } else {
-        alert(editingCard ? '수정되었습니다!' : '생성되었습니다!')
-        setShowForm(false)
-        setEditingCard(null)
-        setFormData({
-          title: '',
-          description: '',
-          price: '',
-          cta_text: '',
-          cta_url: '',  // 변경
-          is_active: true
-        })
-        fetchSideJobCards()
-      }
+      alert(editingCard ? '수정되었습니다!' : '생성되었습니다!')
+      setShowForm(false)
+      setEditingCard(null)
+      setFormData({
+        title: '',
+        description: '',
+        image_url: '',
+        price: '',
+        cta_text: '',
+        cta_url: '',
+        business_card_ids: [],
+        is_active: true
+      })
+      setImageFile(null)
+      setImagePreview(null)
+      fetchSideJobCards()
     } catch (error) {
       console.error('Unexpected error:', error)
       alert('예상치 못한 오류가 발생했습니다.')
@@ -130,11 +259,15 @@ export default function SideJobCardsPage() {
     setFormData({
       title: card.title,
       description: card.description || '',
+      image_url: card.image_url || '',
       price: card.price || '',
       cta_text: card.cta_text || '',
-      cta_url: card.cta_url || '',  // 변경
+      cta_url: card.cta_url || '',
+      business_card_ids: card.business_card_id ? [card.business_card_id] : [],
       is_active: card.is_active
     })
+    setImagePreview(card.image_url)
+    setImageFile(null)
     setShowForm(true)
   }
 
@@ -230,11 +363,15 @@ export default function SideJobCardsPage() {
                   setFormData({
                     title: '',
                     description: '',
+                    image_url: '',
                     price: '',
                     cta_text: '',
-                    cta_url: '',  // 변경
+                    cta_url: '',
+                    business_card_ids: [],
                     is_active: true
                   })
+                  setImageFile(null)
+                  setImagePreview(null)
                   setShowForm(true)
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
@@ -260,7 +397,35 @@ export default function SideJobCardsPage() {
                     card.is_active ? 'border-gray-300' : 'border-gray-200 bg-gray-50 opacity-60'
                   }`}
                 >
-                  <div className="flex justify-between items-start">
+                  <div className="flex gap-4">
+                    {/* Image with CTA Link */}
+                    {card.image_url && (
+                      <div className="w-48 h-32 flex-shrink-0">
+                        {card.cta_url ? (
+                          <a
+                            href={card.cta_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block w-full h-full rounded-lg overflow-hidden hover:opacity-80 transition-opacity"
+                          >
+                            <img
+                              src={card.image_url}
+                              alt={card.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </a>
+                        ) : (
+                          <div className="w-full h-full rounded-lg overflow-hidden">
+                            <img
+                              src={card.image_url}
+                              alt={card.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="text-lg font-semibold">{card.title}</h3>
@@ -273,7 +438,7 @@ export default function SideJobCardsPage() {
                       {card.description && (
                         <p className="text-gray-600 mb-2">{card.description}</p>
                       )}
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-2">
                         {card.price && <span>가격: {card.price}</span>}
                         {card.cta_text && <span>CTA: {card.cta_text}</span>}
                         <span>조회: {card.view_count}</span>
@@ -357,6 +522,32 @@ export default function SideJobCardsPage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     />
                   </div>
+
+                  {/* Image Upload */}
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      이미지
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+                    />
+                    {imagePreview && (
+                      <div className="mt-2">
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
+                          className="w-full h-48 object-cover rounded-lg"
+                        />
+                      </div>
+                    )}
+                    {uploading && (
+                      <p className="text-sm text-gray-500 mt-1">이미지 업로드 중...</p>
+                    )}
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium mb-1">
                       가격
@@ -393,6 +584,59 @@ export default function SideJobCardsPage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                     />
                   </div>
+
+                  {/* 명함 선택 */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      연결할 명함 선택
+                    </label>
+                    {businessCards.length === 0 ? (
+                      <p className="text-sm text-gray-500">등록된 명함이 없습니다.</p>
+                    ) : (
+                      <div className="space-y-2 max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                        <label className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.business_card_ids.length === 0}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setFormData({ ...formData, business_card_ids: [] })
+                              }
+                            }}
+                            className="rounded"
+                          />
+                          <span className="text-sm">모든 명함에 표시</span>
+                        </label>
+                        {businessCards.map((card) => (
+                          <label key={card.id} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.business_card_ids.includes(card.id)}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setFormData({
+                                    ...formData,
+                                    business_card_ids: [...formData.business_card_ids, card.id]
+                                  })
+                                } else {
+                                  setFormData({
+                                    ...formData,
+                                    business_card_ids: formData.business_card_ids.filter(id => id !== card.id)
+                                  })
+                                }
+                              }}
+                              className="rounded"
+                            />
+                            <span className="text-sm">{card.name}</span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      💡 선택하지 않으면 모든 명함에 표시됩니다. 여러 명함을 선택하면 각 명함마다 복사됩니다.
+                    </p>
+                  </div>
+
                   <div className="flex items-center">
                     <input
                       type="checkbox"

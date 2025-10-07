@@ -245,6 +245,11 @@ The project has three parallel implementations:
   - ✅ Business card CRUD with custom URL
   - ✅ Custom URL validation and duplicate checking
   - ✅ Sidejob cards management (CRUD, ordering, drag-and-drop)
+  - ✅ Sidejob cards linked to specific business cards (many-to-many support)
+  - ✅ Business card + Sidejob card integrated preview
+  - ✅ Sidejob image upload to Supabase Storage
+  - ✅ Storage RLS policies for secure file uploads
+  - ✅ Dashboard card preview modal with unified view
   - ✅ Visitor statistics dashboard (Recharts)
   - ✅ Real-time data synchronization
   - ✅ RLS policies for security
@@ -255,12 +260,14 @@ The project has three parallel implementations:
   - ✅ Scan analytics (referrer, IP, user-agent tracking)
   - ✅ Production QR system database schema (8 RLS policies, 7 indexes, analytics view)
   - ✅ Multiple card themes (Trendy, Apple, Professional, Simple, Default)
+  - ✅ Theme preview modal with live preview
   - ✅ Analytics dashboard with charts and visitor tracking
   - ✅ Profile image and company logo upload
   - ✅ Supabase local development environment
   - ✅ Database migrations for QR system
   - ✅ Playwright E2E testing setup
   - ✅ Supabase MCP integration
+  - ✅ Social login UI (Google, Kakao, Apple) - ready for OAuth configuration
 - **Pending Features (Phase 3)**:
   - ⏳ Callback automation system
   - ⏳ SMS automation (Twilio/Aligo integration)

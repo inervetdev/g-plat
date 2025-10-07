@@ -52,16 +52,18 @@ export default function QRCodeGenerator({
 
       // First, check if a QR code already exists for this business card and campaign
       if (businessCardId) {
-        const { data: existingQR, error: fetchError } = await supabase
+        const { data: existingQRs, error: fetchError } = await supabase
           .from('qr_codes')
           .select('*')
           .eq('business_card_id', businessCardId)
           .eq('campaign', campaign || 'business_card')
           .eq('user_id', user.id)
-          .single()
+          .order('created_at', { ascending: false })
+          .limit(1)
 
-        if (existingQR && !fetchError) {
+        if (existingQRs && existingQRs.length > 0 && !fetchError) {
           // Use existing QR code with Edge Function URL
+          const existingQR = existingQRs[0]
           const isDevelopment = window.location.hostname === 'localhost'
           const trackingUrl = isDevelopment
             ? url // Development: use direct URL
@@ -97,17 +99,19 @@ export default function QRCodeGenerator({
 
       if (error) {
         console.error('Error creating QR record:', error)
-        // If unique constraint error, try to fetch the existing record
-        if (error.code === '23505') {
-          const { data: existingQR } = await supabase
+        // If unique constraint error or duplicate, try to fetch the existing record
+        if (error.code === '23505' || error.message?.includes('duplicate')) {
+          const { data: existingQRs } = await supabase
             .from('qr_codes')
             .select('*')
             .eq('business_card_id', businessCardId)
             .eq('campaign', campaign || 'business_card')
             .eq('user_id', user.id)
-            .single()
+            .order('created_at', { ascending: false })
+            .limit(1)
 
-          if (existingQR) {
+          if (existingQRs && existingQRs.length > 0) {
+            const existingQR = existingQRs[0]
             const isDevelopment = window.location.hostname === 'localhost'
             const trackingUrl = isDevelopment
               ? url // Development: use direct URL

@@ -11,6 +11,7 @@ const TermsPage = lazy(() => import('./pages/TermsPage'))
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
 const DashboardPage = lazy(() => import('./pages/DashboardPage'))
 const CardViewPage = lazy(() => import('./pages/CardViewPage'))
+const CardManagePage = lazy(() => import('./pages/CardManagePage'))
 const DemoCardPage = lazy(() => import('./pages/DemoCardPage'))
 const CreateCardPage = lazy(() => import('./pages/CreateCardPage'))
 const EditCardPage = lazy(() => import('./pages/EditCardPage').then(module => ({ default: module.EditCardPage })))
@@ -98,6 +99,12 @@ function App() {
         <Route path="/card/:userId" element={
           <Suspense fallback={<LoadingSpinner />}>
             <CardViewPage />
+          </Suspense>
+        } />
+
+        <Route path="/card-manage" element={
+          <Suspense fallback={<LoadingSpinner />}>
+            <CardManagePage />
           </Suspense>
         } />
 
