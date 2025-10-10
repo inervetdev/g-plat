@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import './index.css'
 
@@ -51,9 +52,10 @@ function App() {
 
   // 메인 앱 - 단순 버전부터 시작
   return (
-    <ThemeProvider>
-      <Router>
-        <Routes>
+    <AuthProvider>
+      <ThemeProvider>
+        <Router>
+          <Routes>
         <Route path="/" element={
           <Suspense fallback={<LoadingSpinner />}>
             <LandingPage />
@@ -155,9 +157,10 @@ function App() {
             <QRStatsPage />
           </Suspense>
         } />
-      </Routes>
-    </Router>
-  </ThemeProvider>
+        </Routes>
+      </Router>
+    </ThemeProvider>
+  </AuthProvider>
   )
 }
 
