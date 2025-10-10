@@ -37,59 +37,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('🔐 Auth state changed:', event, session?.user?.email)
       setSession(session)
       setUser(session?.user ?? null)
 
-      // OAuth 로그인 시 사용자 프로필 자동 생성
+      // Database trigger handles user/user_profiles creation automatically
       if (event === 'SIGNED_IN' && session?.user) {
-        try {
-          const { data: existingUser, error: checkError } = await supabase
-            .from('users')
-            .select('id')
-            .eq('id', session.user.id)
-            .single()
-
-          if (checkError && checkError.code !== 'PGRST116') {
-            console.error('❌ Error checking user:', checkError)
-          }
-
-          if (!existingUser) {
-            console.log('✅ Creating new user profile for:', session.user.email)
-
-            // users 테이블에 사용자 생성
-            const { error: userError } = await supabase
-              .from('users')
-              .insert({
-                id: session.user.id,
-                email: session.user.email!,
-                name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User'
-              })
-
-            if (userError) {
-              console.error('❌ Error creating user:', userError)
-              return
-            }
-
-            // user_profiles 테이블에 프로필 생성
-            const { error: profileError } = await supabase
-              .from('user_profiles')
-              .insert({
-                user_id: session.user.id
-              })
-
-            if (profileError) {
-              console.error('❌ Error creating user profile:', profileError)
-            } else {
-              console.log('✅ User profile created successfully')
-            }
-          } else {
-            console.log('✅ User already exists:', session.user.email)
-          }
-        } catch (error) {
-          console.error('❌ Error in OAuth user creation:', error)
-        }
+        console.log('✅ User signed in:', session.user.email)
       }
     })
 
