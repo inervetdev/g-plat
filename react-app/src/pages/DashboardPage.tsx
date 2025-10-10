@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
 import type { User } from '@supabase/supabase-js'
 import CardWithSideJobs from '../components/CardWithSideJobs'
 
 function DashboardPage() {
+  const { user: authUser } = useAuth()
   const [user, setUser] = useState<User | null>(null)
   const [userData, setUserData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -17,47 +19,48 @@ function DashboardPage() {
   const { setTheme } = useTheme()
 
   useEffect(() => {
-    checkUser()
-  }, [])
+    if (authUser) {
+      loadUserData()
+    }
+  }, [authUser])
 
-  const checkUser = async () => {
+  const loadUserData = async () => {
+    if (!authUser) return
+
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      setUser(authUser)
 
-      if (user) {
-        setUser(user)
+      // 사용자 데이터 가져오기
+      const { data: userData } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', authUser.id)
+        .single()
 
-        // 사용자 데이터 가져오기
-        const { data: userData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
-          .single()
+      setUserData(userData)
 
-        setUserData(userData)
+      // 프로필 데이터 가져오기
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .eq('user_id', authUser.id)
+        .single()
 
-        // 프로필 데이터 가져오기
-        const { data: profile } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('user_id', user.id)
-          .single()
-
-        if (profile) {
-          if (profile.theme) {
-            setTheme(profile.theme)
-          }
+      if (profile) {
+        if (profile.theme) {
+          setTheme(profile.theme)
         }
+      }
 
-        // 명함 데이터 가져오기
-        const { data: cards } = await supabase
-          .from('business_cards')
-          .select('*', { count: 'exact' })
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .order('created_at', { ascending: false })
+      // 명함 데이터 가져오기
+      const { data: cards } = await supabase
+        .from('business_cards')
+        .select('*', { count: 'exact' })
+        .eq('user_id', authUser.id)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
 
-        if (cards) {
+      if (cards) {
           setBusinessCards(cards)
           setCardCount(cards.length)
 
@@ -68,24 +71,21 @@ function DashboardPage() {
           }
         }
 
-        // 부가명함(사이드잡) 데이터 가져오기
-        const { data: sideJobCardsData } = await supabase
-          .from('sidejob_cards')
-          .select('*', { count: 'exact' })
-          .eq('user_id', user.id)
-          .order('display_order', { ascending: true })
+      // 부가명함(사이드잡) 데이터 가져오기
+      const { data: sideJobCardsData } = await supabase
+        .from('sidejob_cards')
+        .select('*', { count: 'exact' })
+        .eq('user_id', authUser.id)
+        .order('display_order', { ascending: true })
 
-        if (sideJobCardsData) {
-          setSideJobCards(sideJobCardsData)
-          setSideJobCount(sideJobCardsData.length)
-        }
+      if (sideJobCardsData) {
+        setSideJobCards(sideJobCardsData)
+        setSideJobCount(sideJobCardsData.length)
+      }
 
-        // 첫 번째 명함을 기본 선택
-        if (cards && cards.length > 0) {
-          setSelectedCardId(cards[0].id)
-        }
-      } else {
-        window.location.href = '/login'
+      // 첫 번째 명함을 기본 선택
+      if (cards && cards.length > 0) {
+        setSelectedCardId(cards[0].id)
       }
     } catch (error) {
       console.error('Error:', error)
@@ -99,7 +99,13 @@ function DashboardPage() {
     window.location.href = '/'
   }
 
-  if (loading) {
+  // 인증되지 않은 경우 로그인 페이지로 리디렉션
+  if (!authUser && !loading) {
+    window.location.href = '/login'
+    return null
+  }
+
+  if (loading || !authUser) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
