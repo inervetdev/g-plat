@@ -37,14 +37,65 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('🔐 Auth state changed:', event, session?.user?.email)
       setSession(session)
       setUser(session?.user ?? null)
 
-      // Database trigger handles user/user_profiles creation automatically
+      // For OAuth users, ensure user profile exists after authentication
       if (event === 'SIGNED_IN' && session?.user) {
         console.log('✅ User signed in:', session.user.email)
+
+        // Wait a moment for auth to be fully established
+        await new Promise(resolve => setTimeout(resolve, 500))
+
+        try {
+          // Check if user profile exists
+          const { data: existingUser, error: checkError } = await supabase
+            .from('users')
+            .select('id')
+            .eq('id', session.user.id)
+            .single()
+
+          if (!existingUser && (!checkError || checkError.code === 'PGRST116')) {
+            console.log('📝 Creating user profile for:', session.user.email)
+
+            // Create user record - now authenticated, so RLS allows it
+            const { error: userError } = await supabase
+              .from('users')
+              .insert({
+                id: session.user.id,
+                email: session.user.email!,
+                name: session.user.user_metadata?.full_name ||
+                      session.user.user_metadata?.name ||
+                      session.user.email?.split('@')[0] ||
+                      'User'
+              })
+
+            if (userError) {
+              console.error('❌ Error creating user:', userError)
+            } else {
+              console.log('✅ User created successfully')
+            }
+
+            // Create user profile
+            const { error: profileError } = await supabase
+              .from('user_profiles')
+              .insert({
+                user_id: session.user.id
+              })
+
+            if (profileError) {
+              console.error('❌ Error creating user profile:', profileError)
+            } else {
+              console.log('✅ User profile created successfully')
+            }
+          } else if (existingUser) {
+            console.log('✅ User profile already exists')
+          }
+        } catch (error) {
+          console.error('❌ Error in user profile creation:', error)
+        }
       }
     })
 
