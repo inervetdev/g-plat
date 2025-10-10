@@ -83,7 +83,7 @@ export const LoginForm: React.FC = () => {
                 type="button"
                 onClick={() => handleSocialLogin('google')}
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="w-full col-span-2 inline-flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -103,32 +103,9 @@ export const LoginForm: React.FC = () => {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <span>Google</span>
+                <span>Google로 계속하기</span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => handleSocialLogin('kakao')}
-                disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-[#FEE500] text-sm font-medium text-[#000000] hover:bg-[#FDD835] disabled:opacity-50"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 3C6.477 3 2 6.477 2 10.75c0 2.762 1.838 5.184 4.595 6.556-.198.734-.752 2.788-.864 3.234-.132.532.195.526.412.383.155-.103 2.492-1.688 3.467-2.349.797.11 1.617.168 2.455.168 5.523 0 9.935-3.477 9.935-7.75S17.523 3 12 3z"/>
-                </svg>
-                <span>Kakao</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleSocialLogin('apple')}
-                disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 border border-gray-300 rounded-md shadow-sm bg-black text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
-              >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                </svg>
-                <span>Apple</span>
-              </button>
             </div>
 
             {error && (

@@ -37,9 +37,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setLoading(false)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
       setUser(session?.user ?? null)
+
+      // OAuth 로그인 시 사용자 프로필 자동 생성
+      if (event === 'SIGNED_IN' && session?.user) {
+        const { data: existingUser } = await supabase
+          .from('users')
+          .select('id')
+          .eq('id', session.user.id)
+          .single()
+
+        if (!existingUser) {
+          // users 테이블에 사용자 생성
+          await supabase
+            .from('users')
+            .insert({
+              id: session.user.id,
+              email: session.user.email!,
+              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User'
+            })
+
+          // user_profiles 테이블에 프로필 생성
+          await supabase
+            .from('user_profiles')
+            .insert({
+              user_id: session.user.id
+            })
+        }
+      }
     })
 
     return () => subscription.unsubscribe()

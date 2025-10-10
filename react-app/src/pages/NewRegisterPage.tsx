@@ -76,8 +76,31 @@ export default function NewRegisterPage() {
     }
   }
 
-  const handleSocialLogin = (provider: string) => {
-    alert(`${provider} 로그인은 준비 중입니다`)
+  const handleSocialLogin = async (provider: string) => {
+    if (provider !== '구글') {
+      alert(`${provider} 로그인은 준비 중입니다`)
+      return
+    }
+
+    setLoading(true)
+    setErrors({})
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      })
+
+      if (error) {
+        setErrors({ general: 'Google 로그인에 실패했습니다' })
+      }
+    } catch (err) {
+      setErrors({ general: 'Google 로그인 중 오류가 발생했습니다' })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
