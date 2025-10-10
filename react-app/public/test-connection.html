@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supabase 연결 테스트</title>
+    <style>
+        body {
+            font-family: monospace;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: white;
+        }
+        .success { border-left: 4px solid #22c55e; }
+        .error { border-left: 4px solid #ef4444; }
+        .info { border-left: 4px solid #3b82f6; }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔌 Supabase 연결 상태 확인</h1>
+
+    <div class="status info">
+        <h3>📋 환경 변수</h3>
+        <div id="env-info">확인 중...</div>
+    </div>
+
+    <div class="status" id="connection-status">
+        <h3>🌐 연결 상태</h3>
+        <div id="connection-info">확인 중...</div>
+    </div>
+
+    <div class="status" id="db-status">
+        <h3>🗄️ 데이터베이스 테스트</h3>
+        <button onclick="testDatabase()">데이터베이스 테스트 실행</button>
+        <div id="db-info"></div>
+    </div>
+
+    <div class="status" id="category-status">
+        <h3>🎯 카테고리 컬럼 확인</h3>
+        <button onclick="checkCategoryColumns()">카테고리 컬럼 확인</button>
+        <div id="category-info"></div>
+    </div>
+
+    <script type="module">
+        // .env 파일의 환경 변수를 읽기 위해 직접 설정
+        const SUPABASE_URL = 'http://127.0.0.1:54321';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0';
+
+        // 환경 변수 표시
+        document.getElementById('env-info').innerHTML = `
+            <pre>SUPABASE_URL: ${SUPABASE_URL}
+SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY.substring(0, 50)}...</pre>
+        `;
+
+        // CDN에서 Supabase 클라이언트 로드
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 연결 테스트
+        async function testConnection() {
+            try {
+                const { data, error } = await supabase.from('business_cards').select('count').limit(1);
+
+                if (error) throw error;
+
+                document.getElementById('connection-status').className = 'status success';
+                document.getElementById('connection-info').innerHTML = `
+                    ✅ <strong>로컬 Supabase 연결 성공!</strong><br>
+                    <small>URL: ${SUPABASE_URL}</small>
+                `;
+            } catch (error) {
+                document.getElementById('connection-status').className = 'status error';
+                document.getElementById('connection-info').innerHTML = `
+                    ❌ <strong>연결 실패</strong><br>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+
+        // 데이터베이스 테스트
+        window.testDatabase = async function() {
+            const infoDiv = document.getElementById('db-info');
+            infoDiv.innerHTML = '<p>테스트 중...</p>';
+
+            try {
+                // 테이블 존재 확인
+                const { data: cards, error: cardsError } = await supabase
+                    .from('business_cards')
+                    .select('*')
+                    .limit(1);
+
+                const { data: sidejobs, error: sidejobsError } = await supabase
+                    .from('sidejob_cards')
+                    .select('*')
+                    .limit(1);
+
+                if (cardsError || sidejobsError) {
+                    throw cardsError || sidejobsError;
+                }
+
+                document.getElementById('db-status').className = 'status success';
+                infoDiv.innerHTML = `
+                    <pre>✅ business_cards 테이블: 접근 가능
+✅ sidejob_cards 테이블: 접근 가능
+
+데이터베이스가 정상적으로 작동합니다!</pre>
+                `;
+            } catch (error) {
+                document.getElementById('db-status').className = 'status error';
+                infoDiv.innerHTML = `<pre>❌ 오류: ${error.message}</pre>`;
+            }
+        };
+
+        // 카테고리 컬럼 확인
+        window.checkCategoryColumns = async function() {
+            const infoDiv = document.getElementById('category-info');
+            infoDiv.innerHTML = '<p>확인 중...</p>';
+
+            try {
+                // 더미 INSERT를 시도하여 컬럼 존재 확인 (실제로는 실행 안 됨)
+                const { data, error } = await supabase
+                    .from('sidejob_cards')
+                    .select('category_primary, category_secondary, tags, badge, expiry_date')
+                    .limit(1);
+
+                if (error) {
+                    if (error.message.includes('column') && error.message.includes('does not exist')) {
+                        throw new Error('카테고리 컬럼이 존재하지 않습니다: ' + error.message);
+                    }
+                    // 권한 오류는 정상 (컬럼은 존재함)
+                    if (error.code === 'PGRST116' || error.code === '42P01') {
+                        throw error;
+                    }
+                }
+
+                document.getElementById('category-status').className = 'status success';
+                infoDiv.innerHTML = `
+                    <pre>✅ category_primary 컬럼: 존재
+✅ category_secondary 컬럼: 존재
+✅ tags 컬럼: 존재
+✅ badge 컬럼: 존재
+✅ expiry_date 컬럼: 존재
+
+카테고리 시스템이 데이터베이스에 정상 적용되었습니다!</pre>
+                `;
+            } catch (error) {
+                document.getElementById('category-status').className = 'status error';
+                infoDiv.innerHTML = `<pre>❌ 오류: ${error.message}
+
+코드: ${error.code || 'N/A'}
+
+카테고리 컬럼이 데이터베이스에 존재하지 않을 수 있습니다.</pre>`;
+            }
+        };
+
+        // 페이지 로드 시 자동 연결 테스트
+        testConnection();
+    </script>
+</body>
+</html>

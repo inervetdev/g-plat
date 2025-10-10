@@ -1,0 +1,69 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]: 🎯
+      - generic [ref=e11]: 지플랫
+    - heading "지금 바로 시작하세요!" [level=1] [ref=e12]
+    - paragraph [ref=e13]:
+      - text: 3분이면 충분합니다
+      - text: 무료로 모바일 명함을 만들고 부업을 시작해보세요
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: ✨
+        - generic [ref=e17]:
+          - heading "무료 시작" [level=3] [ref=e18]
+          - paragraph [ref=e19]: 신용카드 없이 바로 시작
+      - generic [ref=e20]:
+        - generic [ref=e21]: 🚀
+        - generic [ref=e22]:
+          - heading "3분 완성" [level=3] [ref=e23]
+          - paragraph [ref=e24]: 빠르고 간편한 명함 제작
+      - generic [ref=e25]:
+        - generic [ref=e26]: 📈
+        - generic [ref=e27]:
+          - heading "실시간 통계" [level=3] [ref=e28]
+          - paragraph [ref=e29]: 방문자 분석과 성과 측정
+  - generic [ref=e30]:
+    - link "← 홈으로 돌아가기" [ref=e31] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e32]:
+      - heading "회원가입" [level=2] [ref=e33]
+      - paragraph [ref=e34]: 지플랫 계정을 만들어보세요
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - generic [ref=e37]: 이름
+        - textbox "이름" [ref=e38]: 테스트유저
+      - generic [ref=e39]:
+        - generic [ref=e40]: 이메일
+        - textbox "이메일" [ref=e41]: test1760021576960@example.com
+      - generic [ref=e42]:
+        - generic [ref=e43]: 비밀번호
+        - textbox "비밀번호" [active] [ref=e44]: Test123456!
+      - generic [ref=e45]:
+        - generic [ref=e46]: 비밀번호 확인
+        - textbox "비밀번호 확인" [ref=e47]
+      - generic [ref=e49] [cursor=pointer]:
+        - checkbox "이용약관 및 개인정보처리방침에 동의합니다" [ref=e50]
+        - generic [ref=e51] [cursor=pointer]:
+          - link "이용약관" [ref=e52] [cursor=pointer]:
+            - /url: /terms
+          - text: 및
+          - link "개인정보처리방침" [ref=e53] [cursor=pointer]:
+            - /url: /privacy
+          - text: 에 동의합니다
+      - button "무료로 시작하기" [ref=e54] [cursor=pointer]
+      - generic [ref=e57]: 또는
+      - generic [ref=e59]:
+        - button "카카오로 시작하기" [ref=e60] [cursor=pointer]: 카카오로 시작하기
+        - button "네이버로 시작하기" [ref=e62] [cursor=pointer]: 네이버로 시작하기
+        - button "구글로 시작하기" [ref=e64] [cursor=pointer]:
+          - img [ref=e65] [cursor=pointer]
+          - text: 구글로 시작하기
+    - generic [ref=e70]:
+      - text: 이미 계정이 있으신가요?
+      - link "로그인" [ref=e71] [cursor=pointer]:
+        - /url: /login
+```

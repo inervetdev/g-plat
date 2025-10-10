@@ -137,10 +137,17 @@ The project has three parallel implementations:
      - User authentication with Supabase Auth
      - Business card CRUD operations
      - Custom URL validation and duplicate checking
-     - Sidejob cards management system
+     - Sidejob cards management system with categories (2025.10.10 ✅)
+       * 5 Primary categories, 16 Secondary categories
+       * Category-based CTA auto-suggestion
+       * Badge, expiry date, pricing display
+     - Supabase Storage integration (2025.10.10 ✅)
+       * Image upload (max 5MB, JPG/PNG/WEBP/GIF)
+       * 4 RLS policies for security
      - Visitor statistics and analytics dashboard
      - Real-time data synchronization
      - Dashboard with metrics display
+     - CardViewPage integration with sidejob cards (2025.10.10 ✅)
 
 2. **Node.js/Express Server** (`standalone-server.js`) - Legacy
    - Simple Express server serving static HTML
@@ -245,11 +252,26 @@ The project has three parallel implementations:
   - ✅ Business card CRUD with custom URL
   - ✅ Custom URL validation and duplicate checking
   - ✅ Sidejob cards management (CRUD, ordering, drag-and-drop)
+  - ✅ **Sidejob cards category system (2025.10.10)**
+    - 5 Primary categories: 쇼핑/판매, 교육/콘텐츠, 서비스/예약, 구독/멤버십, 프로모션/혜택
+    - 16 Secondary categories with smart categorization
+    - Category-based CTA text auto-suggestion
+    - Category badges with color coding
+    - Badge, expiry date, pricing display
   - ✅ Sidejob cards linked to specific business cards (many-to-many support)
   - ✅ Business card + Sidejob card integrated preview
-  - ✅ Sidejob image upload to Supabase Storage
+  - ✅ **Supabase Storage integration (2025.10.10)**
+    - sidejob-cards storage bucket (local)
+    - Image upload (max 5MB, JPG/PNG/WEBP/GIF)
+    - 4 RLS policies (INSERT, UPDATE, DELETE, SELECT)
+    - User-specific folder structure: sidejob-images/{user_id}/
   - ✅ Storage RLS policies for secure file uploads
   - ✅ Dashboard card preview modal with unified view
+  - ✅ **CardViewPage integration improvements (2025.10.10)**
+    - Refactored to use CardWithSideJobs component
+    - Sidejob cards auto-display on actual card pages (/card/:id)
+    - Image click → CTA link navigation
+    - Active sidejob filtering in preview modals
   - ✅ Visitor statistics dashboard (Recharts)
   - ✅ Real-time data synchronization
   - ✅ RLS policies for security
@@ -264,7 +286,7 @@ The project has three parallel implementations:
   - ✅ Analytics dashboard with charts and visitor tracking
   - ✅ Profile image and company logo upload
   - ✅ Supabase local development environment
-  - ✅ Database migrations for QR system
+  - ✅ Database migrations for QR system and sidejob categories
   - ✅ Playwright E2E testing setup
   - ✅ Supabase MCP integration
   - ✅ Social login UI (Google, Kakao, Apple) - ready for OAuth configuration
@@ -279,19 +301,26 @@ The project has three parallel implementations:
 - **Technology Strategy**: Continue with React for rapid MVP development, evaluate Next.js migration based on user feedback and scaling needs
 
 ### Next Steps
-1. **Phase 3 Development**:
+1. **Production Deployment (Immediate)**:
+   - Deploy sidejob category system to production
+   - Create sidejob-cards storage bucket in production Supabase
+   - Apply storage migration to production database
+   - Test end-to-end flow in production environment
+2. **Phase 3 Development**:
    - Callback automation system
    - SMS integration with Twilio/Aligo
    - Payment system integration (Stripe/Toss Payments)
    - Korean domain (.한국) registration system
-2. **Performance Optimization**:
+3. **Performance Optimization**:
    - Image optimization and lazy loading
    - Code splitting and bundle size reduction
    - Caching strategy implementation
-3. **Analytics Enhancement**:
+   - CDN configuration for uploaded images
+4. **Analytics Enhancement**:
    - Conversion funnel tracking
    - A/B testing framework
    - User behavior heatmaps
+   - Category-based analytics for sidejob cards
 
 ## Database Schema
 The MySQL database (`gplat`) includes tables for users, business cards, side business cards, analytics, and callback management. Schema initialization is in `sql/init.sql`.

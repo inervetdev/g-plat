@@ -216,10 +216,16 @@ export type Database = {
           price: string | null
           cta_text: string | null
           cta_link: string | null
+          business_card_id: string | null
           display_order: number
           is_active: boolean
           view_count: number
           click_count: number
+          category_primary: 'shopping' | 'education' | 'service' | 'subscription' | 'promotion' | null
+          category_secondary: string | null
+          tags: any | null
+          badge: string | null
+          expiry_date: string | null
           created_at: string
           updated_at: string
         }
@@ -232,10 +238,16 @@ export type Database = {
           price?: string | null
           cta_text?: string | null
           cta_link?: string | null
+          business_card_id?: string | null
           display_order?: number
           is_active?: boolean
           view_count?: number
           click_count?: number
+          category_primary?: 'shopping' | 'education' | 'service' | 'subscription' | 'promotion' | null
+          category_secondary?: string | null
+          tags?: any | null
+          badge?: string | null
+          expiry_date?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -248,10 +260,16 @@ export type Database = {
           price?: string | null
           cta_text?: string | null
           cta_link?: string | null
+          business_card_id?: string | null
           display_order?: number
           is_active?: boolean
           view_count?: number
           click_count?: number
+          category_primary?: 'shopping' | 'education' | 'service' | 'subscription' | 'promotion' | null
+          category_secondary?: string | null
+          tags?: any | null
+          badge?: string | null
+          expiry_date?: string | null
           created_at?: string
           updated_at?: string
         }

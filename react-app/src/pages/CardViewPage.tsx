@@ -1,20 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { useTheme } from '../contexts/ThemeContext'
-import { TrendyCard } from '../components/themes/TrendyCard'
-import { AppleCard } from '../components/themes/AppleCard'
-import { ProfessionalCard } from '../components/themes/ProfessionalCard'
-import { SimpleCard } from '../components/themes/SimpleCard'
-import { DefaultCard } from '../components/themes/DefaultCard'
+import CardWithSideJobs from '../components/CardWithSideJobs'
 
 export default function CardViewPage() {
   const { userId } = useParams<{ userId: string }>()
-  const { theme } = useTheme()
   const [loading, setLoading] = useState(true)
   const [userExists, setUserExists] = useState(false)
-  const [cardTheme, setCardTheme] = useState(theme)
-  const [cardId, setCardId] = useState<string | null>(null)
+  const [businessCard, setBusinessCard] = useState<any>(null)
+  const [sideJobCards, setSideJobCards] = useState<any[]>([])
 
   useEffect(() => {
     if (userId) {
@@ -54,8 +48,20 @@ export default function CardViewPage() {
 
       if (cardByUrl && !urlError) {
         setUserExists(true)
-        setCardTheme(cardByUrl.theme || 'trendy')
-        setCardId(cardByUrl.id)
+        setBusinessCard(cardByUrl)
+
+        // 부가명함 로드
+        const { data: sideJobs } = await supabase
+          .from('sidejob_cards')
+          .select('*')
+          .eq('is_active', true)
+          .or(`business_card_id.is.null,business_card_id.eq.${cardByUrl.id}`)
+          .eq('user_id', cardByUrl.user_id)
+          .order('display_order', { ascending: true })
+
+        if (sideJobs) {
+          setSideJobCards(sideJobs)
+        }
 
         // 방문 통계 기록
         await recordVisitorStats(cardByUrl.user_id)
@@ -80,8 +86,20 @@ export default function CardViewPage() {
 
       if (cardById && !idError) {
         setUserExists(true)
-        setCardTheme(cardById.theme || 'trendy')
-        setCardId(cardById.id)
+        setBusinessCard(cardById)
+
+        // 부가명함 로드
+        const { data: sideJobs } = await supabase
+          .from('sidejob_cards')
+          .select('*')
+          .eq('is_active', true)
+          .or(`business_card_id.is.null,business_card_id.eq.${cardById.id}`)
+          .eq('user_id', cardById.user_id)
+          .order('display_order', { ascending: true })
+
+        if (sideJobs) {
+          setSideJobCards(sideJobs)
+        }
 
         // 방문 통계 기록
         await recordVisitorStats(cardById.user_id)
@@ -107,8 +125,21 @@ export default function CardViewPage() {
 
       if (primaryCard && !primaryError) {
         setUserExists(true)
-        setCardTheme(primaryCard.theme || 'trendy')
-        setCardId(primaryCard.id)
+        setBusinessCard(primaryCard)
+
+        // 부가명함 로드
+        const { data: sideJobs } = await supabase
+          .from('sidejob_cards')
+          .select('*')
+          .eq('is_active', true)
+          .or(`business_card_id.is.null,business_card_id.eq.${primaryCard.id}`)
+          .eq('user_id', primaryCard.user_id)
+          .order('display_order', { ascending: true })
+
+        if (sideJobs) {
+          setSideJobCards(sideJobs)
+        }
+
         setLoading(false)
         return
       }
@@ -124,8 +155,21 @@ export default function CardViewPage() {
 
       if (anyCard && !anyError) {
         setUserExists(true)
-        setCardTheme(anyCard.theme || 'trendy')
-        setCardId(anyCard.id)
+        setBusinessCard(anyCard)
+
+        // 부가명함 로드
+        const { data: sideJobs } = await supabase
+          .from('sidejob_cards')
+          .select('*')
+          .eq('is_active', true)
+          .or(`business_card_id.is.null,business_card_id.eq.${anyCard.id}`)
+          .eq('user_id', anyCard.user_id)
+          .order('display_order', { ascending: true })
+
+        if (sideJobs) {
+          setSideJobCards(sideJobs)
+        }
+
         setLoading(false)
         return
       }
@@ -139,17 +183,6 @@ export default function CardViewPage() {
 
       if (userData && !userError) {
         setUserExists(true)
-
-        // Load user's profile theme as fallback
-        const { data: profileData } = await supabase
-          .from('user_profiles')
-          .select('theme')
-          .eq('user_id', userId)
-          .single()
-
-        if (profileData?.theme) {
-          setCardTheme(profileData.theme)
-        }
       } else {
         setUserExists(false)
       }
@@ -186,20 +219,31 @@ export default function CardViewPage() {
     )
   }
 
-  // Render the appropriate theme component based on card's theme
-  const cardIdOrUserId = cardId || userId
-
-  switch (cardTheme) {
-    case 'apple':
-      return <AppleCard userId={cardIdOrUserId} />
-    case 'professional':
-      return <ProfessionalCard userId={cardIdOrUserId} />
-    case 'simple':
-      return <SimpleCard userId={cardIdOrUserId} />
-    case 'default':
-      return <DefaultCard userId={cardIdOrUserId} />
-    case 'trendy':
-    default:
-      return <TrendyCard userId={cardIdOrUserId} />
+  // Render the business card with sidejob cards
+  if (businessCard) {
+    return (
+      <div className="min-h-screen bg-gray-100 py-8">
+        <CardWithSideJobs
+          businessCard={businessCard}
+          sideJobCards={sideJobCards}
+        />
+      </div>
+    )
   }
+
+  // No business card found
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">명함을 찾을 수 없습니다</h2>
+        <p className="text-gray-600 mb-6">요청하신 명함이 존재하지 않거나 삭제되었습니다.</p>
+        <a
+          href="/"
+          className="inline-block px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+        >
+          홈으로 돌아가기
+        </a>
+      </div>
+    </div>
+  )
 }

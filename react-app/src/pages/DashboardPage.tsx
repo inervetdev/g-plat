@@ -283,7 +283,7 @@ function DashboardPage() {
                 <CardWithSideJobs
                   businessCard={businessCards.find(c => c.id === selectedCardId)!}
                   sideJobCards={sideJobCards.filter(sj =>
-                    !sj.business_card_id || sj.business_card_id === selectedCardId
+                    sj.is_active && (!sj.business_card_id || sj.business_card_id === selectedCardId)
                   )}
                 />
               </div>

@@ -3,6 +3,8 @@ import { ProfessionalCard } from './themes/ProfessionalCard'
 import { TrendyCard } from './themes/TrendyCard'
 import { AppleCard } from './themes/AppleCard'
 import { DefaultCard } from './themes/DefaultCard'
+import type { CategoryPrimary } from '../types/sidejob'
+import { CATEGORY_CONFIG, isCardExpired, isCardExpiringSoon } from '../types/sidejob'
 
 interface BusinessCard {
   id: string
@@ -30,7 +32,11 @@ interface SideJobCard {
   image_url: string | null
   price: string | null
   cta_text: string | null
-  cta_url: string | null
+  cta_link: string | null
+  category_primary: CategoryPrimary | null
+  category_secondary: string | null
+  badge: string | null
+  expiry_date: string | null
   is_active: boolean
 }
 
@@ -78,13 +84,29 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
               }`}
             >
               <div className="p-6 hover:bg-gray-50 transition-colors">
+                {/* Badge and Expiry Notice */}
+                {(sideJob.badge || (sideJob.expiry_date && !isCardExpired(sideJob.expiry_date))) && (
+                  <div className="flex gap-2 mb-3">
+                    {sideJob.badge && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-red-500 text-white">
+                        {sideJob.badge}
+                      </span>
+                    )}
+                    {sideJob.expiry_date && !isCardExpired(sideJob.expiry_date) && isCardExpiringSoon(sideJob.expiry_date) && (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-orange-500 text-white">
+                        ⏰ {new Date(sideJob.expiry_date).toLocaleDateString()}까지
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 <div className="flex gap-4">
                   {/* 이미지 */}
                   {sideJob.image_url && (
                     <div className="w-24 h-24 flex-shrink-0">
-                      {sideJob.cta_url ? (
+                      {sideJob.cta_link ? (
                         <a
-                          href={sideJob.cta_url}
+                          href={sideJob.cta_link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="block w-full h-full"
@@ -107,9 +129,21 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
 
                   {/* 내용 */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">
-                      {sideJob.title}
-                    </h3>
+                    <div className="flex items-start gap-2 mb-1">
+                      <h3 className="text-lg font-semibold text-gray-900 truncate flex-1">
+                        {sideJob.title}
+                      </h3>
+                      {/* Category Badge */}
+                      {sideJob.category_primary && (
+                        <span
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white flex-shrink-0"
+                          style={{ backgroundColor: CATEGORY_CONFIG[sideJob.category_primary].color }}
+                          title={`${CATEGORY_CONFIG[sideJob.category_primary].label}${sideJob.category_secondary ? ` · ${sideJob.category_secondary}` : ''}`}
+                        >
+                          {sideJob.category_secondary || CATEGORY_CONFIG[sideJob.category_primary].label.replace(/^.+\s/, '')}
+                        </span>
+                      )}
+                    </div>
                     {sideJob.description && (
                       <p className="text-sm text-gray-600 mb-2 line-clamp-2">
                         {sideJob.description}
@@ -121,9 +155,9 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
                           {sideJob.price}
                         </span>
                       )}
-                      {sideJob.cta_text && sideJob.cta_url && (
+                      {sideJob.cta_text && sideJob.cta_link && (
                         <a
-                          href={sideJob.cta_url}
+                          href={sideJob.cta_link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"

@@ -458,12 +458,20 @@
 - [x] 모바일 반응형 UI - **완료**
 - [ ] 한글 도메인 시스템 - **진행 예정**
 
-#### 현재 상태 (2025년 10월 2일) - **✅ Phase 1 & 2 완료, 프로덕션 배포 완료**
+#### 현재 상태 (2025년 10월 10일) - **✅ Phase 1 & 2 완료, 프로덕션 배포 완료**
 - ✅ React 18 + TypeScript + Vite로 개발 환경 구성 완료
 - ✅ Supabase 통합 (Auth, Database, Realtime, Storage, Edge Functions) 완료
 - ✅ 명함 CRUD 기능 구현 완료
 - ✅ 커스텀 URL 검증 시스템 구현 완료
 - ✅ 부업 카드 관리 시스템 구현 완료 (드래그 앤 드롭 포함)
+- ✅ **부업 카드 카테고리 시스템 구현 완료 (2025.10.10)**
+  - 5개 Primary 카테고리, 16개 Secondary 카테고리
+  - 카테고리 기반 CTA 자동 제안
+  - 배지, 유효기간, 가격 표시 기능
+- ✅ **Supabase Storage 통합 완료 (2025.10.10)**
+  - sidejob-cards 스토리지 버킷 (로컬)
+  - 이미지 업로드 (최대 5MB)
+  - 4개 RLS 정책 적용
 - ✅ 방문자 통계 대시보드 구현 완료
 - ✅ QR 코드 생성 및 추적 기능 구현 완료 (전체)
 - ✅ QR 코드 리다이렉트 Edge Function 구현 완료 (스캔 추적 포함)
@@ -476,6 +484,10 @@
   - auto-update 트리거 설정
 - ✅ 디바이스/브라우저/OS 감지 및 분석 기능 구현 완료
 - ✅ 다중 카드 테마 지원 (Trendy, Apple, Professional, Simple, Default)
+- ✅ **명함 페이지 통합 개선 완료 (2025.10.10)**
+  - CardViewPage 리팩토링 (CardWithSideJobs 사용)
+  - 실제 명함 페이지에서 부가명함 자동 표시
+  - 이미지 클릭 → CTA 링크 연결
 - ✅ Vercel 프로덕션 배포 완료 (커스텀 도메인 연결)
 - ✅ GitHub 저장소 연동 완료
 - ✅ Supabase 로컬 개발 환경 설정 완료
@@ -494,6 +506,17 @@
 
 #### 주요 개발 항목
 - [x] 부업 카드 시스템 - **완료**
+- [x] **부업 카드 카테고리 시스템 (2025.10.10)** - **완료**
+  - 5개 Primary 카테고리: 쇼핑/판매, 교육/콘텐츠, 서비스/예약, 구독/멤버십, 프로모션/혜택
+  - 16개 Secondary 카테고리 (식품·건강, 온라인 강의, 디자인·제작 등)
+  - 카테고리 기반 CTA 텍스트 자동 제안
+  - 카테고리 배지 및 색상 코딩
+  - 배지, 유효기간, 가격 표시 UI
+- [x] **Supabase Storage 통합 (2025.10.10)** - **완료**
+  - sidejob-cards 스토리지 버킷 생성 (로컬)
+  - 이미지 업로드 기능 (최대 5MB, JPG/PNG/WEBP/GIF)
+  - 4개 RLS 정책 (INSERT, UPDATE, DELETE, SELECT)
+  - 사용자별 폴더 구조: `sidejob-images/{user_id}/{timestamp}.{ext}`
 - [x] 실시간 통계 대시보드 - **완료**
 - [x] QR 코드 생성 및 전체 추적 시스템 - **완료**
 - [x] QR 코드 리다이렉트 Edge Function - **완료**
@@ -504,11 +527,18 @@
 - [x] 프로덕션 데이터베이스 스키마 배포 - **완료**
   - qr_codes 테이블 (scan_count 컬럼 포함)
   - qr_scans 테이블 (browser, os 컬럼 포함)
-  - 8개 RLS 정책 (사용자별 접근 제어)
-  - 7개 인덱스 (성능 최적화)
+  - sidejob_cards 테이블 (category_primary, category_secondary, tags, badge, expiry_date)
+  - 8개 RLS 정책 (QR 시스템)
+  - 4개 RLS 정책 (Storage)
+  - 10개 인덱스 (성능 최적화)
   - qr_code_analytics 뷰 (통합 분석)
   - auto-update 트리거
 - [x] 스캔 분석 (디바이스, 브라우저, OS, referrer) - **완료**
+- [x] **명함 페이지 통합 개선 (2025.10.10)** - **완료**
+  - CardViewPage 리팩토링 (CardWithSideJobs 사용)
+  - 실제 명함 페이지에서 부가명함 자동 표시
+  - 이미지 클릭 시 CTA 링크 연결
+  - 대시보드 미리보기 모달 활성 부가명함 필터링
 - [x] 프로덕션 배포 및 도메인 연결 - **완료**
 - [x] Supabase 로컬 개발 환경 - **완료**
 - [x] Playwright E2E 테스트 설정 - **완료**
@@ -520,6 +550,7 @@
 - Week 7-8: ✅ 통계 시스템, QR 코드, 프로덕션 배포 완료
 - Week 9: ✅ QR Edge Function, 스캔 추적, 로컬 개발 환경, E2E 테스트
 - Week 9-10: ✅ QR 시스템 프로덕션 배포 (Edge Function + DB Schema)
+- Week 10: ✅ 부가명함 카테고리 시스템, Storage 통합, 명함 페이지 통합 개선
 
 ### Phase 3: 고급 기능 및 확장 (3개월차) - **진행 예정**
 **목표**: 차별화 기능 완성 및 서비스 확장
@@ -607,12 +638,38 @@
 
 ---
 
-*문서 버전: 1.8*
+*문서 버전: 1.9*
 *작성일: 2025년 1월*
-*최종 수정일: 2025년 10월 7일*
+*최종 수정일: 2025년 10월 10일*
 *다음 검토일: 2025년 11월*
 
 ### 변경 이력
+- v1.9 (2025.10.10): 부가명함 카테고리 시스템 및 스토리지 기능 완료
+  - ✅ 부가명함 카테고리 시스템 구현 완료
+    - 5개 Primary 카테고리: 쇼핑/판매, 교육/콘텐츠, 서비스/예약, 구독/멤버십, 프로모션/혜택
+    - 카테고리별 Secondary 옵션 (총 16개 세부 카테고리)
+    - 카테고리 기반 CTA 텍스트 자동 제안 시스템
+    - 카테고리 배지 및 아이콘 표시 기능
+  - ✅ Supabase Storage 통합 완료
+    - sidejob-cards 스토리지 버킷 생성 (로컬)
+    - RLS 정책 4개 적용 (INSERT, UPDATE, DELETE, SELECT)
+    - 이미지 업로드 기능 (최대 5MB, JPG/PNG/WEBP/GIF)
+    - 파일 구조: `sidejob-cards/sidejob-images/{user_id}/{timestamp}.{ext}`
+  - ✅ 부가명함 UI/UX 개선
+    - React state closure 문제 수정 (formData 업데이트)
+    - 카테고리 선택 UI 구현 (Primary → Secondary 2단계)
+    - 이미지 미리보기 및 삭제 기능
+    - 배지, 유효기간, 가격 표시 기능
+  - ✅ 명함 페이지 통합 개선
+    - CardViewPage를 CardWithSideJobs 컴포넌트로 리팩토링
+    - 실제 명함 페이지(/card/:id)에서 부가명함 자동 표시
+    - 이미지 클릭 시 CTA 링크 연결 수정 (cta_url → cta_link)
+    - 대시보드 미리보기 모달에서 활성 부가명함 필터링
+  - ✅ 데이터베이스 마이그레이션
+    - sidejob_cards 테이블에 category_primary, category_secondary 컬럼 추가
+    - tags (JSONB), badge (TEXT), expiry_date (TIMESTAMPTZ) 컬럼 추가
+    - 인덱스 3개 추가: idx_sidejob_category, idx_sidejob_expiry, idx_sidejob_tags
+    - Storage 마이그레이션 파일 작성 (20251010000001_create_sidejob_storage.sql)
 - v1.8 (2025.10.07): Phase 2 통합 시스템 프로덕션 배포 완료
   - ✅ 명함+부가명함 통합 시스템 Vercel 프로덕션 배포 완료
   - ✅ TypeScript 빌드 에러 수정 완료
