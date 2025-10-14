@@ -161,13 +161,18 @@
 ### 5.1 사용자 인증 및 계정 관리
 
 #### 5.1.1 회원가입
-- **이메일 가입**
+- **이메일 가입** - **✅ 완료**
   - 이메일 중복 검사
   - 이메일 인증 (OTP)
   - 비밀번호 강도 검증
-- **소셜 로그인**
+- **소셜 로그인** - **✅ Google OAuth 완료 (v1.10)**
   - OAuth 2.0 기반
-  - 카카오, 네이버, 구글 지원
+  - **Google 로그인 프로덕션 배포 완료 (2025.10.10)**
+    - Database Trigger 기반 자동 사용자 생성
+    - SECURITY DEFINER 함수로 권한 관리
+    - RLS 정책 강화 (클라이언트 INSERT 제거)
+    - Exception handling으로 안정성 확보
+  - Kakao, Apple 지원 예정 (Phase 3)
   - 최초 로그인 시 추가 정보 수집
 
 #### 5.1.2 프로필 관리
@@ -458,11 +463,17 @@
 - [x] 모바일 반응형 UI - **완료**
 - [ ] 한글 도메인 시스템 - **진행 예정**
 
-#### 현재 상태 (2025년 10월 10일) - **✅ Phase 1 & 2 완료, v1.9.1 프로덕션 배포 완료**
+#### 현재 상태 (2025년 10월 10일) - **✅ Phase 1 & 2 완료, v1.10 프로덕션 배포 완료**
 - ✅ React 18 + TypeScript + Vite로 개발 환경 구성 완료
 - ✅ Supabase 통합 (Auth, Database, Realtime, Storage, Edge Functions) 완료
 - ✅ 명함 CRUD 기능 구현 완료
 - ✅ 커스텀 URL 검증 시스템 구현 완료
+- ✅ **사용자 인증 시스템 완료 (2025.10.10)**
+  - 이메일/비밀번호 로그인/회원가입 구현 완료
+  - **Google OAuth 소셜 로그인 프로덕션 배포 완료 (v1.10)**
+  - Database Trigger 기반 사용자 자동 생성 (industry standard)
+  - RLS 정책 강화 (클라이언트 INSERT 제거, 보안 개선)
+  - Kakao, Apple OAuth 준비 완료 (Phase 3)
 - ✅ 부업 카드 관리 시스템 구현 완료 (드래그 앤 드롭 포함)
 - ✅ **부업 카드 카테고리 시스템 프로덕션 배포 완료 (2025.10.10)**
   - 5개 Primary 카테고리, 16개 Secondary 카테고리
@@ -648,12 +659,42 @@
 
 ---
 
-*문서 버전: 1.9.1*
+*문서 버전: 1.10*
 *작성일: 2025년 1월*
 *최종 수정일: 2025년 10월 10일*
 *다음 검토일: 2025년 11월*
 
 ### 변경 이력
+- v1.10 (2025.10.10): Google OAuth 소셜 로그인 프로덕션 배포 완료
+  - ✅ **Google OAuth 2.0 인증 완료**
+    - Google Cloud Console OAuth 클라이언트 설정
+    - Supabase Auth Google 프로바이더 활성화
+    - Authorized JavaScript origins: https://g-plat.com, http://localhost:5173
+    - Authorized redirect URIs: Supabase callback URL
+  - ✅ **Database Trigger 기반 사용자 생성 (Industry Standard)**
+    - Migration: 20251010000003_proper_oauth_trigger.sql
+    - PostgreSQL TRIGGER on auth.users table
+    - SECURITY DEFINER function for privilege escalation
+    - Automatic users/user_profiles creation on OAuth sign-in
+    - Exception handling (RAISE WARNING, don't fail auth)
+    - ON CONFLICT DO NOTHING for idempotency
+  - ✅ **RLS 보안 정책 강화**
+    - 클라이언트에서 users/user_profiles INSERT 제거
+    - SELECT, UPDATE만 클라이언트에서 허용
+    - Trigger에서만 INSERT 수행 (더 안전한 구조)
+  - ✅ **AuthContext 단순화**
+    - 클라이언트 사이드 사용자 생성 로직 제거
+    - Database trigger가 모든 처리 담당
+    - onAuthStateChange 이벤트 처리 개선
+  - ✅ **프로덕션 검증 완료**
+    - Vercel 자동 배포 완료
+    - g-plat.com에서 Google 로그인 정상 동작
+    - 로컬 개발 환경 (localhost:5173) 정상 동작
+    - 사용자 생성 및 리다이렉트 검증 완료
+  - ✅ **UI 개선**
+    - LoginForm.tsx: Google 로그인 버튼만 표시 (Kakao/Apple 제거)
+    - NewLoginPage.tsx: Google OAuth 구현, Kakao는 준비중 알림
+    - NewRegisterPage.tsx: 회원가입 페이지도 Google OAuth 지원
 - v1.9.1 (2025.10.10): 부가명함 카테고리 시스템 프로덕션 배포 완료
   - ✅ **프로덕션 배포 완료**
     - GitHub 커밋: d0728ab

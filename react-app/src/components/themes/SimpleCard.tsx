@@ -108,6 +108,23 @@ export function SimpleCard({ userId }: { userId: string }) {
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-3">소개</h2>
             <p className="text-sm text-gray-600 leading-relaxed">{cardData.introduction}</p>
+
+            {/* Attachment Download Button */}
+            {cardData.attachment_url && (
+              <a
+                href={cardData.attachment_url}
+                download={cardData.attachment_filename}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 hover:border-blue-300 transition-all group"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">📎</span>
+                  <span className="text-gray-700 font-medium text-sm">{cardData.attachment_title || '첨부파일'}</span>
+                </div>
+                <span className="text-gray-400 group-hover:text-blue-500 transition-colors">↓</span>
+              </a>
+            )}
           </div>
         )}
 

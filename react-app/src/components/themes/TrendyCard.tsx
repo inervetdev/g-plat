@@ -11,6 +11,9 @@ interface CardData {
   introduction?: string
   services?: string[]
   profileImage?: string
+  attachment_title?: string
+  attachment_url?: string
+  attachment_filename?: string
 }
 
 export function TrendyCard({ userId }: { userId: string }) {
@@ -41,7 +44,10 @@ export function TrendyCard({ userId }: { userId: string }) {
           website: businessCard.website || '',
           introduction: businessCard.introduction || '',
           services: businessCard.services || [],
-          profileImage: businessCard.profile_image || ''
+          profileImage: businessCard.profile_image || '',
+          attachment_title: businessCard.attachment_title || '',
+          attachment_url: businessCard.attachment_url || '',
+          attachment_filename: businessCard.attachment_filename || ''
         })
       } else {
         // Fallback to user data
@@ -167,6 +173,23 @@ export function TrendyCard({ userId }: { userId: string }) {
         {cardData.introduction && (
           <div className="mb-8 p-6 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-2xl border border-gray-800 animate-fadeInUp animation-delay-200">
             <p className="text-gray-300 leading-relaxed">{cardData.introduction}</p>
+
+            {/* Attachment Download Button */}
+            {cardData.attachment_url && (
+              <a
+                href={cardData.attachment_url}
+                download={cardData.attachment_filename}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 flex items-center justify-between p-3 bg-gray-800 bg-opacity-70 rounded-xl border border-gray-700 hover:border-green-400 transition-all duration-300 group"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">📎</span>
+                  <span className="text-gray-300 font-medium">{cardData.attachment_title || '첨부파일'}</span>
+                </div>
+                <span className="text-gray-600 group-hover:text-green-400 transition-colors">↓</span>
+              </a>
+            )}
           </div>
         )}
 

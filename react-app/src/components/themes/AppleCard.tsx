@@ -168,6 +168,23 @@ export function AppleCard({ userId }: { userId: string }) {
             </div>
             <div className="px-4 py-3">
               <p className="text-sm text-gray-600 leading-relaxed">{cardData.introduction}</p>
+
+              {/* Attachment Download Button */}
+              {cardData.attachment_url && (
+                <a
+                  href={cardData.attachment_url}
+                  download={cardData.attachment_filename}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">📎</span>
+                    <span className="text-gray-700 font-normal text-sm">{cardData.attachment_title || '첨부파일'}</span>
+                  </div>
+                  <span className="text-blue-500 text-sm">↓</span>
+                </a>
+              )}
             </div>
           </div>
         )}

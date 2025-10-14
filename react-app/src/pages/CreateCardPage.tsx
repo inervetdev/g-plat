@@ -11,6 +11,8 @@ export default function CreateCardPage() {
   const [urlAvailable, setUrlAvailable] = useState<boolean | null>(null)
   const [checkingUrl, setCheckingUrl] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null)
+  const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const [formData, setFormData] = useState<{
     name: string
     title: string
@@ -31,6 +33,7 @@ export default function CreateCardPage() {
     skills: string
     theme: ThemeName
     custom_url: string
+    attachment_title: string
   }>({
     name: '',
     title: '',
@@ -50,7 +53,8 @@ export default function CreateCardPage() {
     services: '',
     skills: '',
     theme: theme || 'trendy',
-    custom_url: ''
+    custom_url: '',
+    attachment_title: ''
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -90,6 +94,58 @@ export default function CreateCardPage() {
     }
   }
 
+  const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Validate file size (max 10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('파일 크기는 10MB 이하여야 합니다.')
+        return
+      }
+      setAttachmentFile(file)
+    }
+  }
+
+  const uploadAttachment = async (file: File, userId: string): Promise<{ url: string; filename: string; size: number } | null> => {
+    try {
+      setUploadingAttachment(true)
+      console.log('📤 Starting attachment upload...', file.name)
+
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${Date.now()}.${fileExt}`
+      const filePath = `${userId}/${fileName}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('card-attachments')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (uploadError) {
+        console.error('❌ Upload error:', uploadError)
+        throw uploadError
+      }
+
+      const { data } = supabase.storage
+        .from('card-attachments')
+        .getPublicUrl(filePath)
+
+      console.log('✅ Upload successful:', data.publicUrl)
+      return {
+        url: data.publicUrl,
+        filename: file.name,
+        size: file.size
+      }
+    } catch (error) {
+      console.error('💥 Error uploading attachment:', error)
+      alert(`파일 업로드 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
+      return null
+    } finally {
+      setUploadingAttachment(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -106,6 +162,16 @@ export default function CreateCardPage() {
       // services와 skills를 배열로 변환
       const servicesArray = formData.services.split(',').map(s => s.trim()).filter(s => s)
       const skillsArray = formData.skills.split(',').map(s => s.trim()).filter(s => s)
+
+      // Upload attachment if selected
+      let attachmentData = null
+      if (attachmentFile) {
+        attachmentData = await uploadAttachment(attachmentFile, user.id)
+        if (!attachmentData) {
+          setLoading(false)
+          return // Upload failed
+        }
+      }
 
       const { data, error } = await supabase
         .from('business_cards')
@@ -130,6 +196,10 @@ export default function CreateCardPage() {
           skills: skillsArray,
           theme: formData.theme,
           custom_url: formData.custom_url || null,
+          attachment_title: formData.attachment_title || null,
+          attachment_url: attachmentData?.url || null,
+          attachment_filename: attachmentData?.filename || null,
+          attachment_size: attachmentData?.size || null,
           is_primary: true // 첫 명함은 대표 명함으로
         })
         .select()
@@ -353,6 +423,46 @@ export default function CreateCardPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      첨부파일 제목
+                    </label>
+                    <input
+                      type="text"
+                      name="attachment_title"
+                      value={formData.attachment_title}
+                      onChange={handleChange}
+                      placeholder="예: 사업계획서, 포트폴리오"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      파일 다운로드 버튼에 표시될 이름
+                    </p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      파일 업로드
+                    </label>
+                    <input
+                      type="file"
+                      onChange={handleAttachmentChange}
+                      accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                    {attachmentFile && (
+                      <p className="text-sm text-green-600 mt-1">
+                        선택됨: {attachmentFile.name} ({(attachmentFile.size / 1024).toFixed(1)}KB)
+                      </p>
+                    )}
+                    {uploadingAttachment && (
+                      <p className="text-sm text-blue-600 mt-1">파일 업로드 중...</p>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      최대 10MB, PDF/DOC/PPT/XLS/이미지 파일
+                    </p>
+                  </div>
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     제공 서비스 (쉼표로 구분)
@@ -473,10 +583,10 @@ export default function CreateCardPage() {
               </button>
               <button
                 type="submit"
-                disabled={loading || (formData.custom_url && urlAvailable === false) || checkingUrl}
+                disabled={loading || uploadingAttachment || (formData.custom_url && urlAvailable === false) || checkingUrl}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
-                {loading ? '생성 중...' : '명함 만들기'}
+                {loading ? '생성 중...' : uploadingAttachment ? '파일 업로드 중...' : '명함 만들기'}
               </button>
             </div>
           </form>

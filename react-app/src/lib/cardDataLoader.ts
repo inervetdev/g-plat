@@ -20,6 +20,9 @@ export interface CardData {
   services?: string[]
   skills?: string[]
   profileImage?: string
+  attachment_title?: string
+  attachment_url?: string
+  attachment_filename?: string
 }
 
 export async function loadBusinessCardData(userId: string): Promise<CardData | null> {
@@ -51,7 +54,10 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
         introduction: businessCard.introduction || '',
         services: businessCard.services || [],
         skills: businessCard.skills || [],
-        profileImage: businessCard.profile_image || ''
+        profileImage: businessCard.profile_image || '',
+        attachment_title: businessCard.attachment_title || '',
+        attachment_url: businessCard.attachment_url || '',
+        attachment_filename: businessCard.attachment_filename || ''
       }
     }
 
