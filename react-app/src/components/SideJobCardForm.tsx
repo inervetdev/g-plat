@@ -89,8 +89,8 @@ export default function SideJobCardForm({
       console.log('File:', file.name, 'Size:', file.size, 'Type:', file.type)
 
       const fileExt = file.name.split('.').pop()
-      const fileName = `${userId}/${Date.now()}.${fileExt}`
-      const filePath = `sidejob-images/${fileName}`
+      const fileName = `${Date.now()}.${fileExt}`
+      const filePath = `${userId}/${fileName}`
 
       console.log('Upload path:', filePath)
 
