@@ -97,9 +97,9 @@ export default function CreateCardPage() {
   const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        alert('파일 크기는 10MB 이하여야 합니다.')
+      // Validate file size (max 50MB)
+      if (file.size > 50 * 1024 * 1024) {
+        alert('파일 크기는 50MB 이하여야 합니다.')
         return
       }
       setAttachmentFile(file)
@@ -459,7 +459,7 @@ export default function CreateCardPage() {
                       <p className="text-sm text-blue-600 mt-1">파일 업로드 중...</p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
-                      최대 10MB, PDF/DOC/PPT/XLS/이미지 파일
+                      최대 50MB, PDF/DOC/PPT/XLS/이미지 파일
                     </p>
                   </div>
                 </div>

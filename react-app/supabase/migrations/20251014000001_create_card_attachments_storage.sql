@@ -4,7 +4,7 @@ VALUES (
   'card-attachments',
   'card-attachments',
   true,
-  10485760, -- 10MB
+  52428800, -- 50MB
   ARRAY[
     'application/pdf',
     'application/msword',
