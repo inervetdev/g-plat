@@ -171,19 +171,26 @@ export function AppleCard({ userId }: { userId: string }) {
 
               {/* Attachment Download Button */}
               {cardData.attachment_url && (
-                <a
-                  href={cardData.attachment_url}
-                  download={cardData.attachment_filename}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
+                <div className="mt-3 flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex items-center gap-3 flex-1">
                     <span className="text-lg">📎</span>
-                    <span className="text-gray-700 font-normal text-sm">{cardData.attachment_title || '첨부파일'}</span>
+                    <div className="flex-1">
+                      <p className="text-gray-700 font-normal text-sm">{cardData.attachment_title || '첨부파일'}</p>
+                      {cardData.attachment_filename && (
+                        <p className="text-gray-500 text-xs mt-0.5">{cardData.attachment_filename}</p>
+                      )}
+                    </div>
                   </div>
-                  <span className="text-blue-500 text-sm">↓</span>
-                </a>
+                  <a
+                    href={cardData.attachment_url}
+                    download={cardData.attachment_filename}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-3 px-4 py-2 bg-blue-500 text-white rounded-lg font-medium text-sm hover:bg-blue-600 transition-all whitespace-nowrap"
+                  >
+                    다운로드
+                  </a>
+                </div>
               )}
             </div>
           </div>

@@ -111,19 +111,26 @@ export function SimpleCard({ userId }: { userId: string }) {
 
             {/* Attachment Download Button */}
             {cardData.attachment_url && (
-              <a
-                href={cardData.attachment_url}
-                download={cardData.attachment_filename}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100 hover:border-blue-300 transition-all group"
-              >
-                <div className="flex items-center gap-3">
+              <div className="mt-4 flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+                <div className="flex items-center gap-3 flex-1">
                   <span className="text-xl">📎</span>
-                  <span className="text-gray-700 font-medium text-sm">{cardData.attachment_title || '첨부파일'}</span>
+                  <div className="flex-1">
+                    <p className="text-gray-700 font-medium text-sm">{cardData.attachment_title || '첨부파일'}</p>
+                    {cardData.attachment_filename && (
+                      <p className="text-gray-500 text-xs mt-0.5">{cardData.attachment_filename}</p>
+                    )}
+                  </div>
                 </div>
-                <span className="text-gray-400 group-hover:text-blue-500 transition-colors">↓</span>
-              </a>
+                <a
+                  href={cardData.attachment_url}
+                  download={cardData.attachment_filename}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-3 px-4 py-2 bg-blue-500 text-white rounded-lg font-medium text-sm hover:bg-blue-600 transition-all transform hover:scale-105 whitespace-nowrap"
+                >
+                  다운로드
+                </a>
+              </div>
             )}
           </div>
         )}
