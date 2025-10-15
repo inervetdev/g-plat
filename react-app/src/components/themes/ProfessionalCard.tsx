@@ -11,6 +11,9 @@ interface CardData {
   introduction?: string
   services?: string[]
   profileImage?: string
+  attachment_title?: string
+  attachment_url?: string
+  attachment_filename?: string
 }
 
 export function ProfessionalCard({ userId }: { userId: string }) {
@@ -41,7 +44,10 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           website: businessCard.website || '',
           introduction: businessCard.introduction || '',
           services: businessCard.services || [],
-          profileImage: businessCard.profile_image || ''
+          profileImage: businessCard.profile_image || '',
+          attachment_title: businessCard.attachment_title || '',
+          attachment_url: businessCard.attachment_url || '',
+          attachment_filename: businessCard.attachment_filename || ''
         })
       } else {
         // Fallback to user data
@@ -162,6 +168,30 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-[#c9a961]">
             <h2 className="text-[#1e3a5f] font-bold mb-3">소개</h2>
             <p className="text-gray-600 leading-relaxed">{cardData.introduction}</p>
+
+            {/* Attachment Download Button */}
+            {cardData.attachment_url && (
+              <div className="mt-4 flex items-center justify-between p-3 bg-[#faf8f4] rounded-lg border border-[#c9a961]">
+                <div className="flex items-center gap-3 flex-1">
+                  <span className="text-xl">📎</span>
+                  <div className="flex-1">
+                    <p className="text-[#1e3a5f] font-medium text-sm">{cardData.attachment_title || '첨부파일'}</p>
+                    {cardData.attachment_filename && (
+                      <p className="text-gray-500 text-xs mt-0.5">{cardData.attachment_filename}</p>
+                    )}
+                  </div>
+                </div>
+                <a
+                  href={cardData.attachment_url}
+                  download={cardData.attachment_filename}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-3 px-4 py-2 bg-[#1e3a5f] text-white rounded-lg font-medium text-sm hover:bg-[#2c4a6f] transition-all whitespace-nowrap"
+                >
+                  다운로드
+                </a>
+              </div>
+            )}
           </div>
         )}
 

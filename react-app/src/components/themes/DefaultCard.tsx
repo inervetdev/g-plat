@@ -1,17 +1,6 @@
 import { useEffect, useState } from 'react'
+import { loadBusinessCardData, defaultDemoData, type CardData } from '../../lib/cardDataLoader'
 import { supabase } from '../../lib/supabase'
-
-interface CardData {
-  name: string
-  title: string
-  company: string
-  phone: string
-  email: string
-  website?: string
-  introduction?: string
-  services?: string[]
-  profileImage?: string
-}
 
 export function DefaultCard({ userId }: { userId: string }) {
   const [cardData, setCardData] = useState<CardData | null>(null)
@@ -25,56 +14,11 @@ export function DefaultCard({ userId }: { userId: string }) {
 
   const loadCardData = async () => {
     try {
-      const { data: userData } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single()
-
-      const { data: profileData } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single()
-
-      if (userData) {
-        setCardData({
-          name: userData.name || '',
-          title: profileData?.title || '프리랜서',
-          company: profileData?.company || '',
-          phone: userData.phone || '',
-          email: userData.email || '',
-          website: profileData?.website || '',
-          introduction: profileData?.introduction || '',
-          services: profileData?.services || [],
-          profileImage: profileData?.profile_image || ''
-        })
-      } else {
-        // Fallback demo data when no user data is available
-        setCardData({
-          name: '이대섭',
-          title: 'Full Stack Developer',
-          company: 'Inervet',
-          phone: '010-1234-5678',
-          email: 'dslee@inervet.com',
-          website: 'https://inervet.com',
-          introduction: '안녕하세요! 풀스택 개발자입니다.',
-          services: ['웹 개발', '앱 개발', 'UI/UX 디자인']
-        })
-      }
+      const data = await loadBusinessCardData(userId)
+      setCardData(data || defaultDemoData)
     } catch (error) {
       console.error('Error loading card data:', error)
-      // Fallback demo data on error
-      setCardData({
-        name: '이대섭',
-        title: 'Full Stack Developer',
-        company: 'Inervet',
-        phone: '010-1234-5678',
-        email: 'dslee@inervet.com',
-        website: 'https://inervet.com',
-        introduction: '안녕하세요! 풀스택 개발자입니다.',
-        services: ['웹 개발', '앱 개발', 'UI/UX 디자인']
-      })
+      setCardData(defaultDemoData)
     } finally {
       setLoading(false)
     }
@@ -249,6 +193,40 @@ export function DefaultCard({ userId }: { userId: string }) {
             <span className="text-xs text-gray-600">공유</span>
           </button>
         </div>
+
+        {/* Introduction */}
+        {cardData.introduction && (
+          <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
+            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span>📝</span> 소개
+            </h2>
+            <p className="text-gray-600 leading-relaxed">{cardData.introduction}</p>
+
+            {/* Attachment Download Button */}
+            {cardData.attachment_url && (
+              <div className="mt-4 flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                <div className="flex items-center gap-3 flex-1">
+                  <span className="text-xl">📎</span>
+                  <div className="flex-1">
+                    <p className="text-gray-700 font-medium text-sm">{cardData.attachment_title || '첨부파일'}</p>
+                    {cardData.attachment_filename && (
+                      <p className="text-gray-500 text-xs mt-0.5">{cardData.attachment_filename}</p>
+                    )}
+                  </div>
+                </div>
+                <a
+                  href={cardData.attachment_url}
+                  download={cardData.attachment_filename}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ml-3 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium text-sm hover:shadow-lg transition-all transform hover:scale-105 whitespace-nowrap"
+                >
+                  다운로드
+                </a>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Services */}
         {cardData.services && cardData.services.length > 0 && (
