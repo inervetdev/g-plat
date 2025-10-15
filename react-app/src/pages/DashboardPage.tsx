@@ -268,9 +268,9 @@ function DashboardPage() {
         {/* Preview Modal */}
         {showPreviewModal && selectedCardId && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
               {/* Modal Header */}
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+              <div className="flex-shrink-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-2xl">
                 <h3 className="text-lg font-semibold text-gray-900">
                   {businessCards.find(c => c.id === selectedCardId)?.name} 명함 미리보기
                 </h3>
@@ -284,8 +284,8 @@ function DashboardPage() {
                 </button>
               </div>
 
-              {/* Modal Content */}
-              <div className="p-6">
+              {/* Modal Content - Scrollable */}
+              <div className="flex-1 overflow-y-auto p-6">
                 <CardWithSideJobs
                   businessCard={businessCards.find(c => c.id === selectedCardId)!}
                   sideJobCards={sideJobCards.filter(sj =>
@@ -295,7 +295,7 @@ function DashboardPage() {
               </div>
 
               {/* Modal Footer */}
-              <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 rounded-b-2xl">
+              <div className="flex-shrink-0 bg-gray-50 border-t border-gray-200 px-6 py-4 rounded-b-2xl">
                 <div className="flex gap-3">
                   <button
                     onClick={() => window.location.href = `/card/${selectedCardId}`}

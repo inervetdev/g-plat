@@ -200,7 +200,32 @@
   - 리치 텍스트 에디터
   - 미디어 업로드 (이미지, 동영상)
 
-#### 5.2.2 명함 공유
+#### 5.2.2 소개 자료 (첨부파일) 시스템 - **✅ 완료 (2025.10.15)**
+- **다중 파일 첨부 지원**
+  - 파일 업로드 (PDF, 이미지, 동영상 등)
+  - YouTube URL 첨부 (여러 개 가능)
+  - 드래그 앤 드롭 순서 변경
+  - 첨부파일별 제목 및 설명
+- **YouTube 통합 기능**
+  - YouTube URL 자동 감지 및 비디오 ID 추출
+  - 썸네일 자동 로드 (maxresdefault.jpg, fallback: hqdefault.jpg)
+  - 2가지 표시 모드:
+    - **모달 모드**: 미리보기 버튼 클릭 시 모달에서 재생
+    - **인라인 모드**: 명함 화면에 카드 형태로 표시
+      - 영상 썸네일 + 재생 오버레이 버튼 UI
+      - 클릭 시 iframe으로 자동 재생 (autoplay)
+      - YouTube 배지 표시
+- **파일 미리보기**
+  - 이미지: 모달에서 전체 크기 보기
+  - 동영상: HTML5 video 플레이어
+  - PDF: 웹 브라우저에서 직접 열기 (iframe 미리보기)
+  - 기타 문서: 다운로드 안내
+- **다운로드 기능**
+  - PDF: 새 탭에서 열기
+  - 일반 파일: 직접 다운로드
+  - YouTube: YouTube에서 보기 링크
+
+#### 5.2.3 명함 공유
 - **공유 방법**
   - URL 복사
   - QR코드 다운로드
@@ -555,6 +580,13 @@
   - 이미지 클릭 시 CTA 링크 연결
   - 대시보드 미리보기 모달 활성 부가명함 필터링
   - **스키마 이슈 해결** (cta_url → cta_link)
+- [x] **소개 자료 첨부파일 시스템 (2025.10.15)** - **✅ 완료**
+  - card_attachments 테이블로 다중 파일 지원
+  - YouTube URL 다중 첨부 기능
+  - YouTube 표시 모드: 모달/인라인 선택
+  - 인라인 모드 YouTube 카드 UI (썸네일 + 재생 오버레이)
+  - PDF 미리보기 및 직접 다운로드
+  - TrendyCard, AppleCard 테마 YouTube 카드 UI 적용
 - [x] 프로덕션 배포 및 도메인 연결 - **완료**
 - [x] Supabase 로컬 개발 환경 - **완료**
 - [x] Playwright E2E 테스트 설정 - **완료**
@@ -659,12 +691,44 @@
 
 ---
 
-*문서 버전: 1.10*
+*문서 버전: 1.11*
 *작성일: 2025년 1월*
-*최종 수정일: 2025년 10월 10일*
+*최종 수정일: 2025년 10월 15일*
 *다음 검토일: 2025년 11월*
 
 ### 변경 이력
+- v1.11 (2025.10.15): 소개 자료 첨부파일 시스템 완료 (YouTube 통합)
+  - ✅ **다중 파일 첨부 시스템 구현 완료**
+    - card_attachments 테이블 구조 개선
+    - 파일 업로드 (PDF, 이미지, 동영상)
+    - YouTube URL 다중 첨부 지원
+  - ✅ **YouTube 통합 기능**
+    - YouTube URL 자동 감지 및 비디오 ID 추출
+    - 썸네일 자동 로드 (maxresdefault.jpg with fallback)
+    - 2가지 표시 모드: 모달/인라인
+    - **인라인 모드 YouTube 카드 UI**
+      - 영상 썸네일 + 재생 오버레이 버튼
+      - 클릭 시 iframe 자동 재생 (autoplay)
+      - YouTube 배지 표시
+      - 16:9 aspect ratio 유지
+  - ✅ **파일 미리보기 개선**
+    - 이미지: 모달 전체 크기 보기
+    - 동영상: HTML5 video 플레이어
+    - PDF: iframe 미리보기 (웹에서 직접 열기)
+    - 기타 문서: 다운로드 안내
+  - ✅ **다운로드 기능 개선**
+    - PDF: 새 탭에서 열기
+    - 일반 파일: 직접 다운로드
+    - YouTube: YouTube에서 보기 링크
+  - ✅ **테마 카드 업데이트**
+    - TrendyCard: YouTube 카드 UI 완료
+    - AppleCard: YouTube 카드 UI 완료
+    - SimpleCard, DefaultCard, ProfessionalCard: 업데이트 예정
+  - ✅ **데이터베이스 마이그레이션**
+    - 20251015000003_add_youtube_url_to_attachments.sql
+    - 20251015000004_add_youtube_display_mode.sql
+    - attachment_type, youtube_url, youtube_display_mode 컬럼 추가
+    - 파일 관련 컬럼 nullable 처리
 - v1.10 (2025.10.10): Google OAuth 소셜 로그인 프로덕션 배포 완료
   - ✅ **Google OAuth 2.0 인증 완료**
     - Google Cloud Console OAuth 클라이언트 설정

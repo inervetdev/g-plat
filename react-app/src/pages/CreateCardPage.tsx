@@ -3,6 +3,17 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useTheme, type ThemeName } from '../contexts/ThemeContext'
 import ThemePreviewModal from '../components/ThemePreviewModal'
+import FilePreviewModal from '../components/FilePreviewModal'
+
+interface AttachmentFile {
+  id: string
+  file?: File
+  title: string
+  preview?: string
+  youtube_url?: string
+  youtube_display_mode?: 'modal' | 'inline'
+  attachment_type: 'file' | 'youtube'
+}
 
 export default function CreateCardPage() {
   const navigate = useNavigate()
@@ -11,8 +22,9 @@ export default function CreateCardPage() {
   const [urlAvailable, setUrlAvailable] = useState<boolean | null>(null)
   const [checkingUrl, setCheckingUrl] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
-  const [attachmentFile, setAttachmentFile] = useState<File | null>(null)
+  const [attachmentFiles, setAttachmentFiles] = useState<AttachmentFile[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
+  const [previewFile, setPreviewFile] = useState<{ url: string; name: string; type: string } | null>(null)
   const [formData, setFormData] = useState<{
     name: string
     title: string
@@ -33,7 +45,6 @@ export default function CreateCardPage() {
     skills: string
     theme: ThemeName
     custom_url: string
-    attachment_title: string
   }>({
     name: '',
     title: '',
@@ -53,8 +64,7 @@ export default function CreateCardPage() {
     services: '',
     skills: '',
     theme: theme || 'trendy',
-    custom_url: '',
-    attachment_title: ''
+    custom_url: ''
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -81,10 +91,8 @@ export default function CreateCardPage() {
         .single()
 
       if (error && error.code === 'PGRST116') {
-        // No rows returned = URL is available
         setUrlAvailable(true)
       } else if (data) {
-        // URL is already taken
         setUrlAvailable(false)
       }
     } catch (error) {
@@ -95,55 +103,130 @@ export default function CreateCardPage() {
   }
 
   const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      // Validate file size (max 50MB)
+    const files = Array.from(e.target.files || [])
+
+    const validFiles = files.filter(file => {
       if (file.size > 50 * 1024 * 1024) {
-        alert('파일 크기는 50MB 이하여야 합니다.')
-        return
+        alert(`${file.name}: 파일 크기는 50MB 이하여야 합니다.`)
+        return false
       }
-      setAttachmentFile(file)
+      return true
+    })
+
+    const newAttachments: AttachmentFile[] = validFiles.map(file => ({
+      id: `${Date.now()}-${Math.random()}`,
+      file,
+      title: file.name.split('.').slice(0, -1).join('.'),
+      attachment_type: 'file' as const
+    }))
+
+    setAttachmentFiles(prev => [...prev, ...newAttachments])
+    e.target.value = '' // Reset input
+  }
+
+  const addYouTubeUrl = (url: string, title: string, displayMode: 'modal' | 'inline' = 'modal') => {
+    const newAttachment: AttachmentFile = {
+      id: `youtube-${Date.now()}-${Math.random()}`,
+      title: title || 'YouTube 영상',
+      youtube_url: url,
+      youtube_display_mode: displayMode,
+      attachment_type: 'youtube'
+    }
+    setAttachmentFiles(prev => [...prev, newAttachment])
+  }
+
+  const updateAttachmentTitle = (id: string, title: string) => {
+    setAttachmentFiles(prev =>
+      prev.map(att => att.id === id ? { ...att, title } : att)
+    )
+  }
+
+  const updateYouTubeDisplayMode = (id: string, mode: 'modal' | 'inline') => {
+    setAttachmentFiles(prev =>
+      prev.map(att => att.id === id ? { ...att, youtube_display_mode: mode } : att)
+    )
+  }
+
+  const removeAttachment = (id: string) => {
+    setAttachmentFiles(prev => prev.filter(att => att.id !== id))
+  }
+
+  const previewAttachment = (attachment: AttachmentFile) => {
+    if (attachment.attachment_type === 'youtube' && attachment.youtube_url) {
+      setPreviewFile({
+        url: attachment.youtube_url,
+        name: attachment.title,
+        type: 'video/youtube'
+      })
+    } else if (attachment.file) {
+      const url = URL.createObjectURL(attachment.file)
+      setPreviewFile({
+        url,
+        name: attachment.file.name,
+        type: attachment.file.type
+      })
     }
   }
 
-  const uploadAttachment = async (file: File, userId: string): Promise<{ url: string; filename: string; size: number } | null> => {
-    try {
-      setUploadingAttachment(true)
-      console.log('📤 Starting attachment upload...', file.name)
+  const uploadAttachments = async (files: AttachmentFile[], userId: string) => {
+    const results = []
 
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}.${fileExt}`
-      const filePath = `${userId}/${fileName}`
+    for (let i = 0; i < files.length; i++) {
+      const attachment = files[i]
 
-      const { error: uploadError } = await supabase.storage
-        .from('card-attachments')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
+      // YouTube URL 처리
+      if (attachment.attachment_type === 'youtube' && attachment.youtube_url) {
+        results.push({
+          title: attachment.title,
+          youtube_url: attachment.youtube_url,
+          youtube_display_mode: attachment.youtube_display_mode || 'modal',
+          attachment_type: 'youtube',
+          display_order: i
+        })
+        continue
+      }
+
+      // 파일 업로드 처리
+      if (!attachment.file) continue
+
+      try {
+        console.log(`📤 Uploading ${i + 1}/${files.length}: ${attachment.file.name}`)
+
+        const fileExt = attachment.file.name.split('.').pop()
+        const fileName = `${Date.now()}-${i}.${fileExt}`
+        const filePath = `${userId}/${fileName}`
+
+        const { error: uploadError } = await supabase.storage
+          .from('card-attachments')
+          .upload(filePath, attachment.file, {
+            cacheControl: '3600',
+            upsert: false
+          })
+
+        if (uploadError) throw uploadError
+
+        const { data } = supabase.storage
+          .from('card-attachments')
+          .getPublicUrl(filePath)
+
+        results.push({
+          title: attachment.title,
+          filename: attachment.file.name,
+          file_url: data.publicUrl,
+          file_size: attachment.file.size,
+          file_type: attachment.file.type,
+          attachment_type: 'file',
+          display_order: i
         })
 
-      if (uploadError) {
-        console.error('❌ Upload error:', uploadError)
-        throw uploadError
+        console.log(`✅ Upload successful: ${attachment.file.name}`)
+      } catch (error) {
+        console.error(`❌ Upload failed: ${attachment.file.name}`, error)
+        throw error
       }
-
-      const { data } = supabase.storage
-        .from('card-attachments')
-        .getPublicUrl(filePath)
-
-      console.log('✅ Upload successful:', data.publicUrl)
-      return {
-        url: data.publicUrl,
-        filename: file.name,
-        size: file.size
-      }
-    } catch (error) {
-      console.error('💥 Error uploading attachment:', error)
-      alert(`파일 업로드 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
-      return null
-    } finally {
-      setUploadingAttachment(false)
     }
+
+    return results
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -163,17 +246,8 @@ export default function CreateCardPage() {
       const servicesArray = formData.services.split(',').map(s => s.trim()).filter(s => s)
       const skillsArray = formData.skills.split(',').map(s => s.trim()).filter(s => s)
 
-      // Upload attachment if selected
-      let attachmentData = null
-      if (attachmentFile) {
-        attachmentData = await uploadAttachment(attachmentFile, user.id)
-        if (!attachmentData) {
-          setLoading(false)
-          return // Upload failed
-        }
-      }
-
-      const { data, error } = await supabase
+      // Create business card first
+      const { data: cardData, error: cardError } = await supabase
         .from('business_cards')
         .insert({
           user_id: user.id,
@@ -196,36 +270,57 @@ export default function CreateCardPage() {
           skills: skillsArray,
           theme: formData.theme,
           custom_url: formData.custom_url || null,
-          attachment_title: formData.attachment_title || null,
-          attachment_url: attachmentData?.url || null,
-          attachment_filename: attachmentData?.filename || null,
-          attachment_size: attachmentData?.size || null,
-          is_primary: true // 첫 명함은 대표 명함으로
+          is_primary: true
         })
         .select()
         .single()
 
-      if (error) {
-        console.error('Error creating card:', error)
-        // 더 구체적인 에러 메시지 표시
-        if (error.message?.includes('duplicate key')) {
+      if (cardError) {
+        console.error('Error creating card:', cardError)
+        if (cardError.message?.includes('duplicate key')) {
           alert('이미 사용 중인 커스텀 URL입니다. 다른 URL을 선택해주세요.')
-        } else if (error.message?.includes('violates foreign key')) {
+        } else if (cardError.message?.includes('violates foreign key')) {
           alert('로그인이 필요합니다. 다시 로그인해주세요.')
-        } else if (error.message?.includes('permission denied')) {
+        } else if (cardError.message?.includes('permission denied')) {
           alert('권한이 없습니다. 로그인 상태를 확인해주세요.')
         } else {
-          alert(`명함 생성 중 오류가 발생했습니다: ${error.message}`)
+          alert(`명함 생성 중 오류가 발생했습니다: ${cardError.message}`)
         }
-      } else if (data) {
-        console.log('Card created successfully:', data)
-        alert('명함이 성공적으로 생성되었습니다!')
-        navigate('/dashboard')
-      } else {
-        console.error('No data returned after card creation')
-        alert('명함이 생성되었지만 데이터를 가져올 수 없습니다.')
-        navigate('/dashboard')
+        return
       }
+
+      // Upload attachments if any
+      if (attachmentFiles.length > 0 && cardData) {
+        setUploadingAttachment(true)
+        try {
+          const uploadedFiles = await uploadAttachments(attachmentFiles, user.id)
+
+          // Insert into card_attachments table
+          const attachmentRecords = uploadedFiles.map(file => ({
+            business_card_id: cardData.id,
+            user_id: user.id,
+            ...file
+          }))
+
+          const { error: attachmentError } = await supabase
+            .from('card_attachments')
+            .insert(attachmentRecords)
+
+          if (attachmentError) {
+            console.error('Error saving attachment records:', attachmentError)
+            alert('파일은 업로드되었지만 데이터베이스 저장 중 오류가 발생했습니다.')
+          }
+        } catch (error) {
+          console.error('Error uploading attachments:', error)
+          alert('첨부파일 업로드 중 오류가 발생했습니다.')
+        } finally {
+          setUploadingAttachment(false)
+        }
+      }
+
+      console.log('Card created successfully:', cardData)
+      alert('명함이 성공적으로 생성되었습니다!')
+      navigate('/dashboard')
     } catch (error) {
       console.error('Unexpected error:', error)
       alert('예상치 못한 오류가 발생했습니다.')
@@ -423,46 +518,123 @@ export default function CreateCardPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      첨부파일 제목
-                    </label>
-                    <input
-                      type="text"
-                      name="attachment_title"
-                      value={formData.attachment_title}
-                      onChange={handleChange}
-                      placeholder="예: 사업계획서, 포트폴리오"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      파일 다운로드 버튼에 표시될 이름
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      파일 업로드
-                    </label>
-                    <input
-                      type="file"
-                      onChange={handleAttachmentChange}
-                      accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                    />
-                    {attachmentFile && (
-                      <p className="text-sm text-green-600 mt-1">
-                        선택됨: {attachmentFile.name} ({(attachmentFile.size / 1024).toFixed(1)}KB)
-                      </p>
-                    )}
-                    {uploadingAttachment && (
-                      <p className="text-sm text-blue-600 mt-1">파일 업로드 중...</p>
-                    )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      최대 50MB, PDF/DOC/PPT/XLS/이미지 파일
-                    </p>
-                  </div>
+
+                {/* 다중 파일 업로드 섹션 */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    첨부파일 업로드
+                  </label>
+                  <input
+                    type="file"
+                    onChange={handleAttachmentChange}
+                    multiple
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp,.gif,.mp4,.webm,.mov,.avi"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    최대 50MB, 여러 파일 선택 가능 (PDF, 문서, 이미지, 동영상)
+                  </p>
                 </div>
+
+                {/* YouTube URL 추가 */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    YouTube URL 추가 (여러 개 가능)
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="url"
+                      id="youtube-url-input"
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const input = document.getElementById('youtube-url-input') as HTMLInputElement
+                        const url = input.value.trim()
+                        if (url) {
+                          const title = prompt('영상 제목을 입력하세요:', 'YouTube 영상')
+                          if (title) {
+                            const displayMode = confirm('명함 화면에 영상을 직접 표시하시겠습니까?\n\n확인: 화면에 직접 표시\n취소: 미리보기 버튼으로만 표시')
+                              ? 'inline'
+                              : 'modal'
+                            addYouTubeUrl(url, title, displayMode)
+                            input.value = ''
+                          }
+                        } else {
+                          alert('YouTube URL을 입력해주세요.')
+                        }
+                      }}
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors whitespace-nowrap"
+                    >
+                      추가
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    YouTube 영상을 여러 개 추가할 수 있습니다. 명함 화면에 직접 표시하거나 미리보기 버튼으로 표시할 수 있습니다.
+                  </p>
+                </div>
+
+                {/* 첨부파일 목록 */}
+                {attachmentFiles.length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-gray-700">첨부된 파일 ({attachmentFiles.length})</h3>
+                    {attachmentFiles.map((attachment) => (
+                      <div
+                        key={attachment.id}
+                        className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <input
+                              type="text"
+                              value={attachment.title}
+                              onChange={(e) => updateAttachmentTitle(attachment.id, e.target.value)}
+                              placeholder="파일 제목"
+                              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                            />
+                            {attachment.attachment_type === 'youtube' && (
+                              <>
+                                <span className="px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">YouTube</span>
+                                <select
+                                  value={attachment.youtube_display_mode || 'modal'}
+                                  onChange={(e) => updateYouTubeDisplayMode(attachment.id, e.target.value as 'modal' | 'inline')}
+                                  className="px-2 py-1 text-xs border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                                  title="표시 방식"
+                                >
+                                  <option value="modal">미리보기 버튼</option>
+                                  <option value="inline">화면에 직접 표시</option>
+                                </select>
+                              </>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 truncate">
+                            {attachment.attachment_type === 'youtube'
+                              ? attachment.youtube_url
+                              : `${attachment.file?.name} (${((attachment.file?.size || 0) / 1024).toFixed(1)}KB)`
+                            }
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => previewAttachment(attachment)}
+                          className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors whitespace-nowrap"
+                        >
+                          미리보기
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeAttachment(attachment.id)}
+                          className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors whitespace-nowrap"
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     제공 서비스 (쉼표로 구분)
@@ -600,6 +772,20 @@ export default function CreateCardPage() {
         currentTheme={formData.theme}
         onSelectTheme={(theme: ThemeName) => setFormData(prev => ({ ...prev, theme }))}
       />
+
+      {/* File Preview Modal */}
+      {previewFile && (
+        <FilePreviewModal
+          isOpen={!!previewFile}
+          onClose={() => {
+            if (previewFile?.url) URL.revokeObjectURL(previewFile.url)
+            setPreviewFile(null)
+          }}
+          fileUrl={previewFile.url}
+          fileName={previewFile.name}
+          fileType={previewFile.type}
+        />
+      )}
     </div>
   )
 }

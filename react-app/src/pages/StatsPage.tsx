@@ -12,6 +12,14 @@ interface StatsSummary {
   topReferrers: { name: string; count: number }[]
   dailyStats: { date: string; views: number }[]
   deviceStats: { name: string; value: number }[]
+  // Download stats
+  totalDownloads: number
+  todayDownloads: number
+  topDownloads: { title: string; count: number }[]
+  // QR stats
+  totalQRScans: number
+  todayQRScans: number
+  qrDeviceStats: { name: string; value: number }[]
 }
 
 export default function StatsPage() {
@@ -25,7 +33,13 @@ export default function StatsPage() {
     uniqueVisitors: 0,
     topReferrers: [],
     dailyStats: [],
-    deviceStats: []
+    deviceStats: [],
+    totalDownloads: 0,
+    todayDownloads: 0,
+    topDownloads: [],
+    totalQRScans: 0,
+    todayQRScans: 0,
+    qrDeviceStats: []
   })
 
   useEffect(() => {
@@ -129,6 +143,69 @@ export default function StatsPage() {
           .filter(([_, value]) => value > 0)
           .map(([name, value]) => ({ name, value }))
 
+        // 다운로드 통계 가져오기
+        const { data: downloadStats } = await supabase
+          .from('attachment_downloads')
+          .select('*, card_attachments!inner(title)')
+          .eq('user_id', user.id)
+          .order('downloaded_at', { ascending: false })
+
+        let totalDownloads = 0
+        let todayDownloads = 0
+        let topDownloads: { title: string; count: number }[] = []
+
+        if (downloadStats && downloadStats.length > 0) {
+          totalDownloads = downloadStats.length
+          todayDownloads = downloadStats.filter(stat =>
+            new Date(stat.downloaded_at) >= today
+          ).length
+
+          // 상위 다운로드 파일
+          const downloadCounts: { [key: string]: number } = {}
+          downloadStats.forEach(stat => {
+            const title = (stat as any).card_attachments?.title || '알 수 없음'
+            downloadCounts[title] = (downloadCounts[title] || 0) + 1
+          })
+          topDownloads = Object.entries(downloadCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([title, count]) => ({ title, count }))
+        }
+
+        // QR 코드 스캔 통계 가져오기
+        const { data: qrScans } = await supabase
+          .from('qr_scans')
+          .select('*, qr_codes!inner(business_card_id)')
+          .eq('qr_codes.user_id', user.id)
+          .order('scanned_at', { ascending: false })
+
+        let totalQRScans = 0
+        let todayQRScans = 0
+        let qrDeviceStats: { name: string; value: number }[] = []
+
+        if (qrScans && qrScans.length > 0) {
+          totalQRScans = qrScans.length
+          todayQRScans = qrScans.filter(scan =>
+            new Date(scan.scanned_at) >= today
+          ).length
+
+          // QR 스캔 디바이스 통계
+          const qrDeviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 }
+          qrScans.forEach(scan => {
+            if (scan.device_type === 'mobile') {
+              qrDeviceCounts.Mobile++
+            } else if (scan.device_type === 'tablet') {
+              qrDeviceCounts.Tablet++
+            } else if (scan.device_type === 'desktop') {
+              qrDeviceCounts.Desktop++
+            }
+          })
+
+          qrDeviceStats = Object.entries(qrDeviceCounts)
+            .filter(([_, value]) => value > 0)
+            .map(([name, value]) => ({ name, value }))
+        }
+
         setStats({
           totalViews: visitorStats.length,
           todayViews,
@@ -137,7 +214,13 @@ export default function StatsPage() {
           uniqueVisitors: uniqueIPs.size,
           topReferrers,
           dailyStats,
-          deviceStats
+          deviceStats,
+          totalDownloads,
+          todayDownloads,
+          topDownloads,
+          totalQRScans,
+          todayQRScans,
+          qrDeviceStats
         })
       }
     } catch (error) {
@@ -170,7 +253,10 @@ export default function StatsPage() {
           </button>
         </div>
 
-        {/* 주요 지표 */}
+        {/* 주요 지표 - 방문자 통계 */}
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-gray-800">방문자 통계</h2>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-gray-500">총 조회수</h3>
@@ -191,6 +277,36 @@ export default function StatsPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-gray-500">고유 방문자</h3>
             <p className="text-2xl font-bold text-orange-600 mt-2">{stats.uniqueVisitors}</p>
+          </div>
+        </div>
+
+        {/* 소개자료 다운로드 통계 */}
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-gray-800">소개자료 다운로드 통계</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-gray-500">총 다운로드</h3>
+            <p className="text-2xl font-bold text-gray-900 mt-2">{stats.totalDownloads}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-gray-500">오늘 다운로드</h3>
+            <p className="text-2xl font-bold text-blue-600 mt-2">{stats.todayDownloads}</p>
+          </div>
+        </div>
+
+        {/* QR명함 스캔 통계 */}
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold text-gray-800">QR명함 스캔 통계</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-gray-500">총 QR 스캔</h3>
+            <p className="text-2xl font-bold text-gray-900 mt-2">{stats.totalQRScans}</p>
+          </div>
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-gray-500">오늘 QR 스캔</h3>
+            <p className="text-2xl font-bold text-blue-600 mt-2">{stats.todayQRScans}</p>
           </div>
         </div>
 
@@ -250,6 +366,48 @@ export default function StatsPage() {
                   <Tooltip />
                   <Bar dataKey="count" fill="#00C49F" name="방문수" />
                 </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
+          {/* 상위 다운로드 파일 */}
+          {stats.topDownloads.length > 0 && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <h3 className="text-lg font-semibold mb-4">상위 다운로드 파일</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={stats.topDownloads}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="title" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="count" fill="#8B5CF6" name="다운로드 수" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+
+          {/* QR 스캔 디바이스 통계 */}
+          {stats.qrDeviceStats.length > 0 && (
+            <div className="bg-white rounded-lg shadow p-6">
+              <h3 className="text-lg font-semibold mb-4">QR 스캔 디바이스별 접속</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={stats.qrDeviceStats}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }: any) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {stats.qrDeviceStats.map((_entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
               </ResponsiveContainer>
             </div>
           )}

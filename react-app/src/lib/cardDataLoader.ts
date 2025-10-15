@@ -2,6 +2,7 @@
 import { supabase } from './supabase'
 
 export interface CardData {
+  id?: string
   name: string
   title: string
   company: string
@@ -37,6 +38,7 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
 
     if (businessCard && !cardError) {
       return {
+        id: businessCard.id,
         name: businessCard.name,
         title: businessCard.title || '',
         company: businessCard.company || '',

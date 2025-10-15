@@ -2,7 +2,19 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ThemePreviewModal from '../components/ThemePreviewModal'
+import FilePreviewModal from '../components/FilePreviewModal'
 import type { ThemeName } from '../contexts/ThemeContext'
+
+interface AttachmentFile {
+  id: string
+  file?: File
+  title: string
+  filename: string
+  file_url?: string
+  file_size: number
+  file_type: string
+  isExisting?: boolean
+}
 
 export function EditCardPage() {
   const { cardId } = useParams()
@@ -10,13 +22,9 @@ export function EditCardPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
-  const [attachmentFile, setAttachmentFile] = useState<File | null>(null)
+  const [attachmentFiles, setAttachmentFiles] = useState<AttachmentFile[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
-  const [existingAttachment, setExistingAttachment] = useState<{
-    title: string
-    url: string
-    filename: string
-  } | null>(null)
+  const [previewFile, setPreviewFile] = useState<{ url: string; name: string; type: string } | null>(null)
   const [formData, setFormData] = useState<{
     name: string
     title: string
@@ -37,7 +45,6 @@ export function EditCardPage() {
     skills: string
     theme: ThemeName
     custom_url: string
-    attachment_title: string
     is_primary: boolean
     is_active: boolean
   }>({
@@ -60,7 +67,6 @@ export function EditCardPage() {
     skills: '',
     theme: 'trendy',
     custom_url: '',
-    attachment_title: '',
     is_primary: false,
     is_active: true
   })
@@ -100,18 +106,28 @@ export function EditCardPage() {
           skills: card.skills?.join(', ') || '',
           theme: card.theme || 'trendy',
           custom_url: card.custom_url || '',
-          attachment_title: card.attachment_title || '',
           is_primary: card.is_primary || false,
           is_active: card.is_active || true
         })
 
-        // Load existing attachment if available
-        if (card.attachment_url) {
-          setExistingAttachment({
-            title: card.attachment_title || '첨부파일',
-            url: card.attachment_url,
-            filename: card.attachment_filename || '파일'
-          })
+        // Load existing attachments from new table
+        const { data: attachments, error: attachError } = await supabase
+          .from('card_attachments')
+          .select('*')
+          .eq('business_card_id', cardId)
+          .order('display_order', { ascending: true })
+
+        if (!attachError && attachments) {
+          const existingAttachments: AttachmentFile[] = attachments.map(att => ({
+            id: att.id,
+            title: att.title,
+            filename: att.filename,
+            file_url: att.file_url,
+            file_size: att.file_size,
+            file_type: att.file_type,
+            isExisting: true
+          }))
+          setAttachmentFiles(existingAttachments)
         }
       }
     } catch (error) {
@@ -124,55 +140,114 @@ export function EditCardPage() {
   }
 
   const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      // Validate file size (max 50MB)
+    const files = Array.from(e.target.files || [])
+
+    const validFiles = files.filter(file => {
       if (file.size > 50 * 1024 * 1024) {
-        alert('파일 크기는 50MB 이하여야 합니다.')
-        return
+        alert(`${file.name}: 파일 크기는 50MB 이하여야 합니다.`)
+        return false
       }
-      setAttachmentFile(file)
-    }
+      return true
+    })
+
+    const newAttachments: AttachmentFile[] = validFiles.map(file => ({
+      id: `new-${Date.now()}-${Math.random()}`,
+      file,
+      title: file.name.split('.').slice(0, -1).join('.'),
+      filename: file.name,
+      file_size: file.size,
+      file_type: file.type,
+      isExisting: false
+    }))
+
+    setAttachmentFiles(prev => [...prev, ...newAttachments])
+    e.target.value = ''
   }
 
-  const uploadAttachment = async (file: File, userId: string): Promise<{ url: string; filename: string; size: number } | null> => {
-    try {
-      setUploadingAttachment(true)
-      console.log('📤 Starting attachment upload...', file.name)
+  const updateAttachmentTitle = (id: string, title: string) => {
+    setAttachmentFiles(prev =>
+      prev.map(att => att.id === id ? { ...att, title } : att)
+    )
+  }
 
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Date.now()}.${fileExt}`
-      const filePath = `${userId}/${fileName}`
+  const removeAttachment = async (attachment: AttachmentFile) => {
+    if (attachment.isExisting) {
+      // Delete from database
+      const { error } = await supabase
+        .from('card_attachments')
+        .delete()
+        .eq('id', attachment.id)
 
-      const { error: uploadError } = await supabase.storage
-        .from('card-attachments')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false
+      if (error) {
+        console.error('Error deleting attachment:', error)
+        alert('첨부파일 삭제 중 오류가 발생했습니다.')
+        return
+      }
+    }
+    setAttachmentFiles(prev => prev.filter(att => att.id !== attachment.id))
+  }
+
+  const previewAttachment = (attachment: AttachmentFile) => {
+    let url: string
+    if (attachment.file) {
+      url = URL.createObjectURL(attachment.file)
+    } else if (attachment.file_url) {
+      url = attachment.file_url
+    } else {
+      return
+    }
+
+    setPreviewFile({
+      url,
+      name: attachment.filename,
+      type: attachment.file_type
+    })
+  }
+
+  const uploadAttachments = async (files: AttachmentFile[], userId: string) => {
+    const results = []
+
+    for (let i = 0; i < files.length; i++) {
+      const attachment = files[i]
+      if (!attachment.file) continue // Skip existing files
+
+      try {
+        console.log(`📤 Uploading ${i + 1}: ${attachment.filename}`)
+
+        const fileExt = attachment.filename.split('.').pop()
+        const fileName = `${Date.now()}-${i}.${fileExt}`
+        const filePath = `${userId}/${fileName}`
+
+        const { error: uploadError } = await supabase.storage
+          .from('card-attachments')
+          .upload(filePath, attachment.file, {
+            cacheControl: '3600',
+            upsert: false
+          })
+
+        if (uploadError) throw uploadError
+
+        const { data } = supabase.storage
+          .from('card-attachments')
+          .getPublicUrl(filePath)
+
+        results.push({
+          id: attachment.id,
+          title: attachment.title,
+          filename: attachment.filename,
+          file_url: data.publicUrl,
+          file_size: attachment.file_size,
+          file_type: attachment.file_type
         })
 
-      if (uploadError) {
-        console.error('❌ Upload error:', uploadError)
-        throw uploadError
+        console.log(`✅ Upload successful: ${attachment.filename}`)
+      } catch (error) {
+        console.error(`❌ Upload failed: ${attachment.filename}`, error)
+        throw error
       }
-
-      const { data } = supabase.storage
-        .from('card-attachments')
-        .getPublicUrl(filePath)
-
-      console.log('✅ Upload successful:', data.publicUrl)
-      return {
-        url: data.publicUrl,
-        filename: file.name,
-        size: file.size
-      }
-    } catch (error) {
-      console.error('💥 Error uploading attachment:', error)
-      alert(`파일 업로드 중 오류가 발생했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
-      return null
-    } finally {
-      setUploadingAttachment(false)
     }
+
+    return results
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -183,20 +258,7 @@ export function EditCardPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('로그인이 필요합니다')
 
-      // Upload new attachment if selected
-      let attachmentData = existingAttachment
-        ? { url: existingAttachment.url, filename: existingAttachment.filename, size: 0 }
-        : null
-
-      if (attachmentFile) {
-        const uploadedData = await uploadAttachment(attachmentFile, user.id)
-        if (!uploadedData) {
-          setSaving(false)
-          return // Upload failed
-        }
-        attachmentData = uploadedData
-      }
-
+      // Update business card
       const { error } = await supabase
         .from('business_cards')
         .update({
@@ -219,10 +281,6 @@ export function EditCardPage() {
           skills: formData.skills ? formData.skills.split(',').map(s => s.trim()) : [],
           theme: formData.theme,
           custom_url: formData.custom_url,
-          attachment_title: formData.attachment_title || null,
-          attachment_url: attachmentData?.url || null,
-          attachment_filename: attachmentData?.filename || null,
-          attachment_size: attachmentData?.size || null,
           is_primary: formData.is_primary,
           is_active: formData.is_active,
           updated_at: new Date().toISOString()
@@ -231,6 +289,50 @@ export function EditCardPage() {
         .eq('user_id', user.id)
 
       if (error) throw error
+
+      // Upload new attachments
+      const newAttachments = attachmentFiles.filter(att => !att.isExisting && att.file)
+      if (newAttachments.length > 0) {
+        setUploadingAttachment(true)
+        try {
+          const uploadedFiles = await uploadAttachments(newAttachments, user.id)
+
+          // Insert new attachments
+          const attachmentRecords = uploadedFiles.map((file, index) => ({
+            business_card_id: cardId,
+            user_id: user.id,
+            title: file.title,
+            filename: file.filename,
+            file_url: file.file_url,
+            file_size: file.file_size,
+            file_type: file.file_type,
+            display_order: attachmentFiles.filter(a => a.isExisting).length + index
+          }))
+
+          const { error: attachmentError } = await supabase
+            .from('card_attachments')
+            .insert(attachmentRecords)
+
+          if (attachmentError) {
+            console.error('Error saving attachments:', attachmentError)
+            alert('파일은 업로드되었지만 데이터베이스 저장 중 오류가 발생했습니다.')
+          }
+        } catch (error) {
+          console.error('Error uploading attachments:', error)
+          alert('첨부파일 업로드 중 오류가 발생했습니다.')
+        } finally {
+          setUploadingAttachment(false)
+        }
+      }
+
+      // Update existing attachment titles
+      const existingAttachments = attachmentFiles.filter(att => att.isExisting)
+      for (const att of existingAttachments) {
+        await supabase
+          .from('card_attachments')
+          .update({ title: att.title })
+          .eq('id', att.id)
+      }
 
       alert('명함이 수정되었습니다!')
       navigate('/dashboard')
@@ -501,50 +603,65 @@ export function EditCardPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    첨부파일 제목
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.attachment_title}
-                    onChange={(e) => setFormData({ ...formData, attachment_title: e.target.value })}
-                    placeholder="예: 사업계획서, 포트폴리오"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    파일 다운로드 버튼에 표시될 이름
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    파일 업로드
-                  </label>
-                  <input
-                    type="file"
-                    onChange={handleAttachmentChange}
-                    accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  />
-                  {existingAttachment && !attachmentFile && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      현재 파일: {existingAttachment.filename}
-                    </p>
-                  )}
-                  {attachmentFile && (
-                    <p className="text-sm text-green-600 mt-1">
-                      새 파일: {attachmentFile.name} ({(attachmentFile.size / 1024).toFixed(1)}KB)
-                    </p>
-                  )}
-                  {uploadingAttachment && (
-                    <p className="text-sm text-blue-600 mt-1">파일 업로드 중...</p>
-                  )}
-                  <p className="text-xs text-gray-500 mt-1">
-                    최대 50MB, PDF/DOC/PPT/XLS/이미지 파일
-                  </p>
-                </div>
+              {/* 다중 파일 업로드 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  첨부파일 업로드
+                </label>
+                <input
+                  type="file"
+                  onChange={handleAttachmentChange}
+                  multiple
+                  accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.webp,.gif,.mp4,.webm,.mov,.avi"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  최대 50MB, 여러 파일 선택 가능 (PDF, 문서, 이미지, 동영상)
+                </p>
               </div>
+
+              {/* 첨부파일 목록 */}
+              {attachmentFiles.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-gray-700">첨부된 파일 ({attachmentFiles.length})</h3>
+                  {attachmentFiles.map((attachment) => (
+                    <div
+                      key={attachment.id}
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <input
+                          type="text"
+                          value={attachment.title}
+                          onChange={(e) => updateAttachmentTitle(attachment.id, e.target.value)}
+                          placeholder="파일 제목"
+                          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                        />
+                        <p className="text-xs text-gray-500 mt-1 truncate flex items-center gap-1">
+                          {attachment.isExisting && <span className="text-green-600">✓ 저장됨</span>}
+                          {!attachment.isExisting && <span className="text-blue-600">새 파일</span>}
+                          <span>·</span>
+                          {attachment.filename} ({(attachment.file_size / 1024).toFixed(1)}KB)
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => previewAttachment(attachment)}
+                        className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                      >
+                        미리보기
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(attachment)}
+                        className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -638,6 +755,22 @@ export function EditCardPage() {
         currentTheme={formData.theme}
         onSelectTheme={(theme) => setFormData({ ...formData, theme })}
       />
+
+      {/* File Preview Modal */}
+      {previewFile && (
+        <FilePreviewModal
+          isOpen={!!previewFile}
+          onClose={() => {
+            if (previewFile?.url && !previewFile.url.startsWith('http')) {
+              URL.revokeObjectURL(previewFile.url)
+            }
+            setPreviewFile(null)
+          }}
+          fileUrl={previewFile.url}
+          fileName={previewFile.name}
+          fileType={previewFile.type}
+        />
+      )}
     </div>
   )
 }
