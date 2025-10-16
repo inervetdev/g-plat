@@ -24,16 +24,36 @@ export function TrendyCard({ userId }: { userId: string }) {
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null)
 
   const getYouTubeVideoId = (url: string): string => {
+    if (!url) return ''
+
     try {
+      // 이미 embed URL인 경우 video ID 추출
+      const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/)
+      if (embedMatch) return embedMatch[1]
+
       const urlObj = new URL(url)
-      if (urlObj.hostname.includes('youtube.com')) {
-        return urlObj.searchParams.get('v') || ''
-      } else if (urlObj.hostname.includes('youtu.be')) {
-        return urlObj.pathname.slice(1)
+
+      // youtube.com/watch?v=VIDEO_ID
+      if (urlObj.hostname.includes('youtube.com') || urlObj.hostname.includes('youtube-nocookie.com')) {
+        const videoId = urlObj.searchParams.get('v')
+        if (videoId) return videoId
+
+        // youtube.com/embed/VIDEO_ID 형식도 처리
+        const pathMatch = urlObj.pathname.match(/\/embed\/([a-zA-Z0-9_-]+)/)
+        if (pathMatch) return pathMatch[1]
       }
+
+      // youtu.be/VIDEO_ID
+      if (urlObj.hostname.includes('youtu.be')) {
+        const videoId = urlObj.pathname.slice(1).split('?')[0]
+        if (videoId) return videoId
+      }
+
       return ''
     } catch {
-      return ''
+      // URL 파싱 실패 시 정규식으로 시도
+      const regexMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/)
+      return regexMatch ? regexMatch[1] : ''
     }
   }
 
