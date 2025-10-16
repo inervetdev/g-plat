@@ -328,36 +328,48 @@ Claude Code has direct access to the production Supabase database via MCP (Model
   - ⏳ Advanced CRM features
 - **Technology Strategy**: Continue with React for rapid MVP development, evaluate Next.js migration based on user feedback and scaling needs
 
-### Next Steps
-1. **Production Deployment (Immediate)**:
-   - Deploy sidejob category system to production
-   - Create sidejob-cards storage bucket in production Supabase
-   - Apply storage migration to production database
-   - Test end-to-end flow in production environment
-2. **Phase 3 Development**:
-   - Callback automation system
-   - SMS integration with Twilio/Aligo
-   - Payment system integration (Stripe/Toss Payments)
-   - Korean domain (.한국) registration system
-3. **Performance Optimization**:
+### Next Steps (Phase 3)
+1. **Callback Automation System**:
+   - Call end detection and automatic SMS sending
+   - Twilio/Aligo API integration
+   - Message template management
+   - Send history tracking
+
+2. **Payment System Integration**:
+   - Stripe/Toss Payments integration
+   - Subscription plan management (Free/Premium/Business)
+   - Payment history and receipt management
+
+3. **Korean Domain (.한국) System**:
+   - Gabia domain API integration
+   - Automatic domain creation and verification
+   - DNS configuration automation
+
+4. **Performance & Analytics**:
    - Image optimization and lazy loading
    - Code splitting and bundle size reduction
-   - Caching strategy implementation
-   - CDN configuration for uploaded images
-4. **Analytics Enhancement**:
    - Conversion funnel tracking
    - A/B testing framework
-   - User behavior heatmaps
-   - Category-based analytics for sidejob cards
 
 ## Database Schema
-The MySQL database (`gplat`) includes tables for users, business cards, side business cards, analytics, and callback management. Schema initialization is in `sql/init.sql`.
+The production database uses **Supabase PostgreSQL** with the following key tables:
+- `business_cards` - Main business card data with custom URLs
+- `sidejob_cards` - Side business portfolio cards with categories
+- `card_attachments` - File and YouTube attachments for cards
+- `qr_codes` - QR code generation and tracking
+- `qr_scans` - QR scan analytics with device/browser detection
+- `visitor_stats` - Page visit tracking and analytics
+- **Storage Buckets**: `card-attachments`, `sidejob-cards`
 
-## Security Considerations
-- Authentication planned via Supabase Auth
-- Current demo credentials in README.md should be replaced
-- Database passwords are hardcoded in docker-compose.yml
-- No secrets management system in place yet
+All tables have Row Level Security (RLS) policies applied for security.
+
+## Security
+- ✅ **Authentication**: Supabase Auth with email/password and social login UI
+- ✅ **Database Security**: RLS policies on all tables
+- ✅ **Storage Security**: RLS policies with user-specific folder access
+- ✅ **API Security**: Supabase anon key with RLS enforcement
+- ⏳ **Environment Variables**: Managed via Vercel and local .env files
+- ⏳ **Secrets Management**: To be implemented for SMS/payment API keys
 
 ## Technical Stack (Current)
 ### Frontend

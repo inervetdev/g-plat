@@ -272,26 +272,45 @@ Claude Code는 MCP (Model Context Protocol)를 통해 프로덕션 Supabase 데�
   - ⏳ 고급 CRM 기능
 - **기술 전략**: React로 빠른 MVP 개발 진행, 사용자 피드백과 확장 필요성에 따라 Next.js 마이그레이션 검토
 
-### 다음 단계
-1. **Phase 3 개발**:
-   - 콜백 자동화 시스템
-   - Twilio/Aligo SMS 통합
-   - 결제 시스템 통합 (Stripe/토스페이먼츠)
-   - 한국 도메인 (.한국) 등록 시스템
-2. **성능 최적화**:
+### 다음 단계 (Phase 3)
+1. **콜백 자동화 시스템**:
+   - 통화 종료 감지 및 자동 SMS 발송
+   - Twilio/Aligo API 연동
+   - 메시지 템플릿 관리
+   - 발송 이력 추적
+
+2. **결제 시스템 통합**:
+   - Stripe/토스페이먼츠 연동
+   - 구독 플랜 관리 (무료/프리미엄/비즈니스)
+   - 결제 내역 및 영수증 관리
+
+3. **한글 도메인 (.한국) 시스템**:
+   - 가비아 도메인 API 연동
+   - 자동 도메인 생성 및 검증
+   - DNS 설정 자동화
+
+4. **성능 및 분석**:
    - 이미지 최적화 및 지연 로딩
    - 코드 스플리팅 및 번들 크기 감소
-   - 캐싱 전략 구현
-3. **분석 기능 향상**:
    - 전환 퍼널 추적
    - A/B 테스팅 프레임워크
-   - 사용자 행동 히트맵
 
 ## 데이터베이스 스키마
-MySQL 데이터베이스 (`gplat`)는 사용자, 명함, 부업 카드, 분석 및 콜백 관리를 위한 테이블을 포함합니다. 스키마 초기화는 `sql/init.sql`에 있습니다.
+프로덕션 데이터베이스는 **Supabase PostgreSQL**을 사용하며 다음 주요 테이블을 포함합니다:
+- `business_cards` - 커스텀 URL이 포함된 주요 명함 데이터
+- `sidejob_cards` - 카테고리가 있는 부업 포트폴리오 카드
+- `card_attachments` - 카드의 파일 및 YouTube 첨부파일
+- `qr_codes` - QR 코드 생성 및 추적
+- `qr_scans` - 디바이스/브라우저 감지가 포함된 QR 스캔 분석
+- `visitor_stats` - 페이지 방문 추적 및 분석
+- **Storage 버킷**: `card-attachments`, `sidejob-cards`
 
-## 보안 고려사항
-- Supabase Auth를 통한 인증 계획
-- README.md의 현재 데모 인증 정보는 교체 필요
-- 데이터베이스 비밀번호가 docker-compose.yml에 하드코딩됨
-- 아직 시크릿 관리 시스템이 없음
+모든 테이블에는 보안을 위해 Row Level Security (RLS) 정책이 적용되어 있습니다.
+
+## 보안
+- ✅ **인증**: 이메일/비밀번호 및 소셜 로그인 UI를 갖춘 Supabase Auth
+- ✅ **데이터베이스 보안**: 모든 테이블에 RLS 정책 적용
+- ✅ **Storage 보안**: 사용자별 폴더 접근 제어를 갖춘 RLS 정책
+- ✅ **API 보안**: RLS 적용이 포함된 Supabase anon key
+- ⏳ **환경 변수**: Vercel 및 로컬 .env 파일로 관리
+- ⏳ **비밀 관리**: SMS/결제 API 키를 위해 구현 예정
