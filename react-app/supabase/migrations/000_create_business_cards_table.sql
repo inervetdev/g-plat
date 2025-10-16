@@ -109,6 +109,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS update_business_cards_updated_at ON public.business_cards;
+
 CREATE TRIGGER update_business_cards_updated_at
     BEFORE UPDATE ON public.business_cards
     FOR EACH ROW
