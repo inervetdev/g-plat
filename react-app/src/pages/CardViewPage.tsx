@@ -21,17 +21,23 @@ export default function CardViewPage() {
       // 방문자 정보 수집
       const visitorData = {
         user_id: cardUserId,
-        page_visited: `/card/${userId}`,
+        page_url: `/card/${userId}`,
         visitor_ip: null, // 서버사이드에서 처리하는 것이 더 안전
         user_agent: navigator.userAgent,
         referrer: document.referrer || null
       }
 
-      await supabase
+      // Insert visitor stats, ignore errors (409 Conflict is expected for duplicates)
+      const { error } = await supabase
         .from('visitor_stats')
         .insert(visitorData)
+
+      // Silently ignore 409 conflicts (duplicate entries)
+      if (error && error.code !== '23505') {
+        console.error('Error recording visitor stats:', error)
+      }
     } catch (error) {
-      console.error('Error recording visitor stats:', error)
+      // Silently fail - visitor stats are not critical
     }
   }
 
@@ -44,7 +50,7 @@ export default function CardViewPage() {
         .select('*')
         .eq('custom_url', userId)
         .eq('is_active', true)
-        .single()
+        .maybeSingle()
 
       if (cardByUrl && !urlError) {
         setUserExists(true)
@@ -82,7 +88,7 @@ export default function CardViewPage() {
         .select('*')
         .eq('id', userId)
         .eq('is_active', true)
-        .single()
+        .maybeSingle()
 
       if (cardById && !idError) {
         setUserExists(true)
@@ -121,7 +127,7 @@ export default function CardViewPage() {
         .eq('user_id', userId)
         .eq('is_primary', true)
         .eq('is_active', true)
-        .single()
+        .maybeSingle()
 
       if (primaryCard && !primaryError) {
         setUserExists(true)
@@ -151,7 +157,7 @@ export default function CardViewPage() {
         .eq('user_id', userId)
         .eq('is_active', true)
         .limit(1)
-        .single()
+        .maybeSingle()
 
       if (anyCard && !anyError) {
         setUserExists(true)
@@ -179,7 +185,7 @@ export default function CardViewPage() {
         .from('users')
         .select('id')
         .eq('id', userId)
-        .single()
+        .maybeSingle()
 
       if (userData && !userError) {
         setUserExists(true)
