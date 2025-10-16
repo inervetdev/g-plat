@@ -194,23 +194,23 @@ export function AppleCard({ userId }: { userId: string }) {
 
         {/* Address & Map */}
         {cardData.address && (
-          <div className="mt-2 bg-white">
-            <div className="px-4">
-              <div className="py-3">
-                <p className="text-xs text-gray-500 mb-2">주소</p>
-                <p className="text-sm text-gray-700 mb-3">{cardData.address}</p>
+          <div className="mt-2 bg-white px-4 py-4">
+            <p className="text-xs text-gray-500 mb-3">주소</p>
 
-                {cardData.latitude && cardData.longitude && (
-                  <MapPreview
-                    latitude={cardData.latitude}
-                    longitude={cardData.longitude}
-                    address={cardData.address}
-                    height="200px"
-                    level={4}
-                  />
-                )}
-              </div>
+            {/* 말풍선 스타일 주소 */}
+            <div className="relative bg-blue-500 text-white rounded-2xl rounded-tl-sm px-4 py-3 mb-3 inline-block max-w-[85%]">
+              <p className="text-sm leading-relaxed">📍 {cardData.address}</p>
             </div>
+
+            {cardData.latitude && cardData.longitude && (
+              <MapPreview
+                latitude={cardData.latitude}
+                longitude={cardData.longitude}
+                address={cardData.address}
+                height="200px"
+                level={4}
+              />
+            )}
           </div>
         )}
 

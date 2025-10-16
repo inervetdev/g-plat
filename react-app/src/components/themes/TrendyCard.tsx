@@ -331,10 +331,16 @@ END:VCARD`
         {cardData.address && (
           <div className="mb-8 animate-fadeInUp animation-delay-600">
             <h2 className="text-xl font-bold mb-4 text-gray-400">주소</h2>
-            <div className="p-6 bg-white rounded-2xl border border-gray-200 shadow-lg">
-              <p className="text-gray-900 font-medium mb-3">📍 {cardData.address}</p>
 
-              {cardData.latitude && cardData.longitude && (
+            {/* 말풍선 스타일 주소 */}
+            <div className="mb-4">
+              <div className="relative bg-white text-gray-900 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-lg">
+                <p className="text-base leading-relaxed font-medium">📍 {cardData.address}</p>
+              </div>
+            </div>
+
+            {cardData.latitude && cardData.longitude && (
+              <div className="rounded-2xl overflow-hidden shadow-lg">
                 <MapPreview
                   latitude={cardData.latitude}
                   longitude={cardData.longitude}
@@ -342,8 +348,8 @@ END:VCARD`
                   height="250px"
                   level={4}
                 />
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
 
