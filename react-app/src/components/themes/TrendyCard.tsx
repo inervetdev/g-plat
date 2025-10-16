@@ -331,8 +331,8 @@ END:VCARD`
         {cardData.address && (
           <div className="mb-8 animate-fadeInUp animation-delay-600">
             <h2 className="text-xl font-bold mb-4 text-gray-400">주소</h2>
-            <div className="p-6 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-2xl border border-gray-800">
-              <p className="text-gray-300 mb-3">📍 {cardData.address}</p>
+            <div className="p-6 bg-white rounded-2xl border border-gray-200 shadow-lg">
+              <p className="text-gray-900 font-medium mb-3">📍 {cardData.address}</p>
 
               {cardData.latitude && cardData.longitude && (
                 <MapPreview
