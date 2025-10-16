@@ -34,9 +34,10 @@
 ### High Priority
 
 1. **Rotate Supabase Access Token Regularly**
-   - Current token: `sbp_27e4a62c9712236fe7b5c4deeb9ebbbfd876d5fb`
    - Recommendation: Rotate every 90 days
-   - Store in secure location (not in code/chat history)
+   - Store in secure location (e.g., 1Password, Bitwarden)
+   - **NEVER** commit tokens to Git or include in documentation
+   - Access tokens from: Supabase Dashboard > Settings > API > Personal Access Tokens
 
 2. **Add File Upload Validation**
    ```typescript

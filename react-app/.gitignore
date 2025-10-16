@@ -12,6 +12,18 @@ dist
 dist-ssr
 *.local
 
+# Environment Variables (ALL .env files)
+.env
+.env.*
+!.env.example
+
+# Development/Migration Scripts (contain sensitive tokens)
+*.cjs
+*.ps1
+*.sh
+apply_migration.js
+execute_sql.js
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

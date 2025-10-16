@@ -21,7 +21,9 @@ VITE_SUPABASE_URL=https://anwwjowwrxdygqyhhckr.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 # Supabase Access Token (관리자 권한 - 민감)
-SUPABASE_ACCESS_TOKEN=sbp_27e4a62c9712236fe7b5c4deeb9ebbbfd876d5fb
+# Supabase Dashboard > Settings > API > Project API keys > service_role key
+# 또는 Personal Access Token을 사용하세요
+SUPABASE_ACCESS_TOKEN=<YOUR_ACCESS_TOKEN_HERE>
 ```
 
 ## MCP 설정 파일
