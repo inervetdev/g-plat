@@ -5,6 +5,7 @@ import { useTheme, type ThemeName } from '../contexts/ThemeContext'
 import ThemePreviewModal from '../components/ThemePreviewModal'
 import FilePreviewModal from '../components/FilePreviewModal'
 import { AddressSearchModal } from '../components/AddressSearchModal'
+import { MapPreview } from '../components/MapPreview'
 
 interface AttachmentFile {
   id: string
@@ -28,6 +29,8 @@ export default function CreateCardPageOptimized() {
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string; type: string } | null>(null)
   const [showAddressSearch, setShowAddressSearch] = useState(false)
+  const [showMap, setShowMap] = useState(false)
+  const [mapCoords, setMapCoords] = useState<{latitude: number, longitude: number} | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -275,6 +278,8 @@ export default function CreateCardPageOptimized() {
           email: formData.email,
           website: formData.website,
           address: formData.address,
+          latitude: mapCoords?.latitude || null,
+          longitude: mapCoords?.longitude || null,
           linkedin: formData.linkedin,
           instagram: formData.instagram,
           facebook: formData.facebook,
@@ -536,6 +541,21 @@ export default function CreateCardPageOptimized() {
                   </div>
                 </div>
               </div>
+              {/* 지도 미리보기 */}
+              {showMap && mapCoords && (
+                <div className="col-span-2 mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    📍 지도 미리보기
+                  </label>
+                  <MapPreview
+                    latitude={mapCoords.latitude}
+                    longitude={mapCoords.longitude}
+                    address={formData.address}
+                    height="300px"
+                    level={3}
+                  />
+                </div>
+              )}
             </div>
 
             {/* 소셜 미디어 - 간소화 */}
@@ -795,7 +815,13 @@ export default function CreateCardPageOptimized() {
       <AddressSearchModal
         isOpen={showAddressSearch}
         onClose={() => setShowAddressSearch(false)}
-        onSelect={(address) => setFormData(prev => ({ ...prev, address }))}
+        onSelect={(address, latitude, longitude) => {
+          setFormData(prev => ({ ...prev, address }))
+          if (latitude && longitude) {
+            setMapCoords({ latitude, longitude })
+            setShowMap(true)
+          }
+        }}
       />
     </div>
   )

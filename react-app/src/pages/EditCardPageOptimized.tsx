@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import ThemePreviewModal from '../components/ThemePreviewModal'
 import FilePreviewModal from '../components/FilePreviewModal'
 import { AddressSearchModal } from '../components/AddressSearchModal'
+import { MapPreview } from '../components/MapPreview'
 import type { ThemeName } from '../contexts/ThemeContext'
 import {
   DndContext,
@@ -48,6 +49,8 @@ export function EditCardPageOptimized() {
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string; type: string } | null>(null)
   const [showAddressSearch, setShowAddressSearch] = useState(false)
+  const [showMap, setShowMap] = useState(false)
+  const [mapCoords, setMapCoords] = useState<{latitude: number, longitude: number} | null>(null)
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -153,6 +156,15 @@ export function EditCardPageOptimized() {
             isExisting: true
           }))
           setAttachmentFiles(existingAttachments)
+        }
+
+        // Load map coordinates if available
+        if (card.latitude && card.longitude) {
+          setMapCoords({
+            latitude: card.latitude,
+            longitude: card.longitude
+          })
+          setShowMap(true)
         }
       }
     } catch (error) {
@@ -348,6 +360,8 @@ export function EditCardPageOptimized() {
           email: formData.email,
           website: formData.website,
           address: formData.address,
+          latitude: mapCoords?.latitude || null,
+          longitude: mapCoords?.longitude || null,
           linkedin: formData.linkedin,
           instagram: formData.instagram,
           facebook: formData.facebook,
@@ -689,6 +703,21 @@ export function EditCardPageOptimized() {
                 <FormField label="웹사이트" name="website" type="url" placeholder="https://" />
                 <FormField label="주소" name="address" />
               </div>
+              {/* 지도 미리보기 */}
+              {showMap && mapCoords && (
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    📍 지도 미리보기
+                  </label>
+                  <MapPreview
+                    latitude={mapCoords.latitude}
+                    longitude={mapCoords.longitude}
+                    address={formData.address}
+                    height="300px"
+                    level={3}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Social Media */}
@@ -891,7 +920,13 @@ export function EditCardPageOptimized() {
       <AddressSearchModal
         isOpen={showAddressSearch}
         onClose={() => setShowAddressSearch(false)}
-        onSelect={(address) => setFormData({ ...formData, address })}
+        onSelect={(address, latitude, longitude) => {
+          setFormData({ ...formData, address })
+          if (latitude && longitude) {
+            setMapCoords({ latitude, longitude })
+            setShowMap(true)
+          }
+        }}
       />
     </div>
   )

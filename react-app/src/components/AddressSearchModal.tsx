@@ -1,24 +1,21 @@
 import { useState } from 'react'
-
-// Naver Maps API 타입 선언
-declare global {
-  interface Window {
-    naver: any
-  }
-}
+import { supabase } from '../lib/supabase'
 
 interface AddressResult {
   roadAddress: string
   jibunAddress: string
   englishAddress: string
-  x: string // longitude
-  y: string // latitude
+  x: string // longitude (경도)
+  y: string // latitude (위도)
+  addressName?: string
+  buildingName?: string
+  zoneNo?: string // 우편번호
 }
 
 interface AddressSearchModalProps {
   isOpen: boolean
   onClose: () => void
-  onSelect: (address: string) => void
+  onSelect: (address: string, latitude?: number, longitude?: number) => void
 }
 
 export function AddressSearchModal({ isOpen, onClose, onSelect }: AddressSearchModalProps) {
@@ -38,30 +35,18 @@ export function AddressSearchModal({ isOpen, onClose, onSelect }: AddressSearchM
     setResults([])
 
     try {
-      // 네이버 지도 JavaScript API 사용 (클라이언트 사이드)
-      if (!window.naver || !window.naver.maps || !window.naver.maps.Service) {
-        throw new Error('네이버 지도 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.')
-      }
-
-      // Promise로 래핑
-      const geocodeResult = await new Promise<any>((resolve, reject) => {
-        window.naver.maps.Service.geocode(
-          {
-            query: searchQuery,
-          },
-          (status: any, response: any) => {
-            if (status === window.naver.maps.Service.Status.OK) {
-              resolve(response)
-            } else if (status === window.naver.maps.Service.Status.ZERO_RESULT) {
-              resolve({ v2: { addresses: [] } })
-            } else {
-              reject(new Error('주소 검색에 실패했습니다'))
-            }
-          }
-        )
+      // Supabase Edge Function을 통해 카카오 Geocoding API 호출
+      const { data, error: functionError } = await supabase.functions.invoke('kakao-geocode', {
+        body: { query: searchQuery }
       })
 
-      const addresses = geocodeResult.v2?.addresses || []
+      if (functionError) {
+        console.error('Edge Function error:', functionError)
+        throw new Error(functionError.message || '주소 검색에 실패했습니다')
+      }
+
+      // 카카오 Geocoding API 응답 구조: { addresses: [...] }
+      const addresses = data?.addresses || []
 
       if (addresses && addresses.length > 0) {
         setResults(addresses)
@@ -80,7 +65,9 @@ export function AddressSearchModal({ isOpen, onClose, onSelect }: AddressSearchM
   const handleSelect = (address: AddressResult) => {
     // 도로명 주소 우선, 없으면 지번 주소 사용
     const selectedAddress = address.roadAddress || address.jibunAddress
-    onSelect(selectedAddress)
+    const latitude = parseFloat(address.y)
+    const longitude = parseFloat(address.x)
+    onSelect(selectedAddress, latitude, longitude)
     onClose()
   }
 
@@ -103,7 +90,7 @@ export function AddressSearchModal({ isOpen, onClose, onSelect }: AddressSearchM
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">주소 검색</h2>
+          <h2 className="text-xl font-semibold text-gray-900">주소 검색 (Kakao)</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -157,14 +144,19 @@ export function AddressSearchModal({ isOpen, onClose, onSelect }: AddressSearchM
                   <div className="font-medium text-gray-900">
                     {result.roadAddress || result.jibunAddress}
                   </div>
-                  {result.roadAddress && result.jibunAddress && (
+                  {result.roadAddress && result.jibunAddress && result.roadAddress !== result.jibunAddress && (
                     <div className="text-sm text-gray-500 mt-1">
                       (지번) {result.jibunAddress}
                     </div>
                   )}
-                  {result.englishAddress && (
+                  {result.buildingName && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      🏢 {result.buildingName}
+                    </div>
+                  )}
+                  {result.zoneNo && (
                     <div className="text-xs text-gray-400 mt-1">
-                      {result.englishAddress}
+                      📮 우편번호: {result.zoneNo}
                     </div>
                   )}
                 </div>

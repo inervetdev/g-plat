@@ -62,7 +62,9 @@ export type Database = {
           introduction: string | null
           is_active: boolean | null
           is_primary: boolean | null
+          latitude: number | null
           linkedin: string | null
+          longitude: number | null
           name: string
           phone: string | null
           profile_image: string | null
@@ -101,7 +103,9 @@ export type Database = {
           introduction?: string | null
           is_active?: boolean | null
           is_primary?: boolean | null
+          latitude?: number | null
           linkedin?: string | null
+          longitude?: number | null
           name: string
           phone?: string | null
           profile_image?: string | null
@@ -140,7 +144,9 @@ export type Database = {
           introduction?: string | null
           is_active?: boolean | null
           is_primary?: boolean | null
+          latitude?: number | null
           linkedin?: string | null
+          longitude?: number | null
           name?: string
           phone?: string | null
           profile_image?: string | null

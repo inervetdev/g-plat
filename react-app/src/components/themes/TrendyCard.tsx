@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
+import { MapPreview } from '../MapPreview'
 import type { Attachment } from '@/types/attachment'
 
 interface CardData {
@@ -10,6 +11,9 @@ interface CardData {
   phone: string
   email: string
   website?: string
+  address?: string
+  latitude?: number
+  longitude?: number
   introduction?: string
   services?: string[]
   profileImage?: string
@@ -111,6 +115,9 @@ export function TrendyCard({ userId }: { userId: string }) {
           phone: businessCard.phone || '',
           email: businessCard.email || '',
           website: (businessCard as any).website || '',
+          address: (businessCard as any).address || '',
+          latitude: (businessCard as any).latitude,
+          longitude: (businessCard as any).longitude,
           introduction: (businessCard as any).introduction || '',
           services: (businessCard as any).services || [],
           profileImage: businessCard.profile_image || '',
@@ -319,6 +326,26 @@ END:VCARD`
             연락처 저장
           </button>
         </div>
+
+        {/* Address & Map */}
+        {cardData.address && (
+          <div className="mb-8 animate-fadeInUp animation-delay-600">
+            <h2 className="text-xl font-bold mb-4 text-gray-400">주소</h2>
+            <div className="p-6 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-2xl border border-gray-800">
+              <p className="text-gray-300 mb-3">📍 {cardData.address}</p>
+
+              {cardData.latitude && cardData.longitude && (
+                <MapPreview
+                  latitude={cardData.latitude}
+                  longitude={cardData.longitude}
+                  address={cardData.address}
+                  height="250px"
+                  level={4}
+                />
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Services */}
         {cardData.services && cardData.services.length > 0 && (
