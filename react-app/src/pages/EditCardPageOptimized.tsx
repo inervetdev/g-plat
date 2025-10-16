@@ -9,11 +9,14 @@ interface AttachmentFile {
   id: string
   file?: File
   title: string
-  filename: string
+  filename?: string
   file_url?: string
-  file_size: number
-  file_type: string
+  file_size?: number
+  file_type?: string
   isExisting?: boolean
+  youtube_url?: string
+  youtube_display_mode?: 'modal' | 'inline'
+  attachment_type?: 'file' | 'youtube'
 }
 
 // React Compiler가 자동으로 최적화 - 수동 memo, useCallback, useMemo 불필요!
@@ -105,6 +108,9 @@ export function EditCardPageOptimized() {
             file_url: att.file_url,
             file_size: att.file_size,
             file_type: att.file_type,
+            youtube_url: att.youtube_url,
+            youtube_display_mode: att.youtube_display_mode || 'modal',
+            attachment_type: att.attachment_type || 'file',
             isExisting: true
           }))
           setAttachmentFiles(existingAttachments)
@@ -138,11 +144,32 @@ export function EditCardPageOptimized() {
       filename: file.name,
       file_size: file.size,
       file_type: file.type,
+      attachment_type: 'file',
       isExisting: false
     }))
 
     setAttachmentFiles(prev => [...prev, ...newAttachments])
     e.target.value = ''
+  }
+
+  // React Compiler가 자동으로 최적화
+  const addYouTubeUrl = (url: string, title: string, displayMode: 'modal' | 'inline' = 'modal') => {
+    const newAttachment: AttachmentFile = {
+      id: `youtube-${Date.now()}-${Math.random()}`,
+      title: title || 'YouTube 영상',
+      youtube_url: url,
+      youtube_display_mode: displayMode,
+      attachment_type: 'youtube',
+      isExisting: false
+    }
+    setAttachmentFiles(prev => [...prev, newAttachment])
+  }
+
+  // React Compiler가 자동으로 최적화
+  const updateYouTubeDisplayMode = (id: string, mode: 'modal' | 'inline') => {
+    setAttachmentFiles(prev =>
+      prev.map(att => att.id === id ? { ...att, youtube_display_mode: mode } : att)
+    )
   }
 
   // React Compiler가 자동으로 최적화
@@ -171,20 +198,26 @@ export function EditCardPageOptimized() {
 
   // React Compiler가 자동으로 최적화
   const previewAttachment = (attachment: AttachmentFile) => {
-    let url: string
-    if (attachment.file) {
-      url = URL.createObjectURL(attachment.file)
+    if (attachment.attachment_type === 'youtube' && attachment.youtube_url) {
+      setPreviewFile({
+        url: attachment.youtube_url,
+        name: attachment.title,
+        type: 'video/youtube'
+      })
+    } else if (attachment.file) {
+      const url = URL.createObjectURL(attachment.file)
+      setPreviewFile({
+        url,
+        name: attachment.filename || attachment.title,
+        type: attachment.file_type || 'application/octet-stream'
+      })
     } else if (attachment.file_url) {
-      url = attachment.file_url
-    } else {
-      return
+      setPreviewFile({
+        url: attachment.file_url,
+        name: attachment.filename || attachment.title,
+        type: attachment.file_type || 'application/octet-stream'
+      })
     }
-
-    setPreviewFile({
-      url,
-      name: attachment.filename,
-      type: attachment.file_type
-    })
   }
 
   // React Compiler가 자동으로 최적화
@@ -192,10 +225,23 @@ export function EditCardPageOptimized() {
     const results = []
 
     for (const attachment of files) {
+      // YouTube 첨부파일 처리
+      if (attachment.attachment_type === 'youtube' && attachment.youtube_url) {
+        results.push({
+          id: attachment.id,
+          title: attachment.title,
+          youtube_url: attachment.youtube_url,
+          youtube_display_mode: attachment.youtube_display_mode || 'modal',
+          attachment_type: 'youtube'
+        })
+        continue
+      }
+
+      // 파일 첨부파일 처리
       if (!attachment.file) continue
 
       try {
-        const fileExt = attachment.filename.split('.').pop()
+        const fileExt = attachment.filename?.split('.').pop()
         const fileName = `${Date.now()}-${Math.random()}.${fileExt}`
         const filePath = `${userId}/${fileName}`
 
@@ -218,7 +264,8 @@ export function EditCardPageOptimized() {
           filename: attachment.filename,
           file_url: data.publicUrl,
           file_size: attachment.file_size,
-          file_type: attachment.file_type
+          file_type: attachment.file_type,
+          attachment_type: 'file'
         })
       } catch (error) {
         console.error(`Upload failed: ${attachment.filename}`, error)
@@ -284,6 +331,9 @@ export function EditCardPageOptimized() {
             file_url: file.file_url,
             file_size: file.file_size,
             file_type: file.file_type,
+            youtube_url: file.youtube_url,
+            youtube_display_mode: file.youtube_display_mode,
+            attachment_type: file.attachment_type,
             display_order: attachmentFiles.filter(a => a.isExisting).length + index
           }))
 
@@ -350,31 +400,49 @@ export function EditCardPageOptimized() {
   const AttachmentItem = ({ attachment }: { attachment: AttachmentFile }) => (
     <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
       <div className="flex-1 min-w-0">
-        <input
-          type="text"
-          value={attachment.title}
-          onChange={(e) => updateAttachmentTitle(attachment.id, e.target.value)}
-          placeholder="파일 제목"
-          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-        />
-        <p className="text-xs text-gray-500 mt-1 truncate flex items-center gap-1">
-          {attachment.isExisting && <span className="text-green-600">✓ 저장됨</span>}
-          {!attachment.isExisting && <span className="text-blue-600">새 파일</span>}
-          <span>·</span>
-          {attachment.filename} ({(attachment.file_size / 1024).toFixed(1)}KB)
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={attachment.title}
+            onChange={(e) => updateAttachmentTitle(attachment.id, e.target.value)}
+            placeholder="파일 제목"
+            className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+          />
+          {attachment.attachment_type === 'youtube' && (
+            <>
+              <span className="px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">YouTube</span>
+              <select
+                value={attachment.youtube_display_mode || 'modal'}
+                onChange={(e) => updateYouTubeDisplayMode(attachment.id, e.target.value as 'modal' | 'inline')}
+                className="px-2 py-1 text-xs border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                title="표시 방식"
+              >
+                <option value="modal">모달</option>
+                <option value="inline">인라인</option>
+              </select>
+            </>
+          )}
+        </div>
+        <p className="text-xs text-gray-500 mt-1 truncate">
+          {attachment.isExisting && <span className="text-green-600">✓ 저장됨 · </span>}
+          {!attachment.isExisting && <span className="text-blue-600">새 파일 · </span>}
+          {attachment.attachment_type === 'youtube'
+            ? attachment.youtube_url
+            : `${attachment.filename} (${((attachment.file_size || 0) / 1024).toFixed(1)}KB)`
+          }
         </p>
       </div>
       <button
         type="button"
         onClick={() => previewAttachment(attachment)}
-        className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+        className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors whitespace-nowrap"
       >
         미리보기
       </button>
       <button
         type="button"
         onClick={() => removeAttachment(attachment)}
-        className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+        className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors whitespace-nowrap"
       >
         삭제
       </button>
@@ -533,6 +601,42 @@ export function EditCardPageOptimized() {
                 </p>
               </div>
 
+              {/* YouTube URL 추가 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  YouTube URL 추가
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    id="youtube-url-input"
+                    placeholder="https://www.youtube.com/watch?v=..."
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const input = document.getElementById('youtube-url-input') as HTMLInputElement
+                      const url = input.value.trim()
+                      if (url) {
+                        const title = prompt('영상 제목을 입력하세요:', 'YouTube 영상')
+                        if (title) {
+                          const displayMode = confirm('명함 화면에 영상을 직접 표시하시겠습니까?\n\n확인: 인라인 표시\n취소: 모달 표시')
+                            ? 'inline' : 'modal'
+                          addYouTubeUrl(url, title, displayMode)
+                          input.value = ''
+                        }
+                      } else {
+                        alert('YouTube URL을 입력해주세요.')
+                      }
+                    }}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    추가
+                  </button>
+                </div>
+              </div>
+
               {/* 첨부파일 목록 */}
               {attachmentFiles.length > 0 && (
                 <div className="space-y-2">
@@ -631,7 +735,7 @@ export function EditCardPageOptimized() {
         <FilePreviewModal
           isOpen={!!previewFile}
           onClose={() => {
-            if (previewFile?.url && !previewFile.url.startsWith('http')) {
+            if (previewFile?.url && !previewFile.url.startsWith('http') && !previewFile.url.includes('youtube')) {
               URL.revokeObjectURL(previewFile.url)
             }
             setPreviewFile(null)
