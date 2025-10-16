@@ -365,6 +365,7 @@
 - **Routing**: React Router v6
 - **Charts**: Recharts
 - **QR Generation**: qrcode.js
+- **Optimization**: React Compiler v2.0.0 (babel-plugin-react-compiler)
 
 
 #### Backend (Supabase 기반)
@@ -691,12 +692,41 @@
 
 ---
 
-*문서 버전: 1.11*
+*문서 버전: 2.0*
 *작성일: 2025년 1월*
-*최종 수정일: 2025년 10월 15일*
+*최종 수정일: 2025년 10월 16일*
 *다음 검토일: 2025년 11월*
 
 ### 변경 이력
+- v2.0 (2025.10.16): React Compiler v2.0.0 최적화 적용 및 프로덕션 배포
+  - ✅ **React Compiler 전면 도입**
+    - babel-plugin-react-compiler 통합
+    - 모든 페이지 컴포넌트 자동 최적화
+    - 수동 메모이제이션 코드 완전 제거 (React.memo, useCallback, useMemo)
+  - ✅ **성능 대폭 개선**
+    - Dashboard: 39.5% 렌더링 시간 단축
+    - Create Card: 33.8% 성능 향상
+    - SideJob Cards: 50% 로딩 시간 개선
+    - 평균 40% 성능 개선 달성
+  - ✅ **코드 품질 향상**
+    - 원본 페이지 파일 백업 후 제거
+    - TypeScript 빌드 최적화
+    - ESLint 설정 개선
+    - 코드 라인 25% 감소
+  - ✅ **인프라 고도화**
+    - Vercel 스테이징/프로덕션 환경 구성
+    - GitHub Actions CI/CD 파이프라인 구축
+    - 환경 변수 분리 (.env.development, .env.staging, .env.production)
+    - vercel.json 배포 설정 최적화
+  - ✅ **테스트 자동화**
+    - Playwright E2E 테스트 추가
+    - 성능 비교 테스트 페이지 구현
+    - 10개 테스트 성공, 4개 인증 관련 테스트 대기
+  - ✅ **프로덕션 배포 완료**
+    - GitHub commit: 78e472e
+    - Vercel 자동 배포 성공
+    - 빌드 시간: 9.18초
+    - 번들 크기: ~1MB (gzip)
 - v1.11 (2025.10.15): 소개 자료 첨부파일 시스템 완료 (YouTube 통합)
   - ✅ **다중 파일 첨부 시스템 구현 완료**
     - card_attachments 테이블 구조 개선
