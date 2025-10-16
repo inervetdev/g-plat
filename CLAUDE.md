@@ -190,6 +190,7 @@ The project has three parallel implementations:
 - **UI Library**: shadcn/ui components
 - **Charts**: Recharts for analytics
 - **QR Code**: qrcode.js for generation
+- **Maps/Geocoding**: Naver Maps JavaScript API (Client-side)
 - **Edge Functions**: Deno runtime on Supabase
 - **Testing**: Playwright for E2E tests
 - **CLI Tools**: Supabase CLI, Playwright CLI
@@ -318,6 +319,12 @@ Claude Code has direct access to the production Supabase database via MCP (Model
     - Visual drag handle with hover effects
     - Keyboard accessibility (arrow keys + space/enter)
     - Automatic display_order persistence to database
+  - ✅ **Naver Maps address search integration (2025.10.17)**
+    - Naver Maps JavaScript API (Client ID: 8oy9bbkq8u)
+    - Client-side geocoding with window.naver.maps.Service
+    - Real-time address search (road names, jibun, building names)
+    - AddressSearchModal component with search results list
+    - English address display support
 - **Pending Features (Phase 3)**:
   - ⏳ Callback automation system
   - ⏳ SMS automation (Twilio/Aligo integration)
