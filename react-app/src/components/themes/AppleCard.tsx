@@ -27,6 +27,10 @@ export function AppleCard({ userId }: { userId: string }) {
         const videoId = urlObj.searchParams.get('v')
         if (videoId) return videoId
 
+        // youtube.com/shorts/VIDEO_ID (YouTube Shorts)
+        const shortsMatch = urlObj.pathname.match(/\/shorts\/([a-zA-Z0-9_-]+)/)
+        if (shortsMatch) return shortsMatch[1]
+
         // youtube.com/embed/VIDEO_ID 형식도 처리
         const pathMatch = urlObj.pathname.match(/\/embed\/([a-zA-Z0-9_-]+)/)
         if (pathMatch) return pathMatch[1]

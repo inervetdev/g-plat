@@ -38,6 +38,10 @@ export function TrendyCard({ userId }: { userId: string }) {
         const videoId = urlObj.searchParams.get('v')
         if (videoId) return videoId
 
+        // youtube.com/shorts/VIDEO_ID (YouTube Shorts)
+        const shortsMatch = urlObj.pathname.match(/\/shorts\/([a-zA-Z0-9_-]+)/)
+        if (shortsMatch) return shortsMatch[1]
+
         // youtube.com/embed/VIDEO_ID 형식도 처리
         const pathMatch = urlObj.pathname.match(/\/embed\/([a-zA-Z0-9_-]+)/)
         if (pathMatch) return pathMatch[1]
@@ -52,7 +56,7 @@ export function TrendyCard({ userId }: { userId: string }) {
       return ''
     } catch {
       // URL 파싱 실패 시 정규식으로 시도
-      const regexMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/)
+      const regexMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/)
       return regexMatch ? regexMatch[1] : ''
     }
   }
