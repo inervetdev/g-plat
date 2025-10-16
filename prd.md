@@ -175,7 +175,7 @@
   - Kakao, Apple 지원 예정 (Phase 3)
   - 최초 로그인 시 추가 정보 수집
 
-#### 5.1.2 프로필 관리 - **✅ 주소 검색 완료 (2025.10.17)**
+#### 5.1.2 프로필 관리 - **✅ 주소 검색 및 상세주소 완료 (2025.10.17)**
 - **기본 정보**
   - 이름, 전화번호, 이메일
   - 프로필 사진 (최대 5MB, JPG/PNG)
@@ -185,6 +185,10 @@
     - 실시간 주소 검색 (도로명, 지번, 건물명)
     - 검색 결과 모달 UI (도로명 주소 우선 표시)
     - 영문 주소 표시 지원
+  - **상세 주소 입력 (2025.10.17)**
+    - 메인 주소 + 상세 주소 분리 입력
+    - 동/호수, 건물명, 층수 등 상세 정보 관리
+    - 모든 테마 카드에서 통합 주소 표시
 - **직업 정보**
   - 회사명, 부서, 직급
   - 업무 분야, 경력
@@ -206,7 +210,7 @@
   - 리치 텍스트 에디터
   - 미디어 업로드 (이미지, 동영상)
 
-#### 5.2.2 소개 자료 (첨부파일) 시스템 - **✅ 완료 (2025.10.15)**
+#### 5.2.2 소개 자료 (첨부파일) 시스템 - **✅ 완료 (2025.10.17)**
 - **다중 파일 첨부 지원**
   - 파일 업로드 (PDF, 이미지, 동영상 등)
   - YouTube URL 첨부 (여러 개 가능)
@@ -214,13 +218,17 @@
   - 첨부파일별 제목 및 설명
 - **YouTube 통합 기능**
   - YouTube URL 자동 감지 및 비디오 ID 추출
+  - YouTube Shorts 완벽 지원 (youtube.com/shorts/VIDEO_ID)
   - 썸네일 자동 로드 (maxresdefault.jpg, fallback: hqdefault.jpg)
   - 2가지 표시 모드:
     - **모달 모드**: 미리보기 버튼 클릭 시 모달에서 재생
-    - **인라인 모드**: 명함 화면에 카드 형태로 표시
+    - **인라인 모드**: 명함 화면에 카드 형태로 표시 ✅
       - 영상 썸네일 + 재생 오버레이 버튼 UI
       - 클릭 시 iframe으로 자동 재생 (autoplay)
       - YouTube 배지 표시
+      - **모든 5개 테마 카드 지원 (2025.10.17)**
+        - TrendyCard, AppleCard, ProfessionalCard ✅
+        - SimpleCard, DefaultCard ✅
 - **파일 미리보기**
   - 이미지: 모달에서 전체 크기 보기
   - 동영상: HTML5 video 플레이어
@@ -709,10 +717,34 @@
 
 *문서 버전: 2.0*
 *작성일: 2025년 1월*
-*최종 수정일: 2025년 10월 16일*
+*최종 수정일: 2025년 10월 17일*
 *다음 검토일: 2025년 11월*
 
 ### 변경 이력
+- v1.14 (2025.10.17): 상세 주소 입력 및 YouTube 인라인 재생 완성
+  - ✅ **상세 주소 입력 필드 추가**
+    - address_detail 컬럼 추가 (TEXT)
+    - CreateCardPageOptimized에 상세주소 입력 필드 추가
+    - EditCardPageOptimized에 상세주소 입력 필드 추가
+    - 모든 5개 테마 카드에 상세주소 표시 적용
+      - TrendyCard, AppleCard, ProfessionalCard ✅
+      - SimpleCard, DefaultCard ✅
+    - 주소 표시 형식: "메인주소 상세주소" (공백으로 연결)
+    - Placeholder: "동/호수, 건물명, 층수 등"
+  - ✅ **YouTube 인라인 재생 전체 테마 적용**
+    - ProfessionalCard 인라인 재생 검증 완료 ✅
+    - SimpleCard 인라인 재생 추가 완료 ✅
+    - DefaultCard 인라인 재생 추가 완료 ✅
+    - playingVideoId state 및 helper 함수 통합
+    - 썸네일 + 재생 버튼 UI 일관성 확보
+    - 클릭 시 autoplay iframe 전환
+  - ✅ **데이터베이스 마이그레이션**
+    - Migration: 20251017120000_add_address_detail.sql
+    - 프로덕션 DB 적용 필요 (수동 실행)
+  - ✅ **GitHub 커밋 및 배포**
+    - Commit: db18c6e (상세주소), fb7e7b5 (YouTube 인라인)
+    - Vercel 자동 배포 완료
+    - 빌드 시간: 9.60초
 - v1.13 (2025.10.17): Naver Maps 주소 검색 기능 구현 완료
   - ✅ **Naver Maps JavaScript API 통합**
     - index.html에 Naver Maps JavaScript SDK 스크립트 추가 (Geocoder submodule 포함)
