@@ -10,7 +10,7 @@ export default defineConfig({
         plugins: [
           ['babel-plugin-react-compiler', {
             // React Compiler options
-            compilationMode: 'automatic', // Automatically optimize all components
+            // compilationMode is removed as it's not supported in current version
             sources: (filename: string) => {
               // Only compile our source files, not node_modules
               return filename.includes('/src/');
