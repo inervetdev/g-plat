@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { loadBusinessCardData, defaultDemoData, type CardData } from '../../lib/cardDataLoader'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
+import { MapPreview } from '../MapPreview'
 import type { Attachment } from '@/types/attachment'
 
 export function AppleCard({ userId }: { userId: string }) {
@@ -190,6 +191,28 @@ export function AppleCard({ userId }: { userId: string }) {
             )}
           </div>
         </div>
+
+        {/* Address & Map */}
+        {cardData.address && (
+          <div className="mt-2 bg-white">
+            <div className="px-4">
+              <div className="py-3">
+                <p className="text-xs text-gray-500 mb-2">주소</p>
+                <p className="text-sm text-gray-700 mb-3">{cardData.address}</p>
+
+                {cardData.latitude && cardData.longitude && (
+                  <MapPreview
+                    latitude={cardData.latitude}
+                    longitude={cardData.longitude}
+                    address={cardData.address}
+                    height="200px"
+                    level={4}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="bg-white px-4 py-4 mt-2">
