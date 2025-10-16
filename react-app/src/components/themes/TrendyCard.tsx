@@ -415,46 +415,12 @@ END:VCARD`
                     </div>
                   </div>
                   <div className="flex gap-2 ml-3">
-                    {canPreview && (
-                      <button
-                        onClick={() => setPreviewAttachment(attachment)}
-                        className="px-4 py-2 bg-gray-700 rounded-lg font-medium text-sm hover:bg-gray-600 transition-all duration-300 whitespace-nowrap flex-shrink-0"
-                      >
-                        미리보기
-                      </button>
-                    )}
-                    {!isYouTube && attachment.file_url && (
-                      <a
-                        href={attachment.file_url}
-                        download={isPDF ? undefined : attachment.filename}
-                        onClick={(e) => {
-                          if (businessCardId) {
-                            trackDownload({
-                              attachmentId: attachment.id,
-                              businessCardId: businessCardId
-                            })
-                          }
-                          // PDF는 새 탭에서 열기
-                          if (isPDF) {
-                            e.preventDefault()
-                            window.open(attachment.file_url, '_blank')
-                          }
-                        }}
-                        className="px-4 py-2 bg-gradient-to-r from-green-500 to-cyan-500 rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 whitespace-nowrap flex-shrink-0"
-                      >
-                        {isPDF ? '열기' : '다운로드'}
-                      </a>
-                    )}
-                    {isYouTube && attachment.youtube_url && (
-                      <a
-                        href={attachment.youtube_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-red-500/25 transition-all duration-300 transform hover:scale-105 whitespace-nowrap flex-shrink-0"
-                      >
-                        YouTube에서 보기
-                      </a>
-                    )}
+                    <button
+                      onClick={() => setPreviewAttachment(attachment)}
+                      className="px-4 py-2 bg-gray-700 rounded-lg font-medium text-sm hover:bg-gray-600 transition-all duration-300 whitespace-nowrap flex-shrink-0"
+                    >
+                      미리보기
+                    </button>
                   </div>
                 </div>
               )
@@ -497,7 +463,7 @@ END:VCARD`
             </div>
 
             {/* Modal Content */}
-            <div className="p-4 overflow-auto" style={{ maxHeight: 'calc(90vh - 5rem)' }}>
+            <div className="p-4 overflow-auto" style={{ maxHeight: 'calc(90vh - 9rem)' }}>
               {previewAttachment.attachment_type === 'youtube' && previewAttachment.youtube_url && (
                 <div className="w-full aspect-video">
                   <iframe
@@ -526,13 +492,60 @@ END:VCARD`
                 </video>
               )}
               {previewAttachment.file_type === 'application/pdf' && previewAttachment.file_url && (
-                <div className="w-full" style={{ height: 'calc(90vh - 10rem)' }}>
+                <div className="w-full" style={{ height: 'calc(90vh - 14rem)' }}>
                   <iframe
                     src={previewAttachment.file_url}
                     className="w-full h-full rounded-lg"
                     title={previewAttachment.title}
                   />
                 </div>
+              )}
+            </div>
+
+            {/* Modal Footer with Download Button */}
+            <div className="flex justify-end gap-3 p-4 border-t border-gray-800 bg-gray-900">
+              <button
+                onClick={() => setPreviewAttachment(null)}
+                className="px-4 py-2 text-gray-300 bg-gray-800 border border-gray-700 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                닫기
+              </button>
+              {previewAttachment.attachment_type !== 'youtube' && previewAttachment.file_url && (
+                <a
+                  href={previewAttachment.file_url}
+                  download={previewAttachment.file_type === 'application/pdf' ? undefined : previewAttachment.filename}
+                  onClick={(e) => {
+                    if (businessCardId) {
+                      trackDownload({
+                        attachmentId: previewAttachment.id,
+                        businessCardId: businessCardId
+                      })
+                    }
+                    if (previewAttachment.file_type === 'application/pdf') {
+                      e.preventDefault()
+                      window.open(previewAttachment.file_url, '_blank')
+                    }
+                  }}
+                  className="px-6 py-2 bg-gradient-to-r from-green-500 to-cyan-500 text-white rounded-lg hover:shadow-lg hover:shadow-green-500/25 transition-all duration-300 inline-flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  {previewAttachment.file_type === 'application/pdf' ? 'PDF 열기' : '다운로드'}
+                </a>
+              )}
+              {previewAttachment.attachment_type === 'youtube' && previewAttachment.youtube_url && (
+                <a
+                  href={previewAttachment.youtube_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:shadow-lg hover:shadow-red-500/25 transition-all duration-300 inline-flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                  YouTube에서 보기
+                </a>
               )}
             </div>
           </div>
