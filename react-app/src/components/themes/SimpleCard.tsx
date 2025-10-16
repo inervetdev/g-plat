@@ -12,17 +12,38 @@ export function SimpleCard({ userId }: { userId: string }) {
   const [previewAttachment, setPreviewAttachment] = useState<Attachment | null>(null)
 
   const getYouTubeEmbedUrl = (url: string) => {
+    if (!url) return ''
+
     try {
+      // 이미 embed URL인 경우 video ID 추출
+      const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/)
+      if (embedMatch) return url
+
       const urlObj = new URL(url)
-      let videoId = ''
-      if (urlObj.hostname.includes('youtube.com')) {
-        videoId = urlObj.searchParams.get('v') || ''
-      } else if (urlObj.hostname.includes('youtu.be')) {
-        videoId = urlObj.pathname.slice(1)
+
+      if (urlObj.hostname.includes('youtube.com') || urlObj.hostname.includes('youtube-nocookie.com')) {
+        const videoId = urlObj.searchParams.get('v')
+        if (videoId) return `https://www.youtube.com/embed/${videoId}`
+
+        // youtube.com/shorts/VIDEO_ID (YouTube Shorts)
+        const shortsMatch = urlObj.pathname.match(/\/shorts\/([a-zA-Z0-9_-]+)/)
+        if (shortsMatch) return `https://www.youtube.com/embed/${shortsMatch[1]}`
+
+        // youtube.com/embed/VIDEO_ID 형식도 처리
+        const pathMatch = urlObj.pathname.match(/\/embed\/([a-zA-Z0-9_-]+)/)
+        if (pathMatch) return `https://www.youtube.com/embed/${pathMatch[1]}`
       }
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : url
-    } catch {
+
+      if (urlObj.hostname.includes('youtu.be')) {
+        const videoId = urlObj.pathname.slice(1).split('?')[0]
+        if (videoId) return `https://www.youtube.com/embed/${videoId}`
+      }
+
       return url
+    } catch {
+      // URL 파싱 실패 시 정규식으로 시도
+      const regexMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/)
+      return regexMatch ? `https://www.youtube.com/embed/${regexMatch[1]}` : url
     }
   }
 
