@@ -1,5 +1,11 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
+
+// Naver Maps API 타입 선언
+declare global {
+  interface Window {
+    naver: any
+  }
+}
 
 interface AddressResult {
   roadAddress: string
@@ -32,23 +38,40 @@ export function AddressSearchModal({ isOpen, onClose, onSelect }: AddressSearchM
     setResults([])
 
     try {
-      // Supabase Edge Function을 통해 네이버 Geocoding API 호출 (CORS 문제 해결)
-      const { data, error: functionError } = await supabase.functions.invoke('naver-geocode', {
-        body: { query: searchQuery }
-      })
-
-      if (functionError) {
-        throw new Error(functionError.message || '주소 검색에 실패했습니다')
+      // 네이버 지도 JavaScript API 사용 (클라이언트 사이드)
+      if (!window.naver || !window.naver.maps || !window.naver.maps.Service) {
+        throw new Error('네이버 지도 API를 불러오는 중입니다. 잠시 후 다시 시도해주세요.')
       }
 
-      if (data.addresses && data.addresses.length > 0) {
-        setResults(data.addresses)
+      // Promise로 래핑
+      const geocodeResult = await new Promise<any>((resolve, reject) => {
+        window.naver.maps.Service.geocode(
+          {
+            query: searchQuery,
+          },
+          (status: any, response: any) => {
+            if (status === window.naver.maps.Service.Status.OK) {
+              resolve(response)
+            } else if (status === window.naver.maps.Service.Status.ZERO_RESULT) {
+              resolve({ v2: { addresses: [] } })
+            } else {
+              reject(new Error('주소 검색에 실패했습니다'))
+            }
+          }
+        )
+      })
+
+      const addresses = geocodeResult.v2?.addresses || []
+
+      if (addresses && addresses.length > 0) {
+        setResults(addresses)
       } else {
-        setError('검색 결과가 없습니다')
+        setError('검색 결과가 없습니다. 다른 키워드로 시도해보세요.')
       }
     } catch (err) {
       console.error('Address search error:', err)
-      setError('주소 검색 중 오류가 발생했습니다')
+      const errorMessage = err instanceof Error ? err.message : '주소 검색 중 오류가 발생했습니다'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
