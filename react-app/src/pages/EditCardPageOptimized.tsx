@@ -4,6 +4,23 @@ import { supabase } from '../lib/supabase'
 import ThemePreviewModal from '../components/ThemePreviewModal'
 import FilePreviewModal from '../components/FilePreviewModal'
 import type { ThemeName } from '../contexts/ThemeContext'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 interface AttachmentFile {
   id: string
@@ -29,6 +46,15 @@ export function EditCardPageOptimized() {
   const [attachmentFiles, setAttachmentFiles] = useState<AttachmentFile[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string; type: string } | null>(null)
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates
+    })
+  )
+
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -177,6 +203,19 @@ export function EditCardPageOptimized() {
     setAttachmentFiles(prev =>
       prev.map(att => att.id === id ? { ...att, title } : att)
     )
+  }
+
+  // React Compiler가 자동으로 최적화
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    if (over && active.id !== over.id) {
+      setAttachmentFiles((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id)
+        const newIndex = items.findIndex((item) => item.id === over.id)
+        return arrayMove(items, oldIndex, newIndex)
+      })
+    }
   }
 
   // React Compiler가 자동으로 최적화
@@ -351,10 +390,14 @@ export function EditCardPageOptimized() {
         }
       }
 
-      // Update existing attachments (including YouTube display mode)
+      // Update existing attachments (including YouTube display mode and display_order)
       const existingAttachments = attachmentFiles.filter(att => att.isExisting)
-      for (const att of existingAttachments) {
-        const updateData: any = { title: att.title }
+      for (let i = 0; i < existingAttachments.length; i++) {
+        const att = existingAttachments[i]
+        const updateData: any = {
+          title: att.title,
+          display_order: attachmentFiles.indexOf(att)  // Update display order based on current position
+        }
 
         // YouTube 첨부파일인 경우 display_mode도 업데이트
         if (att.attachment_type === 'youtube') {
@@ -404,57 +447,90 @@ export function EditCardPageOptimized() {
   }
 
   // React Compiler가 자동으로 최적화 - 컴포넌트 추출
-  const AttachmentItem = ({ attachment }: { attachment: AttachmentFile }) => (
-    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <input
-            type="text"
-            value={attachment.title}
-            onChange={(e) => updateAttachmentTitle(attachment.id, e.target.value)}
-            placeholder="파일 제목"
-            className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-          />
-          {attachment.attachment_type === 'youtube' && (
-            <>
-              <span className="px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">YouTube</span>
-              <select
-                value={attachment.youtube_display_mode || 'modal'}
-                onChange={(e) => updateYouTubeDisplayMode(attachment.id, e.target.value as 'modal' | 'inline')}
-                className="px-2 py-1 text-xs border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-                title="표시 방식"
-              >
-                <option value="modal">모달</option>
-                <option value="inline">인라인</option>
-              </select>
-            </>
-          )}
+  const SortableAttachmentItem = ({ attachment }: { attachment: AttachmentFile }) => {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging
+    } = useSortable({ id: attachment.id })
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1
+    }
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
+      >
+        {/* Drag Handle */}
+        <div
+          {...attributes}
+          {...listeners}
+          className="cursor-grab active:cursor-grabbing p-1 hover:bg-gray-200 rounded transition-colors"
+          title="드래그하여 순서 변경"
+        >
+          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          </svg>
         </div>
-        <p className="text-xs text-gray-500 mt-1 truncate">
-          {attachment.isExisting && <span className="text-green-600">✓ 저장됨 · </span>}
-          {!attachment.isExisting && <span className="text-blue-600">새 파일 · </span>}
-          {attachment.attachment_type === 'youtube'
-            ? attachment.youtube_url
-            : `${attachment.filename} (${((attachment.file_size || 0) / 1024).toFixed(1)}KB)`
-          }
-        </p>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={attachment.title}
+              onChange={(e) => updateAttachmentTitle(attachment.id, e.target.value)}
+              placeholder="파일 제목"
+              className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+            />
+            {attachment.attachment_type === 'youtube' && (
+              <>
+                <span className="px-2 py-0.5 bg-red-100 text-red-600 text-xs rounded-full">YouTube</span>
+                <select
+                  value={attachment.youtube_display_mode || 'modal'}
+                  onChange={(e) => updateYouTubeDisplayMode(attachment.id, e.target.value as 'modal' | 'inline')}
+                  className="px-2 py-1 text-xs border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+                  title="표시 방식"
+                >
+                  <option value="modal">모달</option>
+                  <option value="inline">인라인</option>
+                </select>
+              </>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-1 truncate">
+            {attachment.isExisting && <span className="text-green-600">✓ 저장됨 · </span>}
+            {!attachment.isExisting && <span className="text-blue-600">새 파일 · </span>}
+            {attachment.attachment_type === 'youtube'
+              ? attachment.youtube_url
+              : `${attachment.filename} (${((attachment.file_size || 0) / 1024).toFixed(1)}KB)`
+            }
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => previewAttachment(attachment)}
+          className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors whitespace-nowrap"
+        >
+          미리보기
+        </button>
+        <button
+          type="button"
+          onClick={() => removeAttachment(attachment)}
+          className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors whitespace-nowrap"
+        >
+          삭제
+        </button>
       </div>
-      <button
-        type="button"
-        onClick={() => previewAttachment(attachment)}
-        className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors whitespace-nowrap"
-      >
-        미리보기
-      </button>
-      <button
-        type="button"
-        onClick={() => removeAttachment(attachment)}
-        className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors whitespace-nowrap"
-      >
-        삭제
-      </button>
-    </div>
-  )
+    )
+  }
 
   // React Compiler가 자동으로 최적화 - 폼 필드 컴포넌트
   const FormField = ({ label, name, type = 'text', required = false, placeholder = '' }: {
@@ -648,11 +724,22 @@ export function EditCardPageOptimized() {
               {attachmentFiles.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="text-sm font-medium text-gray-700">
-                    첨부된 파일 ({attachmentFiles.length})
+                    첨부된 파일 ({attachmentFiles.length}) - 드래그하여 순서 변경
                   </h3>
-                  {attachmentFiles.map(attachment => (
-                    <AttachmentItem key={attachment.id} attachment={attachment} />
-                  ))}
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={attachmentFiles.map(att => att.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {attachmentFiles.map(attachment => (
+                        <SortableAttachmentItem key={attachment.id} attachment={attachment} />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
                 </div>
               )}
 
