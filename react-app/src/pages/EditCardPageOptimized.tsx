@@ -316,8 +316,8 @@ export function EditCardPageOptimized() {
 
       if (error) throw error
 
-      // Upload new attachments
-      const newAttachments = attachmentFiles.filter(att => !att.isExisting && att.file)
+      // Upload new attachments (including YouTube)
+      const newAttachments = attachmentFiles.filter(att => !att.isExisting)
       if (newAttachments.length > 0) {
         setUploadingAttachment(true)
         try {
@@ -351,12 +351,19 @@ export function EditCardPageOptimized() {
         }
       }
 
-      // Update existing attachment titles
+      // Update existing attachments (including YouTube display mode)
       const existingAttachments = attachmentFiles.filter(att => att.isExisting)
       for (const att of existingAttachments) {
+        const updateData: any = { title: att.title }
+
+        // YouTube 첨부파일인 경우 display_mode도 업데이트
+        if (att.attachment_type === 'youtube') {
+          updateData.youtube_display_mode = att.youtube_display_mode || 'modal'
+        }
+
         await supabase
           .from('card_attachments' as any)
-          .update({ title: att.title })
+          .update(updateData)
           .eq('id', att.id)
       }
 

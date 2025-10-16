@@ -279,8 +279,32 @@ export default function CreateCardPageOptimized() {
         setUploadingAttachment(true)
         try {
           const uploadedFiles = await uploadAttachments(attachmentFiles, user.id)
-          console.log('Uploaded files:', uploadedFiles)
-          alert('첨부파일이 업로드되었습니다. (DB 저장 기능은 준비 중)')
+
+          // Save attachments to database
+          const attachmentRecords = uploadedFiles.map((file) => ({
+            business_card_id: cardData.id,
+            user_id: user.id,
+            title: file.title,
+            filename: file.filename,
+            file_url: file.file_url,
+            file_size: file.file_size,
+            file_type: file.file_type,
+            youtube_url: file.youtube_url,
+            youtube_display_mode: file.youtube_display_mode,
+            attachment_type: file.attachment_type,
+            display_order: file.display_order
+          }))
+
+          const { error: attachmentError } = await supabase
+            .from('card_attachments' as any)
+            .insert(attachmentRecords)
+
+          if (attachmentError) {
+            console.error('Error saving attachments:', attachmentError)
+            alert('첨부파일 정보 저장 중 오류가 발생했습니다.')
+          } else {
+            console.log('✅ Attachments saved successfully')
+          }
         } catch (error) {
           console.error('Error uploading attachments:', error)
           alert('첨부파일 업로드 중 오류가 발생했습니다.')
