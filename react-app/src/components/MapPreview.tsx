@@ -54,12 +54,8 @@ export function MapPreview({
 
       // 인포윈도우 생성
       const infowindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:10px;min-width:200px;text-align:center;">
-          <strong style="display:block;margin-bottom:5px;">${address}</strong>
-          <span style="font-size:12px;color:#666;">
-            위도: ${latitude.toFixed(6)}<br/>
-            경도: ${longitude.toFixed(6)}
-          </span>
+        content: `<div style="padding:10px;min-width:150px;text-align:center;">
+          <strong style="display:block;font-size:14px;">${address}</strong>
         </div>`,
         removable: false
       })
