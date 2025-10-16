@@ -42,6 +42,7 @@ export type Database = {
       business_cards: {
         Row: {
           address: string | null
+          address_detail: string | null
           attachment_filename: string | null
           attachment_size: number | null
           attachment_title: string | null
@@ -83,6 +84,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          address_detail?: string | null
           attachment_filename?: string | null
           attachment_size?: number | null
           attachment_title?: string | null
@@ -124,6 +126,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          address_detail?: string | null
           attachment_filename?: string | null
           attachment_size?: number | null
           attachment_title?: string | null

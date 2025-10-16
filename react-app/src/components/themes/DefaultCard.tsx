@@ -302,7 +302,7 @@ export function DefaultCard({ userId }: { userId: string }) {
             {/* Gradient speech bubble style address */}
             <div className="mb-4">
               <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-lg">
-                <p className="text-sm leading-relaxed">📍 {cardData.address}</p>
+                <p className="text-sm leading-relaxed">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 

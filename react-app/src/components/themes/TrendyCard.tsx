@@ -12,6 +12,7 @@ interface CardData {
   email: string
   website?: string
   address?: string
+  address_detail?: string
   latitude?: number
   longitude?: number
   introduction?: string
@@ -116,6 +117,7 @@ export function TrendyCard({ userId }: { userId: string }) {
           email: businessCard.email || '',
           website: (businessCard as any).website || '',
           address: (businessCard as any).address || '',
+          address_detail: (businessCard as any).address_detail || '',
           latitude: (businessCard as any).latitude,
           longitude: (businessCard as any).longitude,
           introduction: (businessCard as any).introduction || '',
@@ -335,7 +337,7 @@ END:VCARD`
             {/* 말풍선 스타일 주소 */}
             <div className="mb-4">
               <div className="relative bg-white text-gray-900 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-lg">
-                <p className="text-base leading-relaxed font-medium">📍 {cardData.address}</p>
+                <p className="text-base leading-relaxed font-medium">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 

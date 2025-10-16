@@ -69,6 +69,7 @@ export function EditCardPageOptimized() {
     email: '',
     website: '',
     address: '',
+    address_detail: '',
     linkedin: '',
     instagram: '',
     facebook: '',
@@ -120,6 +121,7 @@ export function EditCardPageOptimized() {
           email: card.email || '',
           website: card.website || '',
           address: card.address || '',
+          address_detail: card.address_detail || '',
           linkedin: card.linkedin || '',
           instagram: card.instagram || '',
           facebook: card.facebook || '',
@@ -360,6 +362,7 @@ export function EditCardPageOptimized() {
           email: formData.email,
           website: formData.website,
           address: formData.address,
+          address_detail: formData.address_detail,
           latitude: mapCoords?.latitude || null,
           longitude: mapCoords?.longitude || null,
           linkedin: formData.linkedin,
@@ -702,6 +705,20 @@ export function EditCardPageOptimized() {
                 <FormField label="이메일" name="email" type="email" required />
                 <FormField label="웹사이트" name="website" type="url" placeholder="https://" />
                 <FormField label="주소" name="address" />
+              </div>
+              {/* 상세 주소 */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  상세 주소
+                </label>
+                <input
+                  type="text"
+                  name="address_detail"
+                  value={formData.address_detail}
+                  onChange={(e) => setFormData({ ...formData, address_detail: e.target.value })}
+                  placeholder="동/호수, 건물명, 층수 등"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
               </div>
               {/* 지도 미리보기 */}
               {showMap && mapCoords && (

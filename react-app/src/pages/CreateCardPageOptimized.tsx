@@ -40,6 +40,7 @@ export default function CreateCardPageOptimized() {
     email: '',
     website: '',
     address: '',
+    address_detail: '',
     linkedin: '',
     instagram: '',
     facebook: '',
@@ -278,6 +279,7 @@ export default function CreateCardPageOptimized() {
           email: formData.email,
           website: formData.website,
           address: formData.address,
+          address_detail: formData.address_detail,
           latitude: mapCoords?.latitude || null,
           longitude: mapCoords?.longitude || null,
           linkedin: formData.linkedin,
@@ -518,7 +520,7 @@ export default function CreateCardPageOptimized() {
                     http:// 또는 https:// 없이 입력하면 자동으로 추가됩니다
                   </p>
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     주소
                   </label>
@@ -539,6 +541,21 @@ export default function CreateCardPageOptimized() {
                       주소 검색
                     </button>
                   </div>
+                </div>
+
+                {/* 상세 주소 */}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    상세 주소
+                  </label>
+                  <input
+                    type="text"
+                    name="address_detail"
+                    value={formData.address_detail}
+                    onChange={handleChange}
+                    placeholder="동/호수, 건물명, 층수 등"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
                 </div>
               </div>
               {/* 지도 미리보기 */}

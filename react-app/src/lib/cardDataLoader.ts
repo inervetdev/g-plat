@@ -11,6 +11,7 @@ export interface CardData {
   email: string
   website?: string
   address?: string
+  address_detail?: string
   latitude?: number
   longitude?: number
   linkedin?: string
@@ -50,6 +51,7 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
         email: cardData.email || '',
         website: cardData.website || '',
         address: cardData.address || '',
+        address_detail: cardData.address_detail || '',
         latitude: cardData.latitude,
         longitude: cardData.longitude,
         linkedin: cardData.linkedin || '',

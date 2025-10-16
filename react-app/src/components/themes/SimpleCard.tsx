@@ -237,7 +237,7 @@ END:VCARD`
             {/* Speech bubble style address */}
             <div className="mb-4">
               <div className="relative bg-white border-2 border-gray-200 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-sm">
-                <p className="text-sm text-gray-700 leading-relaxed">📍 {cardData.address}</p>
+                <p className="text-sm text-gray-700 leading-relaxed">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 
