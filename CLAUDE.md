@@ -236,6 +236,25 @@ The project has three parallel implementations:
 - Advanced templates
 - Team collaboration features
 
+## Supabase MCP Integration
+
+Claude Code has direct access to the production Supabase database via MCP (Model Context Protocol).
+
+### MCP Configuration
+- **Project**: g-plat (`anwwjowwrxdygqyhhckr`)
+- **Database**: PostgreSQL on Supabase (AWS ap-northeast-2)
+- **Connection**: `postgresql://postgres.anwwjowwrxdygqyhhckr:[PASSWORD]@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres`
+- **Documentation**: [docs/SUPABASE_MCP.md](docs/SUPABASE_MCP.md)
+
+### Available MCP Operations
+- Schema inspection (`information_schema.columns`)
+- RLS policy queries (`pg_policies`)
+- Index verification (`pg_indexes`)
+- Data querying and analysis
+- Storage bucket information (`storage.buckets`)
+
+**Important**: MCP bypasses RLS policies - exercise caution when modifying production data.
+
 ### Current Development Status
 - **Active Development**: React app with Supabase integration - **✅ PRODUCTION DEPLOYED**
 - **Deployment Status**:
@@ -290,6 +309,15 @@ The project has three parallel implementations:
   - ✅ Playwright E2E testing setup
   - ✅ Supabase MCP integration
   - ✅ Social login UI (Google, Kakao, Apple) - ready for OAuth configuration
+  - ✅ **Attachment system with YouTube Shorts support (2025.10.16)**
+    - YouTube Shorts URL parsing (youtube.com/shorts/VIDEO_ID)
+    - 5 theme cards with enhanced getYouTubeVideoId function
+    - Support for embed URLs, no-cookie domains, and fallback regex
+  - ✅ **Drag-and-drop attachment reordering (2025.10.16)**
+    - @dnd-kit library integration
+    - Visual drag handle with hover effects
+    - Keyboard accessibility (arrow keys + space/enter)
+    - Automatic display_order persistence to database
 - **Pending Features (Phase 3)**:
   - ⏳ Callback automation system
   - ⏳ SMS automation (Twilio/Aligo integration)

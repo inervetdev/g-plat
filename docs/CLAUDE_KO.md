@@ -198,6 +198,25 @@ setup-ngrok.ps1        # PowerShell ngrok 설정
 4. 콜백 자동화 시스템
 5. 실시간 분석 대시보드
 
+## Supabase MCP 통합
+
+Claude Code는 MCP (Model Context Protocol)를 통해 프로덕션 Supabase 데이터베이스에 직접 접근할 수 있습니다.
+
+### MCP 설정 정보
+- **프로젝트**: g-plat (`anwwjowwrxdygqyhhckr`)
+- **데이터베이스**: PostgreSQL on Supabase (AWS ap-northeast-2)
+- **연결 문자열**: `postgresql://postgres.anwwjowwrxdygqyhhckr:[PASSWORD]@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres`
+- **상세 가이드**: [docs/SUPABASE_MCP.md](SUPABASE_MCP.md)
+
+### MCP로 가능한 작업
+- 테이블 스키마 확인 (`information_schema.columns`)
+- RLS 정책 조회 (`pg_policies`)
+- 인덱스 확인 (`pg_indexes`)
+- 데이터 조회 및 분석
+- Storage 버킷 정보 확인 (`storage.buckets`)
+
+**주의사항**: MCP는 RLS 정책을 우회하므로 프로덕션 데이터 수정 시 주의가 필요합니다.
+
 ### 현재 개발 상태
 - **활발한 개발**: React 앱 with Supabase 통합 - **✅ 프로덕션 배포 완료**
 - **배포 상태**:
@@ -234,6 +253,15 @@ setup-ngrok.ps1        # PowerShell ngrok 설정
   - ✅ Playwright E2E 테스트 설정
   - ✅ Supabase MCP 통합
   - ✅ 소셜 로그인 UI (Google, Kakao, Apple) - OAuth 설정 대기
+  - ✅ **첨부파일 시스템 YouTube Shorts 지원 (2025.10.16)**
+    - YouTube Shorts URL 파싱 (youtube.com/shorts/VIDEO_ID)
+    - 5개 테마 카드 전체 적용 (강화된 getYouTubeVideoId 함수)
+    - Embed URL, no-cookie 도메인, 정규식 fallback 지원
+  - ✅ **드래그 앤 드롭 첨부파일 순서 변경 (2025.10.16)**
+    - @dnd-kit 라이브러리 통합
+    - 시각적 드래그 핸들 및 호버 효과
+    - 키보드 접근성 (화살표 키 + 스페이스바)
+    - display_order 데이터베이스 자동 저장
 - **대기 중인 기능 (Phase 3)**:
   - ⏳ 콜백 자동화 시스템
   - ⏳ SMS 자동화 (Twilio/Aligo 통합)
