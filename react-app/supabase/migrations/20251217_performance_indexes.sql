@@ -56,10 +56,6 @@ ON sidejob_cards(user_id, view_count DESC, click_count DESC);
 CREATE INDEX IF NOT EXISTS idx_visitor_stats_user_created
 ON visitor_stats(user_id, created_at DESC);
 
--- Index for date range queries
-CREATE INDEX IF NOT EXISTS idx_visitor_stats_created_date
-ON visitor_stats(created_at::date, user_id);
-
 -- Index for unique visitor counting
 CREATE INDEX IF NOT EXISTS idx_visitor_stats_user_ip
 ON visitor_stats(user_id, visitor_ip)
@@ -101,10 +97,6 @@ CREATE INDEX IF NOT EXISTS idx_qr_scans_device
 ON qr_scans(qr_code_id, device_type)
 WHERE device_type IS NOT NULL;
 
--- Index for date range queries
-CREATE INDEX IF NOT EXISTS idx_qr_scans_date
-ON qr_scans(scanned_at::date, qr_code_id);
-
 -- ============================================
 -- Card Attachments Table Indexes
 -- ============================================
@@ -140,7 +132,7 @@ ON users(email);
 -- Index for subscription tier filtering
 CREATE INDEX IF NOT EXISTS idx_users_subscription
 ON users(subscription_tier)
-WHERE subscription_tier != 'free';
+WHERE subscription_tier IS NOT NULL;
 
 -- ============================================
 -- User Profiles Table Indexes

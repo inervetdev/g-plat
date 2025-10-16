@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useTheme, type ThemeName } from '../contexts/ThemeContext'
 import ThemePreviewModal from '../components/ThemePreviewModal'
 import FilePreviewModal from '../components/FilePreviewModal'
+import { AddressSearchModal } from '../components/AddressSearchModal'
 
 interface AttachmentFile {
   id: string
@@ -26,6 +27,7 @@ export default function CreateCardPageOptimized() {
   const [attachmentFiles, setAttachmentFiles] = useState<AttachmentFile[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string; type: string } | null>(null)
+  const [showAddressSearch, setShowAddressSearch] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -49,14 +51,42 @@ export default function CreateCardPageOptimized() {
   })
 
   // React Compiler가 자동으로 최적화
+  const normalizeUrl = (url: string): string => {
+    if (!url) return ''
+
+    // 이미 http:// 또는 https://로 시작하면 그대로 반환
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url
+    }
+
+    // https:// 자동 추가
+    return `https://${url}`
+  }
+
+  // React Compiler가 자동으로 최적화
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+
+    // URL 필드는 자동 보정
+    if (name === 'website') {
+      setFormData(prev => ({ ...prev, [name]: value }))
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }))
+    }
 
     if (name === 'custom_url' && value) {
       checkUrlAvailability(value)
     } else if (name === 'custom_url' && !value) {
       setUrlAvailable(null)
+    }
+  }
+
+  // React Compiler가 자동으로 최적화
+  const handleUrlBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    if (name === 'website' && value) {
+      const normalized = normalizeUrl(value)
+      setFormData(prev => ({ ...prev, [name]: normalized }))
     }
   }
 
@@ -471,24 +501,39 @@ export default function CreateCardPageOptimized() {
                     웹사이트
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     name="website"
                     value={formData.website}
                     onChange={handleChange}
+                    onBlur={handleUrlBlur}
+                    placeholder="www.example.com 또는 example.com"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    http:// 또는 https:// 없이 입력하면 자동으로 추가됩니다
+                  </p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     주소
                   </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      placeholder="주소를 입력하거나 검색하세요"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowAddressSearch(true)}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors whitespace-nowrap"
+                    >
+                      주소 검색
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -745,6 +790,13 @@ export default function CreateCardPageOptimized() {
           fileType={previewFile.type}
         />
       )}
+
+      {/* Address Search Modal */}
+      <AddressSearchModal
+        isOpen={showAddressSearch}
+        onClose={() => setShowAddressSearch(false)}
+        onSelect={(address) => setFormData(prev => ({ ...prev, address }))}
+      />
     </div>
   )
 }

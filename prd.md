@@ -581,13 +581,22 @@
   - 이미지 클릭 시 CTA 링크 연결
   - 대시보드 미리보기 모달 활성 부가명함 필터링
   - **스키마 이슈 해결** (cta_url → cta_link)
-- [x] **소개 자료 첨부파일 시스템 (2025.10.15)** - **✅ 완료**
+- [x] **소개 자료 첨부파일 시스템 (2025.10.16)** - **✅ 완료**
   - card_attachments 테이블로 다중 파일 지원
   - YouTube URL 다중 첨부 기능
+  - **YouTube Shorts 지원 (2025.10.16)** - 모든 테마 카드 적용 완료
+    - youtube.com/shorts/VIDEO_ID URL 형식 지원
+    - 5개 테마 카드 전체 적용 (Trendy, Apple, Default, Professional, Simple)
+    - 강화된 URL 파싱 로직 (embed, no-cookie 도메인 지원)
   - YouTube 표시 모드: 모달/인라인 선택
   - 인라인 모드 YouTube 카드 UI (썸네일 + 재생 오버레이)
+  - **드래그 앤 드롭 첨부파일 순서 변경 (2025.10.16)** - 완료
+    - @dnd-kit 라이브러리 통합
+    - 직관적인 드래그 핸들 UI
+    - 키보드 접근성 지원
+    - display_order 자동 저장
   - PDF 미리보기 및 직접 다운로드
-  - TrendyCard, AppleCard 테마 YouTube 카드 UI 적용
+  - 전체 테마 카드 YouTube/첨부파일 기능 적용 완료
 - [x] 프로덕션 배포 및 도메인 연결 - **완료**
 - [x] Supabase 로컬 개발 환경 - **완료**
 - [x] Playwright E2E 테스트 설정 - **완료**
@@ -698,6 +707,31 @@
 *다음 검토일: 2025년 11월*
 
 ### 변경 이력
+- v1.12 (2025.10.16): 첨부파일 시스템 고도화 - YouTube Shorts 및 드래그 앤 드롭
+  - ✅ **YouTube Shorts 전면 지원**
+    - 5개 모든 테마 카드에 Shorts URL 파싱 로직 적용
+    - youtube.com/shorts/VIDEO_ID 형식 지원
+    - 강화된 getYouTubeVideoId 함수 (embed, no-cookie, 정규식 fallback)
+    - TrendyCard, AppleCard, DefaultCard, ProfessionalCard, SimpleCard 전체 적용
+  - ✅ **드래그 앤 드롭 첨부파일 순서 변경**
+    - @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities 설치
+    - SortableAttachmentItem 컴포넌트 구현
+    - 드래그 핸들 아이콘 및 시각적 피드백
+    - 키보드 접근성 지원 (화살표 키 + 스페이스바)
+    - display_order 데이터베이스 자동 저장
+    - 드래그 중 반투명 효과 및 애니메이션
+  - ✅ **EditCardPageOptimized.tsx 개선**
+    - DndContext 및 SortableContext 통합
+    - handleDragEnd 함수로 arrayMove 처리
+    - 순서 변경 시 자동 display_order 업데이트
+    - "드래그하여 순서 변경" 안내 문구 추가
+  - ✅ **TypeScript 빌드 검증**
+    - 컴파일 에러 0개 확인
+    - 타입 안정성 유지
+  - ✅ **GitHub 커밋**
+    - 18dc08e: YouTube Shorts 지원 (TrendyCard, AppleCard)
+    - 092b4bb: YouTube Shorts 지원 (DefaultCard, ProfessionalCard, SimpleCard)
+    - cdb1062: 드래그 앤 드롭 첨부파일 순서 변경
 - v2.0 (2025.10.16): React Compiler v2.0.0 최적화 적용 및 프로덕션 배포
   - ✅ **React Compiler 전면 도입**
     - babel-plugin-react-compiler 통합

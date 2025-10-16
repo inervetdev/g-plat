@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import ThemePreviewModal from '../components/ThemePreviewModal'
 import FilePreviewModal from '../components/FilePreviewModal'
+import { AddressSearchModal } from '../components/AddressSearchModal'
 import type { ThemeName } from '../contexts/ThemeContext'
 import {
   DndContext,
@@ -46,6 +47,7 @@ export function EditCardPageOptimized() {
   const [attachmentFiles, setAttachmentFiles] = useState<AttachmentFile[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string; type: string } | null>(null)
+  const [showAddressSearch, setShowAddressSearch] = useState(false)
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -78,6 +80,17 @@ export function EditCardPageOptimized() {
     is_primary: false,
     is_active: true
   })
+
+  // React Compiler가 자동으로 최적화
+  const normalizeUrl = (url: string): string => {
+    if (!url) return ''
+    // 이미 http:// 또는 https://로 시작하면 그대로 반환
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url
+    }
+    // https:// 자동 추가
+    return `https://${url}`
+  }
 
   useEffect(() => {
     loadCardData()
@@ -539,21 +552,55 @@ export function EditCardPageOptimized() {
     type?: string
     required?: boolean
     placeholder?: string
-  }) => (
-    <div>
-      <label className="block text-sm font-medium text-gray-700">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <input
-        type={type}
-        required={required}
-        value={String(formData[name])}
-        onChange={(e) => setFormData({ ...formData, [name]: e.target.value })}
-        placeholder={placeholder}
-        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-      />
-    </div>
-  )
+  }) => {
+    const isWebsiteField = name === 'website'
+    const isAddressField = name === 'address'
+
+    return (
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          {label} {required && <span className="text-red-500">*</span>}
+        </label>
+        {isAddressField ? (
+          <div className="flex gap-2 mt-1">
+            <input
+              type={type}
+              required={required}
+              value={String(formData[name])}
+              onChange={(e) => setFormData({ ...formData, [name]: e.target.value })}
+              placeholder={placeholder || '주소를 입력하거나 검색하세요'}
+              className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={() => setShowAddressSearch(true)}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors whitespace-nowrap text-sm"
+            >
+              주소 검색
+            </button>
+          </div>
+        ) : (
+          <input
+            type={isWebsiteField ? 'text' : type}
+            required={required}
+            value={String(formData[name])}
+            onChange={(e) => setFormData({ ...formData, [name]: e.target.value })}
+            onBlur={isWebsiteField ? (e) => {
+              const normalized = normalizeUrl(e.target.value)
+              setFormData({ ...formData, [name]: normalized })
+            } : undefined}
+            placeholder={isWebsiteField ? 'www.example.com 또는 example.com' : placeholder}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          />
+        )}
+        {isWebsiteField && (
+          <p className="text-xs text-gray-500 mt-1">
+            http:// 또는 https:// 없이 입력하면 자동으로 추가됩니다
+          </p>
+        )}
+      </div>
+    )
+  }
 
   if (loading) {
     return (
@@ -839,6 +886,13 @@ export function EditCardPageOptimized() {
           fileType={previewFile.type}
         />
       )}
+
+      {/* Address Search Modal */}
+      <AddressSearchModal
+        isOpen={showAddressSearch}
+        onClose={() => setShowAddressSearch(false)}
+        onSelect={(address) => setFormData({ ...formData, address })}
+      />
     </div>
   )
 }
