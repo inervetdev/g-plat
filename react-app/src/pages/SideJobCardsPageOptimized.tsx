@@ -65,11 +65,11 @@ function CardImage({ card }: { card: SideJobCardWithCategory }) {
     />
   )
 
-  if (card.cta_url) {
+  if (card.cta_link) {
     return (
       <div className="w-48 h-32 flex-shrink-0">
         <a
-          href={card.cta_url}
+          href={card.cta_link}
           target="_blank"
           rel="noopener noreferrer"
           className="block w-full h-full rounded-lg overflow-hidden hover:opacity-80 transition-opacity"
@@ -300,7 +300,7 @@ export default function SideJobCardsPageOptimized() {
       if (error) {
         console.error('Error fetching sidejob cards:', error)
       } else {
-        setCards(data || [])
+        setCards((data as any) || [])
       }
     } catch (error) {
       console.error('Unexpected error:', error)

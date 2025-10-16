@@ -2,18 +2,7 @@ import { useEffect, useState } from 'react'
 import { loadBusinessCardData, defaultDemoData, type CardData } from '../../lib/cardDataLoader'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
-
-interface Attachment {
-  id: string
-  title: string
-  filename?: string
-  file_url?: string
-  file_size?: number
-  file_type?: string
-  youtube_url?: string
-  attachment_type: 'file' | 'youtube'
-  display_order: number
-}
+import type { Attachment } from '@/types/attachment'
 
 export function SimpleCard({ userId }: { userId: string }) {
   const [cardData, setCardData] = useState<CardData | null>(null)
@@ -49,14 +38,18 @@ export function SimpleCard({ userId }: { userId: string }) {
       // Load attachments from card_attachments table
       if (data?.id) {
         setBusinessCardId(data.id)
-        const { data: attachmentsData } = await supabase
-          .from('card_attachments')
-          .select('*')
-          .eq('business_card_id', data.id)
-          .order('display_order', { ascending: true })
+        try {
+          const { data: attachmentsData } = await supabase
+            .from('card_attachments' as any)
+            .select('*')
+            .eq('business_card_id', data.id)
+            .order('display_order', { ascending: true })
 
-        if (attachmentsData) {
-          setAttachments(attachmentsData)
+          if (attachmentsData) {
+            setAttachments((attachmentsData as any) || [])
+          }
+        } catch (error) {
+          console.error('Error loading attachments:', error)
         }
       }
     } catch (error) {
@@ -154,7 +147,7 @@ export function SimpleCard({ userId }: { userId: string }) {
                 className="flex items-center gap-3 text-gray-600 hover:text-blue-500 transition-colors"
               >
                 <span className="text-lg">🌐</span>
-                <span className="text-sm">{cardData.website.replace(/^https?:\/\//, '')}</span>
+                <span className="text-sm">{cardData.website?.replace(/^https?:\/\//, '')}</span>
               </a>
             )}
           </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
+import type { Attachment } from '@/types/attachment'
 
 interface CardData {
   id?: string
@@ -16,18 +17,6 @@ interface CardData {
   attachment_title?: string
   attachment_url?: string
   attachment_filename?: string
-}
-
-interface Attachment {
-  id: string
-  title: string
-  filename?: string
-  file_url?: string
-  file_size?: number
-  file_type?: string
-  youtube_url?: string
-  attachment_type: 'file' | 'youtube'
-  display_order: number
 }
 
 export function ProfessionalCard({ userId }: { userId: string }) {
@@ -75,9 +64,9 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           company: businessCard.company || '',
           phone: businessCard.phone || '',
           email: businessCard.email || '',
-          website: businessCard.website || '',
-          introduction: businessCard.introduction || '',
-          services: businessCard.services || [],
+          website: (businessCard as any).website || '',
+          introduction: (businessCard as any).introduction || '',
+          services: (businessCard as any).services || [],
           profileImage: businessCard.profile_image || '',
           attachment_title: businessCard.attachment_title || '',
           attachment_url: businessCard.attachment_url || '',
@@ -85,14 +74,18 @@ export function ProfessionalCard({ userId }: { userId: string }) {
         })
 
         // Load attachments from card_attachments table
-        const { data: attachmentsData } = await supabase
-          .from('card_attachments')
-          .select('*')
-          .eq('business_card_id', businessCard.id)
-          .order('display_order', { ascending: true })
+        try {
+          const { data: attachmentsData } = await supabase
+            .from('card_attachments' as any)
+            .select('*')
+            .eq('business_card_id', businessCard.id)
+            .order('display_order', { ascending: true })
 
-        if (attachmentsData) {
-          setAttachments(attachmentsData)
+          if (attachmentsData) {
+            setAttachments((attachmentsData as any) || [])
+          }
+        } catch (error) {
+          console.error('Error loading attachments:', error)
         }
       } else {
         // Fallback to user data
@@ -109,16 +102,17 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           .single()
 
         if (userData) {
+          const profile = profileData as any
           setCardData({
             name: userData.name || '',
-            title: profileData?.title || '프리랜서',
-            company: profileData?.company || '',
-            phone: userData.phone || '',
+            title: profile?.title || '프리랜서',
+            company: profile?.company || '',
+            phone: (userData as any).phone || '',
             email: userData.email || '',
-            website: profileData?.website || '',
-            introduction: profileData?.introduction || '',
-            services: profileData?.services || [],
-            profileImage: profileData?.profile_image || ''
+            website: profile?.website || '',
+            introduction: profile?.introduction || '',
+            services: profile?.services || [],
+            profileImage: profile?.profile_image || ''
           })
         } else {
           // Fallback demo data when no user data is available
@@ -258,7 +252,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                     rel="noopener noreferrer"
                     className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors"
                   >
-                    {cardData.website.replace(/^https?:\/\//, '')}
+                    {cardData.website?.replace(/^https?:\/\//, '')}
                   </a>
                 </div>
               </div>

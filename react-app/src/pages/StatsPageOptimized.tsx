@@ -257,7 +257,7 @@ export default function StatsPageOptimized() {
           .map(([name, value]) => ({ name, value }))
 
         const { data: downloadStats } = await supabase
-          .from('attachment_downloads')
+          .from('attachment_downloads' as any)
           .select('*, card_attachments!inner(title)')
           .eq('user_id', user.id)
           .order('downloaded_at', { ascending: false }) as any

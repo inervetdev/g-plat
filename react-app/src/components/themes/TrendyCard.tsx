@@ -1,18 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
-
-interface Attachment {
-  id: string
-  title: string
-  filename?: string
-  file_url?: string
-  file_size?: number
-  file_type?: string
-  youtube_url?: string
-  youtube_display_mode?: 'modal' | 'inline'
-  attachment_type: 'file' | 'youtube'
-}
+import type { Attachment } from '@/types/attachment'
 
 interface CardData {
   name: string
@@ -76,11 +65,20 @@ export function TrendyCard({ userId }: { userId: string }) {
         setBusinessCardId(businessCard.id)
 
         // Load attachments from card_attachments table
-        const { data: attachments } = await supabase
-          .from('card_attachments')
-          .select('*')
-          .eq('business_card_id', businessCard.id)
-          .order('display_order', { ascending: true })
+        let attachments: Attachment[] = []
+        try {
+          const { data: attachmentsData } = await supabase
+            .from('card_attachments' as any)
+            .select('*')
+            .eq('business_card_id', businessCard.id)
+            .order('display_order', { ascending: true })
+
+          if (attachmentsData) {
+            attachments = (attachmentsData as any) || []
+          }
+        } catch (error) {
+          console.error('Error loading attachments:', error)
+        }
 
         setCardData({
           name: businessCard.name,
@@ -88,11 +86,11 @@ export function TrendyCard({ userId }: { userId: string }) {
           company: businessCard.company || '',
           phone: businessCard.phone || '',
           email: businessCard.email || '',
-          website: businessCard.website || '',
-          introduction: businessCard.introduction || '',
-          services: businessCard.services || [],
+          website: (businessCard as any).website || '',
+          introduction: (businessCard as any).introduction || '',
+          services: (businessCard as any).services || [],
           profileImage: businessCard.profile_image || '',
-          attachments: attachments || []
+          attachments: attachments
         })
       } else {
         // Fallback to user data
@@ -109,16 +107,17 @@ export function TrendyCard({ userId }: { userId: string }) {
           .single()
 
         if (userData) {
+          const profile = profileData as any
           setCardData({
             name: userData.name || '김대리',
-            title: profileData?.title || 'Full Stack Developer',
-            company: profileData?.company || 'G-PLAT Tech',
-            phone: userData.phone || '010-1234-5678',
+            title: profile?.title || 'Full Stack Developer',
+            company: profile?.company || 'G-PLAT Tech',
+            phone: (userData as any).phone || '010-1234-5678',
             email: userData.email || 'demo@gplat.com',
-            website: profileData?.website || 'https://gplat.com',
-            introduction: profileData?.introduction || '안녕하세요! 풀스택 개발자입니다. React, Node.js, TypeScript를 주로 사용하며, 모바일 명함 서비스를 개발하고 있습니다.',
-            services: profileData?.services || ['웹 개발', '앱 개발', 'UI/UX 디자인', '기술 컨설팅'],
-            profileImage: profileData?.profile_image || ''
+            website: profile?.website || 'https://gplat.com',
+            introduction: profile?.introduction || '안녕하세요! 풀스택 개발자입니다. React, Node.js, TypeScript를 주로 사용하며, 모바일 명함 서비스를 개발하고 있습니다.',
+            services: profile?.services || ['웹 개발', '앱 개발', 'UI/UX 디자인', '기술 컨설팅'],
+            profileImage: profile?.profile_image || ''
           })
         } else {
           // 데이터가 없을 때 데모 데이터 사용
@@ -259,7 +258,7 @@ export function TrendyCard({ userId }: { userId: string }) {
               >
                 <div className="flex items-center gap-3">
                   <span className="text-2xl">🌐</span>
-                  <span className="text-gray-300">{cardData.website.replace(/^https?:\/\//, '')}</span>
+                  <span className="text-gray-300">{cardData.website?.replace(/^https?:\/\//, '')}</span>
                 </div>
                 <span className="text-gray-600 group-hover:text-purple-400 transition-colors">→</span>
               </a>

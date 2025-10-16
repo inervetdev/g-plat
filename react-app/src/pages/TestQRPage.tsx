@@ -38,7 +38,7 @@ export default function TestQRPage() {
         .insert({
           business_card_id: '', // This would be a valid business card ID in production
           short_code: testShortCode,
-          long_url: 'https://example.com/test',
+          target_url: 'https://example.com/test',
           is_active: true
         } as any)
         .select()
@@ -52,7 +52,7 @@ export default function TestQRPage() {
         // 4. Test UPDATE
         const { error: updateError } = await supabase
           .from('qr_codes')
-          .update({ long_url: 'https://example.com/test_updated' })
+          .update({ target_url: 'https://example.com/test_updated' } as any)
           .eq('id', insertData.id) as any
 
         results.updateTest = updateError ? `❌ UPDATE failed: ${updateError.message}` : '✅ UPDATE successful'

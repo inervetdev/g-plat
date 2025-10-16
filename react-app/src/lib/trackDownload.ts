@@ -49,7 +49,7 @@ export async function trackDownload(data: DownloadTrackingData) {
     const { deviceType, browser, os } = parseUserAgent(userAgent)
 
     const { error } = await supabase
-      .from('attachment_downloads')
+      .from('attachment_downloads' as any)
       .insert({
         attachment_id: data.attachmentId,
         business_card_id: data.businessCardId,

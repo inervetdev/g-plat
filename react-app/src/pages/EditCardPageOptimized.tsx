@@ -84,7 +84,7 @@ export function EditCardPageOptimized() {
           introduction: card.introduction || '',
           services: card.services?.join(', ') || '',
           skills: card.skills?.join(', ') || '',
-          theme: card.theme || 'trendy',
+          theme: (card.theme as ThemeName) || 'trendy',
           custom_url: card.custom_url || '',
           is_primary: card.is_primary || false,
           is_active: card.is_active || true
@@ -92,13 +92,13 @@ export function EditCardPageOptimized() {
 
         // Load existing attachments
         const { data: attachments } = await supabase
-          .from('card_attachments')
+          .from('card_attachments' as any)
           .select('*')
           .eq('business_card_id', cardId)
           .order('display_order', { ascending: true })
 
         if (attachments) {
-          const existingAttachments: AttachmentFile[] = attachments.map(att => ({
+          const existingAttachments: AttachmentFile[] = (attachments as any[]).map((att: any) => ({
             id: att.id,
             title: att.title,
             filename: att.filename,
@@ -156,7 +156,7 @@ export function EditCardPageOptimized() {
   const removeAttachment = async (attachment: AttachmentFile) => {
     if (attachment.isExisting) {
       const { error } = await supabase
-        .from('card_attachments')
+        .from('card_attachments' as any)
         .delete()
         .eq('id', attachment.id)
 
@@ -288,7 +288,7 @@ export function EditCardPageOptimized() {
           }))
 
           const { error: attachmentError } = await supabase
-            .from('card_attachments')
+            .from('card_attachments' as any)
             .insert(attachmentRecords)
 
           if (attachmentError) {
@@ -305,7 +305,7 @@ export function EditCardPageOptimized() {
       const existingAttachments = attachmentFiles.filter(att => att.isExisting)
       for (const att of existingAttachments) {
         await supabase
-          .from('card_attachments')
+          .from('card_attachments' as any)
           .update({ title: att.title })
           .eq('id', att.id)
       }
@@ -396,7 +396,7 @@ export function EditCardPageOptimized() {
       <input
         type={type}
         required={required}
-        value={formData[name]}
+        value={String(formData[name])}
         onChange={(e) => setFormData({ ...formData, [name]: e.target.value })}
         placeholder={placeholder}
         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"

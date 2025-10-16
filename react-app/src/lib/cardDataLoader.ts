@@ -37,29 +37,30 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
       .single()
 
     if (businessCard && !cardError) {
+      const cardData = businessCard as any
       return {
-        id: businessCard.id,
-        name: businessCard.name,
-        title: businessCard.title || '',
-        company: businessCard.company || '',
-        department: businessCard.department || '',
-        phone: businessCard.phone || '',
-        email: businessCard.email || '',
-        website: businessCard.website || '',
-        address: businessCard.address || '',
-        linkedin: businessCard.linkedin || '',
-        instagram: businessCard.instagram || '',
-        facebook: businessCard.facebook || '',
-        twitter: businessCard.twitter || '',
-        youtube: businessCard.youtube || '',
-        github: businessCard.github || '',
-        introduction: businessCard.introduction || '',
-        services: businessCard.services || [],
-        skills: businessCard.skills || [],
-        profileImage: businessCard.profile_image || '',
-        attachment_title: businessCard.attachment_title || '',
-        attachment_url: businessCard.attachment_url || '',
-        attachment_filename: businessCard.attachment_filename || ''
+        id: cardData.id,
+        name: cardData.name,
+        title: cardData.title || '',
+        company: cardData.company || '',
+        department: cardData.department || '',
+        phone: cardData.phone || '',
+        email: cardData.email || '',
+        website: cardData.website || '',
+        address: cardData.address || '',
+        linkedin: cardData.linkedin || '',
+        instagram: cardData.instagram || '',
+        facebook: cardData.facebook || '',
+        twitter: cardData.twitter || '',
+        youtube: cardData.youtube || '',
+        github: cardData.github || '',
+        introduction: cardData.introduction || '',
+        services: cardData.services || [],
+        skills: cardData.skills || [],
+        profileImage: cardData.profile_image || '',
+        attachment_title: cardData.attachment_title || '',
+        attachment_url: cardData.attachment_url || '',
+        attachment_filename: cardData.attachment_filename || ''
       }
     }
 
@@ -77,14 +78,15 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
       .single()
 
     if (userData) {
+      const profile = profileData as any
       return {
         name: userData.name || '이름',
-        title: profileData?.title || '직책',
-        company: profileData?.company || '회사',
+        title: profile?.title || '직책',
+        company: profile?.company || '회사',
         department: '',
-        phone: userData.phone || '010-0000-0000',
+        phone: (userData as any).phone || '010-0000-0000',
         email: userData.email || 'email@example.com',
-        website: profileData?.website || '',
+        website: profile?.website || '',
         address: '',
         linkedin: '',
         instagram: '',
@@ -92,10 +94,10 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
         twitter: '',
         youtube: '',
         github: '',
-        introduction: profileData?.introduction || '',
-        services: profileData?.services || [],
+        introduction: profile?.introduction || '',
+        services: profile?.services || [],
         skills: [],
-        profileImage: profileData?.profile_image || ''
+        profileImage: profile?.profile_image || ''
       }
     }
 

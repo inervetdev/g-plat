@@ -2,19 +2,7 @@ import { useEffect, useState } from 'react'
 import { loadBusinessCardData, defaultDemoData, type CardData } from '../../lib/cardDataLoader'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
-
-interface Attachment {
-  id: string
-  title: string
-  filename?: string
-  file_url?: string
-  file_size?: number
-  file_type?: string
-  youtube_url?: string
-  youtube_display_mode?: 'modal' | 'inline'
-  attachment_type: 'file' | 'youtube'
-  display_order: number
-}
+import type { Attachment } from '@/types/attachment'
 
 export function AppleCard({ userId }: { userId: string }) {
   const [cardData, setCardData] = useState<CardData | null>(null)
@@ -57,17 +45,21 @@ export function AppleCard({ userId }: { userId: string }) {
       const data = await loadBusinessCardData(userId)
       setCardData(data || defaultDemoData)
 
-      // Load attachments from card_attachments table
+      // Load attachments from card_attachments table (skip if table doesn't exist)
       if (data?.id) {
         setBusinessCardId(data.id)
-        const { data: attachmentsData } = await supabase
-          .from('card_attachments')
-          .select('*')
-          .eq('business_card_id', data.id)
-          .order('display_order', { ascending: true })
+        try {
+          const { data: attachmentsData, error } = await supabase
+            .from('card_attachments' as any)
+            .select('*')
+            .eq('business_card_id', data.id)
+            .order('display_order', { ascending: true })
 
-        if (attachmentsData) {
-          setAttachments(attachmentsData)
+          if (attachmentsData && !error) {
+            setAttachments((attachmentsData as any) || [])
+          }
+        } catch (error) {
+          console.log('Card attachments table not available yet')
         }
       }
     } catch (error) {

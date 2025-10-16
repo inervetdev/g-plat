@@ -139,7 +139,7 @@ export interface SideJobCardWithCategory {
   image_url: string | null
   price: string | null
   cta_text: string | null
-  cta_url: string | null
+  cta_link: string | null  // Database uses cta_link, not cta_url
   business_card_id: string | null
   display_order: number
   is_active: boolean

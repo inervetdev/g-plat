@@ -28,7 +28,7 @@ interface ScanData {
   device_type: string
   browser: string
   os: string
-  referer: string
+  referrer: string
 }
 
 interface StatsData {
@@ -77,8 +77,8 @@ export default function QRStatsPage() {
       .order('scanned_at', { ascending: false })
 
     if (!error && data) {
-      setScans(data)
-      processStats(data)
+      setScans(data as any)
+      processStats(data as any)
     }
   }
 

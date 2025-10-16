@@ -168,11 +168,11 @@ function DashboardPageOptimized() {
       setUserData(userData as UserData)
 
       if (profile?.theme_settings) {
-        setTheme(profile.theme_settings)
+        setTheme(profile.theme_settings as any)
       } else if (cards) {
         const primaryCard = cards.find(card => card.is_primary)
         if (primaryCard?.theme) {
-          setTheme(primaryCard.theme)
+          setTheme(primaryCard.theme as any)
         }
       }
 
