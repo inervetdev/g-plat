@@ -175,10 +175,16 @@
   - Kakao, Apple 지원 예정 (Phase 3)
   - 최초 로그인 시 추가 정보 수집
 
-#### 5.1.2 프로필 관리
+#### 5.1.2 프로필 관리 - **✅ 주소 검색 완료 (2025.10.17)**
 - **기본 정보**
   - 이름, 전화번호, 이메일
   - 프로필 사진 (최대 5MB, JPG/PNG)
+  - **주소 검색 기능 (2025.10.17)**
+    - Naver Maps JavaScript API 통합
+    - 클라이언트 사이드 Geocoding (window.naver.maps.Service.geocode)
+    - 실시간 주소 검색 (도로명, 지번, 건물명)
+    - 검색 결과 모달 UI (도로명 주소 우선 표시)
+    - 영문 주소 표시 지원
 - **직업 정보**
   - 회사명, 부서, 직급
   - 업무 분야, 경력
@@ -707,6 +713,29 @@
 *다음 검토일: 2025년 11월*
 
 ### 변경 이력
+- v1.13 (2025.10.17): Naver Maps 주소 검색 기능 구현 완료
+  - ✅ **Naver Maps JavaScript API 통합**
+    - index.html에 Naver Maps JavaScript SDK 스크립트 추가 (Geocoder submodule 포함)
+    - Client ID: 8oy9bbkq8u (gplat-geocoding-v2 애플리케이션)
+    - 브라우저 전역 window.naver 객체를 통한 직접 API 호출
+  - ✅ **AddressSearchModal 컴포넌트 구현**
+    - 클라이언트 사이드 Geocoding: window.naver.maps.Service.geocode()
+    - Promise 래핑으로 비동기 처리 개선
+    - 실시간 주소 검색 (도로명, 지번, 건물명 지원)
+    - 검색 결과 리스트 UI (도로명 주소 우선, 지번 주소 부가 표시)
+    - 영문 주소 표시 지원
+    - Enter 키 검색 지원
+  - ✅ **기술적 전환**
+    - 초기 시도: Naver Cloud Platform VPC Maps API (서버 사이드)
+      - Edge Function 기반 프록시 구현
+      - 구독 연결 문제로 error 210 지속 발생
+    - 최종 솔루션: Naver Maps JavaScript API (클라이언트 사이드)
+      - 구독 복잡도 제거 (Client ID만 필요)
+      - Edge Function 의존성 제거
+      - CORS 및 인증 문제 해결
+      - 더 빠른 응답 시간
+  - ✅ **GitHub 커밋**
+    - 6127d56: feat: Switch to Naver Maps JavaScript API for client-side geocoding
 - v1.12 (2025.10.16): 첨부파일 시스템 고도화 - YouTube Shorts 및 드래그 앤 드롭
   - ✅ **YouTube Shorts 전면 지원**
     - 5개 모든 테마 카드에 Shorts URL 파싱 로직 적용
