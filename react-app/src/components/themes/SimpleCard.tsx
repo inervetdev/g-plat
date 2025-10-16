@@ -11,41 +11,48 @@ export function SimpleCard({ userId }: { userId: string }) {
   const [businessCardId, setBusinessCardId] = useState<string | null>(null)
   const [attachments, setAttachments] = useState<Attachment[]>([])
   const [previewAttachment, setPreviewAttachment] = useState<Attachment | null>(null)
+  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null)
 
-  const getYouTubeEmbedUrl = (url: string) => {
+  const getYouTubeVideoId = (url: string): string => {
     if (!url) return ''
 
     try {
-      // 이미 embed URL인 경우 video ID 추출
       const embedMatch = url.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/)
-      if (embedMatch) return url
+      if (embedMatch) return embedMatch[1]
 
       const urlObj = new URL(url)
 
       if (urlObj.hostname.includes('youtube.com') || urlObj.hostname.includes('youtube-nocookie.com')) {
         const videoId = urlObj.searchParams.get('v')
-        if (videoId) return `https://www.youtube.com/embed/${videoId}`
+        if (videoId) return videoId
 
-        // youtube.com/shorts/VIDEO_ID (YouTube Shorts)
         const shortsMatch = urlObj.pathname.match(/\/shorts\/([a-zA-Z0-9_-]+)/)
-        if (shortsMatch) return `https://www.youtube.com/embed/${shortsMatch[1]}`
+        if (shortsMatch) return shortsMatch[1]
 
-        // youtube.com/embed/VIDEO_ID 형식도 처리
         const pathMatch = urlObj.pathname.match(/\/embed\/([a-zA-Z0-9_-]+)/)
-        if (pathMatch) return `https://www.youtube.com/embed/${pathMatch[1]}`
+        if (pathMatch) return pathMatch[1]
       }
 
       if (urlObj.hostname.includes('youtu.be')) {
         const videoId = urlObj.pathname.slice(1).split('?')[0]
-        if (videoId) return `https://www.youtube.com/embed/${videoId}`
+        if (videoId) return videoId
       }
 
-      return url
+      return ''
     } catch {
-      // URL 파싱 실패 시 정규식으로 시도
       const regexMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/)
-      return regexMatch ? `https://www.youtube.com/embed/${regexMatch[1]}` : url
+      return regexMatch ? regexMatch[1] : ''
     }
+  }
+
+  const getYouTubeEmbedUrl = (url: string) => {
+    const videoId = getYouTubeVideoId(url)
+    return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : url
+  }
+
+  const getYouTubeThumbnail = (url: string) => {
+    const videoId = getYouTubeVideoId(url)
+    return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : ''
   }
 
   useEffect(() => {
@@ -255,6 +262,7 @@ END:VCARD`
             <div className="space-y-3">
               {attachments.map((attachment) => {
                 const isYouTube = attachment.attachment_type === 'youtube'
+                const isInlineYouTube = isYouTube && attachment.youtube_display_mode === 'inline'
                 const isImage = attachment.file_type?.startsWith('image/')
                 const isVideo = attachment.file_type?.startsWith('video/')
                 const isPDF = attachment.file_type === 'application/pdf'
@@ -266,6 +274,61 @@ END:VCARD`
                 else if (isPDF) icon = '📄'
 
                 const canPreview = isYouTube || isImage || isVideo
+
+                // YouTube inline 표시
+                if (isInlineYouTube && attachment.youtube_url) {
+                  const videoId = getYouTubeVideoId(attachment.youtube_url)
+                  const isPlaying = playingVideoId === attachment.id
+
+                  return (
+                    <div key={attachment.id} className="space-y-2">
+                      <div className="flex items-center gap-2 text-gray-700">
+                        <span className="text-lg">{icon}</span>
+                        <p className="text-sm font-medium">{attachment.title}</p>
+                      </div>
+
+                      <div
+                        className="relative w-full aspect-video rounded-xl overflow-hidden border-2 border-blue-200 bg-gray-100 group cursor-pointer"
+                        onClick={() => {
+                          if (!isPlaying) {
+                            setPlayingVideoId(attachment.id)
+                          }
+                        }}
+                      >
+                        {!isPlaying ? (
+                          <>
+                            <img
+                              src={getYouTubeThumbnail(attachment.youtube_url)}
+                              alt={attachment.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.currentTarget.src = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                              <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 shadow-2xl">
+                                <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z" />
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="absolute bottom-2 left-2 px-2 py-1 bg-black bg-opacity-80 rounded text-xs text-white">
+                              YouTube
+                            </div>
+                          </>
+                        ) : (
+                          <iframe
+                            src={getYouTubeEmbedUrl(attachment.youtube_url)}
+                            className="w-full h-full"
+                            title={attachment.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )
+                }
 
                 return (
                   <div
