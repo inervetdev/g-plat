@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
+import { MapPreview } from '../MapPreview'
 import type { Attachment } from '@/types/attachment'
 
 interface CardData {
@@ -11,6 +12,9 @@ interface CardData {
   phone: string
   email: string
   website?: string
+  address?: string
+  latitude?: number
+  longitude?: number
   introduction?: string
   services?: string[]
   profileImage?: string
@@ -86,6 +90,9 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           phone: businessCard.phone || '',
           email: businessCard.email || '',
           website: (businessCard as any).website || '',
+          address: (businessCard as any).address || '',
+          latitude: (businessCard as any).latitude,
+          longitude: (businessCard as any).longitude,
           introduction: (businessCard as any).introduction || '',
           services: (businessCard as any).services || [],
           profileImage: businessCard.profile_image || '',
@@ -327,6 +334,32 @@ END:VCARD`
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Address & Map */}
+        {cardData.address && (
+          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h2 className="text-[#1e3a5f] font-bold mb-4">주소</h2>
+
+            {/* 말풍선 스타일 주소 */}
+            <div className="mb-4">
+              <div className="relative bg-[#1e3a5f] text-white rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-md">
+                <p className="text-sm leading-relaxed">📍 {cardData.address}</p>
+              </div>
+            </div>
+
+            {cardData.latitude && cardData.longitude && (
+              <div className="rounded-lg overflow-hidden">
+                <MapPreview
+                  latitude={cardData.latitude}
+                  longitude={cardData.longitude}
+                  address={cardData.address}
+                  height="220px"
+                  level={4}
+                />
+              </div>
+            )}
           </div>
         )}
 

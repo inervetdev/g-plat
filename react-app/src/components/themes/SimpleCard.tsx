@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { loadBusinessCardData, defaultDemoData, type CardData } from '../../lib/cardDataLoader'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
+import { MapPreview } from '../MapPreview'
 import type { Attachment } from '@/types/attachment'
 
 export function SimpleCard({ userId }: { userId: string }) {
@@ -218,6 +219,32 @@ END:VCARD`
                 </span>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Address & Map */}
+        {cardData.address && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">주소</h2>
+
+            {/* Speech bubble style address */}
+            <div className="mb-4">
+              <div className="relative bg-white border-2 border-gray-200 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-sm">
+                <p className="text-sm text-gray-700 leading-relaxed">📍 {cardData.address}</p>
+              </div>
+            </div>
+
+            {cardData.latitude && cardData.longitude && (
+              <div className="rounded-xl overflow-hidden shadow-md">
+                <MapPreview
+                  latitude={cardData.latitude}
+                  longitude={cardData.longitude}
+                  address={cardData.address}
+                  height="220px"
+                  level={4}
+                />
+              </div>
+            )}
           </div>
         )}
 

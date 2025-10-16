@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { loadBusinessCardData, defaultDemoData, type CardData } from '../../lib/cardDataLoader'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
+import { MapPreview } from '../MapPreview'
 import type { Attachment } from '@/types/attachment'
 
 export function DefaultCard({ userId }: { userId: string }) {
@@ -281,6 +282,34 @@ export function DefaultCard({ userId }: { userId: string }) {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Address & Map */}
+        {cardData.address && (
+          <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
+            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span>📍</span> 주소
+            </h2>
+
+            {/* Gradient speech bubble style address */}
+            <div className="mb-4">
+              <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-lg">
+                <p className="text-sm leading-relaxed">📍 {cardData.address}</p>
+              </div>
+            </div>
+
+            {cardData.latitude && cardData.longitude && (
+              <div className="rounded-2xl overflow-hidden shadow-lg">
+                <MapPreview
+                  latitude={cardData.latitude}
+                  longitude={cardData.longitude}
+                  address={cardData.address}
+                  height="220px"
+                  level={4}
+                />
+              </div>
+            )}
           </div>
         )}
 
