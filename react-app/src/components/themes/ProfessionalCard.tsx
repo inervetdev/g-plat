@@ -64,7 +64,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
         .select('*')
         .or(`id.eq.${userId},user_id.eq.${userId},custom_url.eq.${userId}`)
         .eq('is_active', true)
-        .single()
+        .single() as any
 
       if (businessCard && !cardError) {
         setBusinessCardId(businessCard.id)

@@ -16,7 +16,8 @@ interface AttachmentFile {
   isExisting?: boolean
 }
 
-export function EditCardPage() {
+// React Compiler가 자동으로 최적화 - 수동 memo, useCallback, useMemo 불필요!
+export function EditCardPageOptimized() {
   const { cardId } = useParams()
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
@@ -25,29 +26,7 @@ export function EditCardPage() {
   const [attachmentFiles, setAttachmentFiles] = useState<AttachmentFile[]>([])
   const [uploadingAttachment, setUploadingAttachment] = useState(false)
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string; type: string } | null>(null)
-  const [formData, setFormData] = useState<{
-    name: string
-    title: string
-    company: string
-    department: string
-    phone: string
-    email: string
-    website: string
-    address: string
-    linkedin: string
-    instagram: string
-    facebook: string
-    twitter: string
-    youtube: string
-    github: string
-    introduction: string
-    services: string
-    skills: string
-    theme: ThemeName
-    custom_url: string
-    is_primary: boolean
-    is_active: boolean
-  }>({
+  const [formData, setFormData] = useState({
     name: '',
     title: '',
     company: '',
@@ -65,7 +44,7 @@ export function EditCardPage() {
     introduction: '',
     services: '',
     skills: '',
-    theme: 'trendy',
+    theme: 'trendy' as ThemeName,
     custom_url: '',
     is_primary: false,
     is_active: true
@@ -75,6 +54,7 @@ export function EditCardPage() {
     loadCardData()
   }, [cardId])
 
+  // React Compiler가 자동으로 최적화
   const loadCardData = async () => {
     try {
       const { data: card, error } = await supabase
@@ -110,14 +90,14 @@ export function EditCardPage() {
           is_active: card.is_active || true
         })
 
-        // Load existing attachments from new table
-        const { data: attachments, error: attachError } = await supabase
+        // Load existing attachments
+        const { data: attachments } = await supabase
           .from('card_attachments')
           .select('*')
           .eq('business_card_id', cardId)
           .order('display_order', { ascending: true })
 
-        if (!attachError && attachments) {
+        if (attachments) {
           const existingAttachments: AttachmentFile[] = attachments.map(att => ({
             id: att.id,
             title: att.title,
@@ -139,6 +119,7 @@ export function EditCardPage() {
     }
   }
 
+  // React Compiler가 자동으로 최적화
   const handleAttachmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
 
@@ -164,15 +145,16 @@ export function EditCardPage() {
     e.target.value = ''
   }
 
+  // React Compiler가 자동으로 최적화
   const updateAttachmentTitle = (id: string, title: string) => {
     setAttachmentFiles(prev =>
       prev.map(att => att.id === id ? { ...att, title } : att)
     )
   }
 
+  // React Compiler가 자동으로 최적화
   const removeAttachment = async (attachment: AttachmentFile) => {
     if (attachment.isExisting) {
-      // Delete from database
       const { error } = await supabase
         .from('card_attachments')
         .delete()
@@ -187,6 +169,7 @@ export function EditCardPage() {
     setAttachmentFiles(prev => prev.filter(att => att.id !== attachment.id))
   }
 
+  // React Compiler가 자동으로 최적화
   const previewAttachment = (attachment: AttachmentFile) => {
     let url: string
     if (attachment.file) {
@@ -204,18 +187,16 @@ export function EditCardPage() {
     })
   }
 
+  // React Compiler가 자동으로 최적화
   const uploadAttachments = async (files: AttachmentFile[], userId: string) => {
     const results = []
 
-    for (let i = 0; i < files.length; i++) {
-      const attachment = files[i]
-      if (!attachment.file) continue // Skip existing files
+    for (const attachment of files) {
+      if (!attachment.file) continue
 
       try {
-        console.log(`📤 Uploading ${i + 1}: ${attachment.filename}`)
-
         const fileExt = attachment.filename.split('.').pop()
-        const fileName = `${Date.now()}-${i}.${fileExt}`
+        const fileName = `${Date.now()}-${Math.random()}.${fileExt}`
         const filePath = `${userId}/${fileName}`
 
         const { error: uploadError } = await supabase.storage
@@ -239,10 +220,8 @@ export function EditCardPage() {
           file_size: attachment.file_size,
           file_type: attachment.file_type
         })
-
-        console.log(`✅ Upload successful: ${attachment.filename}`)
       } catch (error) {
-        console.error(`❌ Upload failed: ${attachment.filename}`, error)
+        console.error(`Upload failed: ${attachment.filename}`, error)
         throw error
       }
     }
@@ -250,6 +229,7 @@ export function EditCardPage() {
     return results
   }
 
+  // React Compiler가 자동으로 최적화
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
@@ -258,7 +238,6 @@ export function EditCardPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('로그인이 필요합니다')
 
-      // Update business card
       const { error } = await supabase
         .from('business_cards')
         .update({
@@ -297,7 +276,6 @@ export function EditCardPage() {
         try {
           const uploadedFiles = await uploadAttachments(newAttachments, user.id)
 
-          // Insert new attachments
           const attachmentRecords = uploadedFiles.map((file, index) => ({
             business_card_id: cardId,
             user_id: user.id,
@@ -315,11 +293,9 @@ export function EditCardPage() {
 
           if (attachmentError) {
             console.error('Error saving attachments:', attachmentError)
-            alert('파일은 업로드되었지만 데이터베이스 저장 중 오류가 발생했습니다.')
           }
         } catch (error) {
           console.error('Error uploading attachments:', error)
-          alert('첨부파일 업로드 중 오류가 발생했습니다.')
         } finally {
           setUploadingAttachment(false)
         }
@@ -344,8 +320,9 @@ export function EditCardPage() {
     }
   }
 
+  // React Compiler가 자동으로 최적화
   const handleDelete = async () => {
-    if (!confirm('정말 이 명함을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+    if (!confirm('정말 이 명함을 삭제하시겠습니까?')) {
       return
     }
 
@@ -369,6 +346,64 @@ export function EditCardPage() {
     }
   }
 
+  // React Compiler가 자동으로 최적화 - 컴포넌트 추출
+  const AttachmentItem = ({ attachment }: { attachment: AttachmentFile }) => (
+    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+      <div className="flex-1 min-w-0">
+        <input
+          type="text"
+          value={attachment.title}
+          onChange={(e) => updateAttachmentTitle(attachment.id, e.target.value)}
+          placeholder="파일 제목"
+          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
+        />
+        <p className="text-xs text-gray-500 mt-1 truncate flex items-center gap-1">
+          {attachment.isExisting && <span className="text-green-600">✓ 저장됨</span>}
+          {!attachment.isExisting && <span className="text-blue-600">새 파일</span>}
+          <span>·</span>
+          {attachment.filename} ({(attachment.file_size / 1024).toFixed(1)}KB)
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={() => previewAttachment(attachment)}
+        className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+      >
+        미리보기
+      </button>
+      <button
+        type="button"
+        onClick={() => removeAttachment(attachment)}
+        className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+      >
+        삭제
+      </button>
+    </div>
+  )
+
+  // React Compiler가 자동으로 최적화 - 폼 필드 컴포넌트
+  const FormField = ({ label, name, type = 'text', required = false, placeholder = '' }: {
+    label: string
+    name: keyof typeof formData
+    type?: string
+    required?: boolean
+    placeholder?: string
+  }) => (
+    <div>
+      <label className="block text-sm font-medium text-gray-700">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <input
+        type={type}
+        required={required}
+        value={formData[name]}
+        onChange={(e) => setFormData({ ...formData, [name]: e.target.value })}
+        placeholder={placeholder}
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+      />
+    </div>
+  )
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -382,7 +417,7 @@ export function EditCardPage() {
       <div className="max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-gray-900">명함 수정</h1>
+            <h1 className="text-2xl font-bold text-gray-900">명함 수정 (React Compiler 최적화)</h1>
             <button
               onClick={() => navigate('/dashboard')}
               className="text-gray-500 hover:text-gray-700"
@@ -403,10 +438,6 @@ export function EditCardPage() {
                   onClick={() => setShowPreview(true)}
                   className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2 text-sm"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
                   테마 미리보기
                 </button>
               </div>
@@ -443,149 +474,31 @@ export function EditCardPage() {
             {/* Basic Information */}
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900">기본 정보</h2>
-
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    이름 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    직책
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    회사
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    부서
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.department}
-                    onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
+                <FormField label="이름" name="name" required />
+                <FormField label="직책" name="title" />
+                <FormField label="회사" name="company" />
+                <FormField label="부서" name="department" />
               </div>
             </div>
 
             {/* Contact Information */}
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900">연락처 정보</h2>
-
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    전화번호 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    이메일 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    웹사이트
-                  </label>
-                  <input
-                    type="url"
-                    value={formData.website}
-                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                    placeholder="https://"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    주소
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
+                <FormField label="전화번호" name="phone" type="tel" required />
+                <FormField label="이메일" name="email" type="email" required />
+                <FormField label="웹사이트" name="website" type="url" placeholder="https://" />
+                <FormField label="주소" name="address" />
               </div>
             </div>
 
             {/* Social Media */}
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900">소셜 미디어</h2>
-
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    LinkedIn
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.linkedin}
-                    onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">
-                    Instagram
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.instagram}
-                    onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
+                <FormField label="LinkedIn" name="linkedin" />
+                <FormField label="Instagram" name="instagram" />
               </div>
             </div>
 
@@ -603,7 +516,7 @@ export function EditCardPage() {
                 />
               </div>
 
-              {/* 다중 파일 업로드 */}
+              {/* 파일 업로드 */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   첨부파일 업로드
@@ -616,49 +529,18 @@ export function EditCardPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  최대 50MB, 여러 파일 선택 가능 (PDF, 문서, 이미지, 동영상)
+                  최대 50MB, 여러 파일 선택 가능
                 </p>
               </div>
 
               {/* 첨부파일 목록 */}
               {attachmentFiles.length > 0 && (
                 <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-gray-700">첨부된 파일 ({attachmentFiles.length})</h3>
-                  {attachmentFiles.map((attachment) => (
-                    <div
-                      key={attachment.id}
-                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <input
-                          type="text"
-                          value={attachment.title}
-                          onChange={(e) => updateAttachmentTitle(attachment.id, e.target.value)}
-                          placeholder="파일 제목"
-                          className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-blue-500 focus:border-blue-500"
-                        />
-                        <p className="text-xs text-gray-500 mt-1 truncate flex items-center gap-1">
-                          {attachment.isExisting && <span className="text-green-600">✓ 저장됨</span>}
-                          {!attachment.isExisting && <span className="text-blue-600">새 파일</span>}
-                          <span>·</span>
-                          {attachment.filename} ({(attachment.file_size / 1024).toFixed(1)}KB)
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => previewAttachment(attachment)}
-                        className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                      >
-                        미리보기
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => removeAttachment(attachment)}
-                        className="px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                      >
-                        삭제
-                      </button>
-                    </div>
+                  <h3 className="text-sm font-medium text-gray-700">
+                    첨부된 파일 ({attachmentFiles.length})
+                  </h3>
+                  {attachmentFiles.map(attachment => (
+                    <AttachmentItem key={attachment.id} attachment={attachment} />
                   ))}
                 </div>
               )}
@@ -680,19 +562,7 @@ export function EditCardPage() {
             {/* Settings */}
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900">설정</h2>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  사용자 정의 URL
-                </label>
-                <input
-                  type="text"
-                  value={formData.custom_url}
-                  onChange={(e) => setFormData({ ...formData, custom_url: e.target.value })}
-                  placeholder="my-business-card"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
-              </div>
+              <FormField label="사용자 정의 URL" name="custom_url" placeholder="my-business-card" />
 
               <div className="flex items-center gap-6">
                 <label className="flex items-center">

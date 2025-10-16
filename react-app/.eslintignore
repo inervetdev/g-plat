@@ -1,0 +1,11 @@
+node_modules
+dist
+build
+.cache
+public
+*.config.js
+*.config.ts
+playwright-report
+test-results
+backup
+coverage

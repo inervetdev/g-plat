@@ -35,10 +35,10 @@
     - generic [ref=e35]:
       - generic [ref=e36]:
         - generic [ref=e37]: 이름
-        - textbox "이름" [ref=e38]: 테스트유저
+        - textbox "이름" [ref=e38]
       - generic [ref=e39]:
         - generic [ref=e40]: 이메일
-        - textbox "이메일" [ref=e41]: test1760593632506@example.com
+        - textbox "이메일" [ref=e41]: test1760593615568@example.com
       - generic [ref=e42]:
         - generic [ref=e43]: 비밀번호
         - textbox "비밀번호" [active] [ref=e44]: Test123456!

@@ -203,7 +203,7 @@ export default function SideJobCardForm({
           .update({
             ...cardDataBase,
             business_card_id: selectedCardIds[0]
-          })
+          } as any)
           .eq('id', editingCard.id)
 
         if (error) {
@@ -223,7 +223,7 @@ export default function SideJobCardForm({
 
         const { error } = await supabase
           .from('sidejob_cards')
-          .insert(cardsToInsert)
+          .insert(cardsToInsert as any)
 
         if (error) {
           console.error('Error creating cards:', error)

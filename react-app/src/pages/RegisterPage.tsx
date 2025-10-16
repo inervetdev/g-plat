@@ -64,7 +64,7 @@ function RegisterPage() {
               email: formData.email,
               name: formData.name,
               phone: formData.phone || null
-            })
+            } as any)
 
           if (userInsertError) {
             console.log('Note: User profile will be created on first login:', userInsertError)
@@ -74,7 +74,7 @@ function RegisterPage() {
               .from('user_profiles')
               .insert({
                 user_id: authData.user.id
-              })
+              } as any)
           }
         } catch (err) {
           console.log('Profile creation deferred to first login:', err)

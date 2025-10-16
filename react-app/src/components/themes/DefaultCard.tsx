@@ -74,7 +74,9 @@ export function DefaultCard({ userId }: { userId: string }) {
       // Track visitor
       await supabase.from('visitor_stats').insert({
         user_id: userId,
-        visited_at: new Date().toISOString()
+        page_url: window.location.pathname,
+        user_agent: navigator.userAgent,
+        referrer: document.referrer || null
       })
 
       // Get visitor stats
@@ -83,7 +85,7 @@ export function DefaultCard({ userId }: { userId: string }) {
         .from('visitor_stats')
         .select('id')
         .eq('user_id', userId)
-        .gte('visited_at', today)
+        .gte('created_at', today)
 
       const { data: totalStats } = await supabase
         .from('visitor_stats')

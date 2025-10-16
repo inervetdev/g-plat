@@ -6,7 +6,235 @@ import SideJobCardForm from '../components/SideJobCardForm'
 import type { CategoryPrimary, SideJobCardWithCategory } from '../types/sidejob'
 import { CATEGORY_CONFIG } from '../types/sidejob'
 
-export default function SideJobCardsPage() {
+// Extracted Components
+function CategoryBadge({ card }: { card: SideJobCardWithCategory }) {
+  if (!card.category_primary) return null
+
+  const config = CATEGORY_CONFIG[card.category_primary]
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-white"
+      style={{ backgroundColor: config.color }}
+    >
+      {config.label}
+      {card.category_secondary && ` · ${card.category_secondary}`}
+    </span>
+  )
+}
+
+function CategoryFilterButton({
+  category,
+  label,
+  count,
+  isActive,
+  onClick,
+  color
+}: {
+  category: CategoryPrimary | 'all'
+  label: string
+  count: number
+  isActive: boolean
+  onClick: () => void
+  color?: string
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+        isActive
+          ? category === 'all'
+            ? 'bg-gray-800 text-white'
+            : 'text-white shadow-sm'
+          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+      }`}
+      style={isActive && category !== 'all' && color ? { backgroundColor: color } : undefined}
+    >
+      {label} ({count})
+    </button>
+  )
+}
+
+function CardImage({ card }: { card: SideJobCardWithCategory }) {
+  if (!card.image_url) return null
+
+  const imageContent = (
+    <img
+      src={card.image_url}
+      alt={card.title}
+      className="w-full h-full object-cover"
+    />
+  )
+
+  if (card.cta_url) {
+    return (
+      <div className="w-48 h-32 flex-shrink-0">
+        <a
+          href={card.cta_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full h-full rounded-lg overflow-hidden hover:opacity-80 transition-opacity"
+        >
+          {imageContent}
+        </a>
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-48 h-32 flex-shrink-0">
+      <div className="w-full h-full rounded-lg overflow-hidden">
+        {imageContent}
+      </div>
+    </div>
+  )
+}
+
+function CardActions({
+  card,
+  index,
+  totalCards,
+  onMoveUp,
+  onMoveDown,
+  onToggleActive,
+  onEdit,
+  onDelete
+}: {
+  card: SideJobCardWithCategory
+  index: number
+  totalCards: number
+  onMoveUp: () => void
+  onMoveDown: () => void
+  onToggleActive: () => void
+  onEdit: () => void
+  onDelete: () => void
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={onMoveUp}
+        disabled={index === 0}
+        className="p-1.5 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
+        title="위로 이동"
+      >
+        <MoveUp className="w-4 h-4" />
+      </button>
+      <button
+        onClick={onMoveDown}
+        disabled={index === totalCards - 1}
+        className="p-1.5 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
+        title="아래로 이동"
+      >
+        <MoveDown className="w-4 h-4" />
+      </button>
+      <button
+        onClick={onToggleActive}
+        className="p-1.5 text-gray-600 hover:bg-gray-100 rounded"
+        title={card.is_active ? '비활성화' : '활성화'}
+      >
+        {card.is_active ? (
+          <Eye className="w-4 h-4" />
+        ) : (
+          <EyeOff className="w-4 h-4" />
+        )}
+      </button>
+      <button
+        onClick={onEdit}
+        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
+        title="수정"
+      >
+        <Edit2 className="w-4 h-4" />
+      </button>
+      <button
+        onClick={onDelete}
+        className="p-1.5 text-red-600 hover:bg-red-50 rounded"
+        title="삭제"
+      >
+        <Trash2 className="w-4 h-4" />
+      </button>
+    </div>
+  )
+}
+
+function SideJobCard({
+  card,
+  index,
+  totalCards,
+  onMoveUp,
+  onMoveDown,
+  onToggleActive,
+  onEdit,
+  onDelete
+}: {
+  card: SideJobCardWithCategory
+  index: number
+  totalCards: number
+  onMoveUp: (card: SideJobCardWithCategory, direction: 'up') => void
+  onMoveDown: (card: SideJobCardWithCategory, direction: 'down') => void
+  onToggleActive: (card: SideJobCardWithCategory) => void
+  onEdit: (card: SideJobCardWithCategory) => void
+  onDelete: (id: string) => void
+}) {
+  return (
+    <div
+      className={`border rounded-lg p-4 ${
+        card.is_active ? 'border-gray-300 bg-white' : 'border-gray-200 bg-gray-50 opacity-60'
+      }`}
+    >
+      <div className="flex gap-4">
+        <CardImage card={card} />
+
+        <div className="flex-1">
+          <div className="flex items-start gap-2 mb-2">
+            <h3 className="text-lg font-semibold">{card.title}</h3>
+            {!card.is_active && (
+              <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">
+                비활성
+              </span>
+            )}
+            {card.badge && (
+              <span className="text-xs bg-red-500 text-white px-2 py-1 rounded font-medium">
+                {card.badge}
+              </span>
+            )}
+          </div>
+
+          <div className="mb-2">
+            <CategoryBadge card={card} />
+          </div>
+
+          {card.description && (
+            <p className="text-gray-600 mb-2 text-sm">{card.description}</p>
+          )}
+
+          <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-2">
+            {card.price && <span>💰 {card.price}</span>}
+            {card.cta_text && <span>🔘 {card.cta_text}</span>}
+            <span>👁️ {card.view_count}</span>
+            <span>🖱️ {card.click_count}</span>
+            {card.expiry_date && (
+              <span className="text-orange-600 font-medium">
+                ⏰ {new Date(card.expiry_date).toLocaleDateString()}까지
+              </span>
+            )}
+          </div>
+        </div>
+
+        <CardActions
+          card={card}
+          index={index}
+          totalCards={totalCards}
+          onMoveUp={() => onMoveUp(card, 'up')}
+          onMoveDown={() => onMoveDown(card, 'down')}
+          onToggleActive={() => onToggleActive(card)}
+          onEdit={() => onEdit(card)}
+          onDelete={() => onDelete(card.id)}
+        />
+      </div>
+    </div>
+  )
+}
+
+export default function SideJobCardsPageOptimized() {
   const navigate = useNavigate()
   const [cards, setCards] = useState<SideJobCardWithCategory[]>([])
   const [filteredCards, setFilteredCards] = useState<SideJobCardWithCategory[]>([])
@@ -21,7 +249,6 @@ export default function SideJobCardsPage() {
   }, [])
 
   useEffect(() => {
-    // Apply category filter
     if (categoryFilter === 'all') {
       setFilteredCards(cards)
     } else {
@@ -112,7 +339,7 @@ export default function SideJobCardsPage() {
     try {
       const { error } = await supabase
         .from('sidejob_cards')
-        .update({ is_active: !card.is_active })
+        .update({ is_active: !card.is_active } as any)
         .eq('id', card.id)
 
       if (error) {
@@ -143,27 +370,12 @@ export default function SideJobCardsPage() {
           .from('sidejob_cards')
           .update({ display_order: card.display_order })
           .eq('id', otherCard.id)
-      ])
+      ] as any)
 
       fetchSideJobCards()
     } catch (error) {
       console.error('Error changing order:', error)
     }
-  }
-
-  const getCategoryBadge = (card: SideJobCardWithCategory) => {
-    if (!card.category_primary) return null
-
-    const config = CATEGORY_CONFIG[card.category_primary]
-    return (
-      <span
-        className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-white"
-        style={{ backgroundColor: config.color }}
-      >
-        {config.label}
-        {card.category_secondary && ` · ${card.category_secondary}`}
-      </span>
-    )
   }
 
   if (loading) {
@@ -180,7 +392,7 @@ export default function SideJobCardsPage() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h1 className="text-2xl font-bold">부가명함 관리</h1>
+            <h1 className="text-2xl font-bold">부가명함 관리 (React Compiler 최적화)</h1>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => navigate('/dashboard')}
@@ -209,38 +421,28 @@ export default function SideJobCardsPage() {
                 <span className="text-sm font-medium text-gray-700">카테고리 필터</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                <button
+                <CategoryFilterButton
+                  category="all"
+                  label="전체"
+                  count={cards.length}
+                  isActive={categoryFilter === 'all'}
                   onClick={() => setCategoryFilter('all')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    categoryFilter === 'all'
-                      ? 'bg-gray-800 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  전체 ({cards.length})
-                </button>
+                />
                 {(Object.keys(CATEGORY_CONFIG) as CategoryPrimary[]).map((key) => {
                   const config = CATEGORY_CONFIG[key]
                   const count = cards.filter(c => c.category_primary === key).length
                   if (count === 0) return null
 
                   return (
-                    <button
+                    <CategoryFilterButton
                       key={key}
+                      category={key}
+                      label={config.label}
+                      count={count}
+                      isActive={categoryFilter === key}
                       onClick={() => setCategoryFilter(key)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                        categoryFilter === key
-                          ? 'text-white shadow-sm'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                      style={
-                        categoryFilter === key
-                          ? { backgroundColor: config.color }
-                          : undefined
-                      }
-                    >
-                      {config.label} ({count})
-                    </button>
+                      color={config.color}
+                    />
                   )
                 })}
               </div>
@@ -262,123 +464,17 @@ export default function SideJobCardsPage() {
           ) : (
             <div className="grid gap-4">
               {filteredCards.map((card, index) => (
-                <div
+                <SideJobCard
                   key={card.id}
-                  className={`border rounded-lg p-4 ${
-                    card.is_active ? 'border-gray-300 bg-white' : 'border-gray-200 bg-gray-50 opacity-60'
-                  }`}
-                >
-                  <div className="flex gap-4">
-                    {/* Image */}
-                    {card.image_url && (
-                      <div className="w-48 h-32 flex-shrink-0">
-                        {card.cta_url ? (
-                          <a
-                            href={card.cta_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block w-full h-full rounded-lg overflow-hidden hover:opacity-80 transition-opacity"
-                          >
-                            <img
-                              src={card.image_url}
-                              alt={card.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </a>
-                        ) : (
-                          <div className="w-full h-full rounded-lg overflow-hidden">
-                            <img
-                              src={card.image_url}
-                              alt={card.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Content */}
-                    <div className="flex-1">
-                      <div className="flex items-start gap-2 mb-2">
-                        <h3 className="text-lg font-semibold">{card.title}</h3>
-                        {!card.is_active && (
-                          <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">
-                            비활성
-                          </span>
-                        )}
-                        {card.badge && (
-                          <span className="text-xs bg-red-500 text-white px-2 py-1 rounded font-medium">
-                            {card.badge}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Category Badge */}
-                      <div className="mb-2">{getCategoryBadge(card)}</div>
-
-                      {card.description && (
-                        <p className="text-gray-600 mb-2 text-sm">{card.description}</p>
-                      )}
-
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-2">
-                        {card.price && <span>💰 {card.price}</span>}
-                        {card.cta_text && <span>🔘 {card.cta_text}</span>}
-                        <span>👁️ {card.view_count}</span>
-                        <span>🖱️ {card.click_count}</span>
-                        {card.expiry_date && (
-                          <span className="text-orange-600 font-medium">
-                            ⏰ {new Date(card.expiry_date).toLocaleDateString()}까지
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => changeOrder(card, 'up')}
-                        disabled={index === 0}
-                        className="p-1.5 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
-                        title="위로 이동"
-                      >
-                        <MoveUp className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => changeOrder(card, 'down')}
-                        disabled={index === filteredCards.length - 1}
-                        className="p-1.5 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-30"
-                        title="아래로 이동"
-                      >
-                        <MoveDown className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => toggleActive(card)}
-                        className="p-1.5 text-gray-600 hover:bg-gray-100 rounded"
-                        title={card.is_active ? '비활성화' : '활성화'}
-                      >
-                        {card.is_active ? (
-                          <Eye className="w-4 h-4" />
-                        ) : (
-                          <EyeOff className="w-4 h-4" />
-                        )}
-                      </button>
-                      <button
-                        onClick={() => handleEdit(card)}
-                        className="p-1.5 text-blue-600 hover:bg-blue-50 rounded"
-                        title="수정"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(card.id)}
-                        className="p-1.5 text-red-600 hover:bg-red-50 rounded"
-                        title="삭제"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                  card={card}
+                  index={index}
+                  totalCards={filteredCards.length}
+                  onMoveUp={changeOrder}
+                  onMoveDown={changeOrder}
+                  onToggleActive={toggleActive}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
               ))}
             </div>
           )}

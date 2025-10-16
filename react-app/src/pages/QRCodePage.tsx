@@ -39,7 +39,7 @@ export default function QRCodePage() {
       const { data: cardData, error } = await supabase
         .from('business_cards')
         .select('*')
-        .eq('id', cardId)
+        .eq('id', cardId || '')
         .eq('user_id', user.id)
         .single()
 
@@ -65,7 +65,7 @@ export default function QRCodePage() {
           *,
           qr_scans(count)
         `)
-        .eq('business_card_id', cardId)
+        .eq('business_card_id', cardId || '')
         .order('created_at', { ascending: false })
 
       if (!error && stats) {

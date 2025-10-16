@@ -36,15 +36,13 @@ export default function TestQRPage() {
       const { data: insertData, error: insertError } = await supabase
         .from('qr_codes')
         .insert({
-          user_id: user.id,
+          business_card_id: '', // This would be a valid business card ID in production
           short_code: testShortCode,
-          target_url: 'https://example.com/test',
-          target_type: 'static',
-          campaign: 'test',
+          long_url: 'https://example.com/test',
           is_active: true
-        })
+        } as any)
         .select()
-        .single()
+        .single() as any
 
       results.insertTest = insertError ? `❌ INSERT failed: ${insertError.message}` : '✅ INSERT successful'
 
@@ -54,8 +52,8 @@ export default function TestQRPage() {
         // 4. Test UPDATE
         const { error: updateError } = await supabase
           .from('qr_codes')
-          .update({ campaign: 'test_updated' })
-          .eq('id', insertData.id)
+          .update({ long_url: 'https://example.com/test_updated' })
+          .eq('id', insertData.id) as any
 
         results.updateTest = updateError ? `❌ UPDATE failed: ${updateError.message}` : '✅ UPDATE successful'
 

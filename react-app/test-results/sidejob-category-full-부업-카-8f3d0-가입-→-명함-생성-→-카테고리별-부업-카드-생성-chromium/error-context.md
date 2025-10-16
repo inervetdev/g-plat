@@ -1,0 +1,257 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "🎯 지플랫" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8] [cursor=pointer]: 🎯
+        - generic [ref=e9] [cursor=pointer]: 지플랫
+      - list [ref=e10]:
+        - listitem [ref=e11]:
+          - button "주요 기능" [ref=e12] [cursor=pointer]
+        - listitem [ref=e13]:
+          - button "이용 방법" [ref=e14] [cursor=pointer]
+        - listitem [ref=e15]:
+          - button "요금제" [ref=e16] [cursor=pointer]
+        - listitem [ref=e17]:
+          - button "회사 소개" [ref=e18] [cursor=pointer]
+      - generic [ref=e19]:
+        - button "로그인" [ref=e20] [cursor=pointer]
+        - button "무료 시작" [ref=e21] [cursor=pointer]
+  - generic [ref=e25]:
+    - generic [ref=e26]:
+      - heading "모바일 명함으로 부업을 시작하세요" [level=1] [ref=e27]:
+        - text: 모바일 명함으로
+        - text: 부업을 시작하세요
+      - paragraph [ref=e28]:
+        - text: 3분 만에 완성하는 나만의 모바일 명함
+        - text: 한글 도메인으로 쉽게 공유하고 부업을 관리하세요
+      - generic [ref=e29]:
+        - button "🚀 무료로 시작하기" [ref=e30] [cursor=pointer]
+        - button "👀 데모 보기" [ref=e31] [cursor=pointer]
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]: 10K+
+          - generic [ref=e35]: 활성 사용자
+        - generic [ref=e36]:
+          - generic [ref=e37]: 50+
+          - generic [ref=e38]: 파트너사
+        - generic [ref=e39]:
+          - generic [ref=e40]: 99.9%
+          - generic [ref=e41]: 서비스 가용성
+    - generic [ref=e42]:
+      - generic [ref=e44]:
+        - generic [ref=e45]:
+          - generic [ref=e46]: 김
+          - generic [ref=e47]:
+            - heading "김대리" [level=3] [ref=e48]
+            - paragraph [ref=e49]: 마케팅 매니저 · ABC컴퍼니
+        - generic [ref=e50]:
+          - generic [ref=e51] [cursor=pointer]:
+            - heading "🏠 정수기 렌탈" [level=4] [ref=e52] [cursor=pointer]
+            - paragraph [ref=e53] [cursor=pointer]: 월 29,900원부터 · 무료설치
+          - generic [ref=e54] [cursor=pointer]:
+            - heading "🚗 자동차 보험" [level=4] [ref=e55] [cursor=pointer]
+            - paragraph [ref=e56] [cursor=pointer]: 최대 30% 할인 · 실시간 견적
+          - generic [ref=e57] [cursor=pointer]:
+            - heading "📚 온라인 강의" [level=4] [ref=e58] [cursor=pointer]
+            - paragraph [ref=e59] [cursor=pointer]: 마케팅 실무 · 수료증 발급
+      - generic [ref=e60]:
+        - generic [ref=e61]: 자동 콜백
+        - paragraph [ref=e62]: 통화 후 자동 전송
+      - generic [ref=e63]:
+        - generic [ref=e64]: 한글도메인
+        - paragraph [ref=e65]: 김대리.한국
+  - generic [ref=e67]:
+    - generic [ref=e68]:
+      - heading "지플랫만의 특별한 기능" [level=2] [ref=e69]
+      - paragraph [ref=e70]: 복잡한 설정 없이 바로 시작할 수 있는 강력한 기능들
+    - generic [ref=e71]:
+      - generic [ref=e72]:
+        - generic [ref=e73]: 📱
+        - heading "3분 완성" [level=3] [ref=e74]
+        - paragraph [ref=e75]: 직관적인 인터페이스로 누구나 쉽게 명함을 만들 수 있습니다
+      - generic [ref=e76]:
+        - generic [ref=e77]: 🌐
+        - heading "한글 도메인" [level=3] [ref=e78]
+        - paragraph [ref=e79]: 이름.한국 형태의 기억하기 쉬운 개인 URL을 제공합니다
+      - generic [ref=e80]:
+        - generic [ref=e81]: 📲
+        - heading "자동 콜백" [level=3] [ref=e82]
+        - paragraph [ref=e83]: 통화 종료 후 자동으로 명함 URL을 전송합니다
+      - generic [ref=e84]:
+        - generic [ref=e85]: 💼
+        - heading "부업 관리" [level=3] [ref=e86]
+        - paragraph [ref=e87]: 여러 부업을 카드 형태로 쉽게 관리할 수 있습니다
+      - generic [ref=e88]:
+        - generic [ref=e89]: 📊
+        - heading "실시간 통계" [level=3] [ref=e90]
+        - paragraph [ref=e91]: 방문자, 클릭률 등 상세한 통계를 실시간으로 확인합니다
+      - generic [ref=e92]:
+        - generic [ref=e93]: 🔗
+        - heading "SNS 연동" [level=3] [ref=e94]
+        - paragraph [ref=e95]: 인스타그램, 유튜브 등 다양한 SNS를 연결할 수 있습니다
+  - generic [ref=e97]:
+    - generic [ref=e98]:
+      - heading "간단한 3단계로 시작하세요" [level=2] [ref=e99]
+      - paragraph [ref=e100]: 복잡한 과정 없이 빠르게 나만의 명함을 만들어보세요
+    - generic [ref=e101]:
+      - generic [ref=e103]:
+        - generic [ref=e104]: "1"
+        - heading "회원가입" [level=3] [ref=e105]
+        - paragraph [ref=e106]: 이메일 또는 SNS로 간편하게 가입하고 한글 도메인을 받으세요
+      - generic [ref=e107]:
+        - generic [ref=e108]: "2"
+        - heading "명함 제작" [level=3] [ref=e109]
+        - paragraph [ref=e110]: 템플릿을 선택하고 정보를 입력하여 명함을 완성하세요
+      - generic [ref=e111]:
+        - generic [ref=e112]: "3"
+        - heading "부업 등록" [level=3] [ref=e113]
+        - paragraph [ref=e114]: 관심 있는 부업을 선택하고 카드로 만들어 공유하세요
+  - generic [ref=e116]:
+    - generic [ref=e117]:
+      - heading "합리적인 요금제" [level=2] [ref=e118]
+      - paragraph [ref=e119]: 필요에 따라 선택할 수 있는 다양한 플랜
+    - generic [ref=e120]:
+      - generic [ref=e121]:
+        - generic [ref=e122]:
+          - heading "무료" [level=3] [ref=e123]
+          - generic [ref=e124]:
+            - text: "0"
+            - generic [ref=e125]: 원/월
+          - paragraph [ref=e126]: 개인 사용자를 위한 기본 플랜
+        - list [ref=e127]:
+          - listitem [ref=e128]:
+            - generic [ref=e129]: ✓
+            - text: 기본 명함 기능
+          - listitem [ref=e130]:
+            - generic [ref=e131]: ✓
+            - text: 부업 카드 3개
+          - listitem [ref=e132]:
+            - generic [ref=e133]: ✓
+            - text: 월 100회 콜백
+          - listitem [ref=e134]:
+            - generic [ref=e135]: ✓
+            - text: 기본 통계
+          - listitem [ref=e136]:
+            - generic [ref=e137]: ✓
+            - text: 지플랫 서브도메인
+        - button "무료로 시작" [ref=e138] [cursor=pointer]
+      - generic [ref=e139]:
+        - generic [ref=e140]: 인기
+        - generic [ref=e141]:
+          - heading "프리미엄" [level=3] [ref=e142]
+          - generic [ref=e143]:
+            - text: 9,900
+            - generic [ref=e144]: 원/월
+          - paragraph [ref=e145]: 전문가를 위한 프리미엄 플랜
+        - list [ref=e146]:
+          - listitem [ref=e147]:
+            - generic [ref=e148]: ✓
+            - text: 무제한 부업 카드
+          - listitem [ref=e149]:
+            - generic [ref=e150]: ✓
+            - text: 무제한 콜백 발송
+          - listitem [ref=e151]:
+            - generic [ref=e152]: ✓
+            - text: 고급 통계 분석
+          - listitem [ref=e153]:
+            - generic [ref=e154]: ✓
+            - text: 커스텀 한글 도메인
+          - listitem [ref=e155]:
+            - generic [ref=e156]: ✓
+            - text: 우선 고객 지원
+          - listitem [ref=e157]:
+            - generic [ref=e158]: ✓
+            - text: 광고 제거
+        - button "프리미엄 시작" [ref=e159] [cursor=pointer]
+      - generic [ref=e160]:
+        - generic [ref=e161]:
+          - heading "비즈니스" [level=3] [ref=e162]
+          - generic [ref=e163]:
+            - text: 29,900
+            - generic [ref=e164]: 원/월
+          - paragraph [ref=e165]: 팀과 기업을 위한 비즈니스 플랜
+        - list [ref=e166]:
+          - listitem [ref=e167]:
+            - generic [ref=e168]: ✓
+            - text: 프리미엄 기능 전체
+          - listitem [ref=e169]:
+            - generic [ref=e170]: ✓
+            - text: 팀 계정 5명
+          - listitem [ref=e171]:
+            - generic [ref=e172]: ✓
+            - text: API 연동
+          - listitem [ref=e173]:
+            - generic [ref=e174]: ✓
+            - text: 전담 매니저
+          - listitem [ref=e175]:
+            - generic [ref=e176]: ✓
+            - text: 맞춤형 교육
+          - listitem [ref=e177]:
+            - generic [ref=e178]: ✓
+            - text: 우선 기술 지원
+        - button "문의하기" [ref=e179] [cursor=pointer]
+  - generic [ref=e181]:
+    - heading "지금 바로 시작하세요" [level=2] [ref=e182]
+    - paragraph [ref=e183]: 3분이면 충분합니다. 복잡한 절차 없이 바로 명함을 만들어보세요.
+    - generic [ref=e184]:
+      - button "🚀 무료로 시작하기" [ref=e185] [cursor=pointer]
+      - button "📞 상담 신청" [ref=e186] [cursor=pointer]
+  - contentinfo [ref=e187]:
+    - generic [ref=e188]:
+      - generic [ref=e189]:
+        - generic [ref=e190]:
+          - heading "지플랫" [level=3] [ref=e191]
+          - paragraph [ref=e192]:
+            - text: 개인 부업 포트폴리오 모바일 명함 웹 빌더
+            - text: 누구나 쉽게 시작할 수 있는 부업 플랫폼
+        - generic [ref=e193]:
+          - heading "서비스" [level=4] [ref=e194]
+          - list [ref=e195]:
+            - listitem [ref=e196]:
+              - link "주요 기능" [ref=e197] [cursor=pointer]:
+                - /url: "#features"
+            - listitem [ref=e198]:
+              - link "요금제" [ref=e199] [cursor=pointer]:
+                - /url: "#pricing"
+            - listitem [ref=e200]:
+              - link "템플릿" [ref=e201] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e202]:
+              - link "API" [ref=e203] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e204]:
+          - heading "지원" [level=4] [ref=e205]
+          - list [ref=e206]:
+            - listitem [ref=e207]:
+              - link "도움말" [ref=e208] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e209]:
+              - link "FAQ" [ref=e210] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e211]:
+              - link "문의하기" [ref=e212] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e213]:
+              - link "블로그" [ref=e214] [cursor=pointer]:
+                - /url: "#"
+        - generic [ref=e215]:
+          - heading "회사" [level=4] [ref=e216]
+          - list [ref=e217]:
+            - listitem [ref=e218]:
+              - link "회사 소개" [ref=e219] [cursor=pointer]:
+                - /url: "#"
+            - listitem [ref=e220]:
+              - link "이용약관" [ref=e221] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e222]:
+              - link "개인정보처리방침" [ref=e223] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e224]:
+              - link "파트너" [ref=e225] [cursor=pointer]:
+                - /url: "#"
+      - paragraph [ref=e227]: © 2025 지플랫. All rights reserved.
+```

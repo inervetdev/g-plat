@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import QRCode from 'qrcode'
 import { supabase } from '../lib/supabase'
+import type { QRCode as QRCodeType } from '../lib/supabase'
 import { Download, Link, BarChart3, Settings, Copy, Check } from 'lucide-react'
 
 interface QRCodeGeneratorProps {
@@ -54,16 +55,14 @@ export default function QRCodeGenerator({
       if (businessCardId) {
         const { data: existingQRs, error: fetchError } = await supabase
           .from('qr_codes')
-          .select('*')
+          .select<'*', QRCodeType>('*')
           .eq('business_card_id', businessCardId)
-          .eq('campaign', campaign || 'business_card')
-          .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(1)
 
         if (existingQRs && existingQRs.length > 0 && !fetchError) {
           // Use existing QR code with Edge Function URL
-          const existingQR = existingQRs[0]
+          const existingQR: QRCodeType = existingQRs[0]
           const isDevelopment = window.location.hostname === 'localhost'
           const trackingUrl = isDevelopment
             ? url // Development: use direct URL
@@ -86,14 +85,11 @@ export default function QRCodeGenerator({
       const { error } = await supabase
         .from('qr_codes')
         .insert({
-          user_id: user.id,
-          business_card_id: businessCardId,
+          business_card_id: businessCardId!,
           short_code: shortCode,
-          target_url: url,
-          target_type: 'static',
-          campaign: campaign || 'business_card',
+          long_url: url,
           is_active: true
-        })
+        } as any)
         .select()
         .single()
 
@@ -103,15 +99,13 @@ export default function QRCodeGenerator({
         if (error.code === '23505' || error.message?.includes('duplicate')) {
           const { data: existingQRs } = await supabase
             .from('qr_codes')
-            .select('*')
-            .eq('business_card_id', businessCardId)
-            .eq('campaign', campaign || 'business_card')
-            .eq('user_id', user.id)
+            .select<'*', QRCodeType>('*')
+            .eq('business_card_id', businessCardId!)
             .order('created_at', { ascending: false })
             .limit(1)
 
           if (existingQRs && existingQRs.length > 0) {
-            const existingQR = existingQRs[0]
+            const existingQR: QRCodeType = existingQRs[0]
             const isDevelopment = window.location.hostname === 'localhost'
             const trackingUrl = isDevelopment
               ? url // Development: use direct URL

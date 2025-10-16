@@ -1,334 +1,81 @@
 import { createClient } from '@supabase/supabase-js'
+import type { Database } from './database.types'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Environment variables check:', {
-    VITE_SUPABASE_URL: supabaseUrl ? 'exists' : 'missing',
-    VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? 'exists' : 'missing',
-    allEnvVars: import.meta.env
-  })
-  throw new Error('Missing Supabase environment variables. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel environment settings.')
+// Environment variable validation with type safety
+interface SupabaseEnv {
+  VITE_SUPABASE_URL: string
+  VITE_SUPABASE_ANON_KEY: string
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+function validateEnv(): SupabaseEnv {
+  const url = import.meta.env.VITE_SUPABASE_URL
+  const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+  const errors: string[] = []
+
+  // Validate URL (allow both http for local dev and https for production)
+  if (!url) {
+    errors.push('VITE_SUPABASE_URL is missing')
+  } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    errors.push('VITE_SUPABASE_URL must start with http:// or https://')
+  }
+
+  // Validate Anon Key
+  if (!anonKey) {
+    errors.push('VITE_SUPABASE_ANON_KEY is missing')
+  } else if (anonKey.length < 100) {
+    errors.push('VITE_SUPABASE_ANON_KEY appears to be invalid (too short)')
+  }
+
+  if (errors.length > 0) {
+    const errorMessage = `
+❌ Supabase Configuration Error:
+${errors.map(e => `  • ${e}`).join('\n')}
+
+Please check your environment variables:
+  • For local development: Check .env file
+  • For production: Check Vercel environment settings
+    `
+    console.error(errorMessage)
+    throw new Error('Invalid Supabase configuration. See console for details.')
+  }
+
+  return {
+    VITE_SUPABASE_URL: url,
+    VITE_SUPABASE_ANON_KEY: anonKey
+  }
+}
+
+const env = validateEnv()
+
+// Create typed Supabase client
+export const supabase = createClient<Database>(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-  }
+    detectSessionInUrl: true,
+    flowType: 'pkce', // More secure flow
+  },
+  db: {
+    schema: 'public',
+  },
+  global: {
+    headers: {
+      'x-application-name': 'g-plat-web',
+    },
+  },
 })
 
-// Database types (updated to match actual Supabase tables)
-export type Database = {
-  public: {
-    Tables: {
-      business_cards: {
-        Row: {
-          id: string
-          user_id: string
-          name: string
-          title: string | null
-          company: string | null
-          department: string | null
-          phone: string | null
-          email: string | null
-          website: string | null
-          address: string | null
-          linkedin: string | null
-          instagram: string | null
-          facebook: string | null
-          twitter: string | null
-          youtube: string | null
-          github: string | null
-          introduction: string | null
-          services: string[] | null
-          skills: string[] | null
-          theme: string
-          card_color: string | null
-          font_style: string | null
-          profile_image: string | null
-          company_logo: string | null
-          background_image: string | null
-          qr_code: string | null
-          custom_url: string | null
-          short_url: string | null
-          is_active: boolean
-          is_primary: boolean
-          view_count: number
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          name: string
-          title?: string | null
-          company?: string | null
-          department?: string | null
-          phone?: string | null
-          email?: string | null
-          website?: string | null
-          address?: string | null
-          linkedin?: string | null
-          instagram?: string | null
-          facebook?: string | null
-          twitter?: string | null
-          youtube?: string | null
-          github?: string | null
-          introduction?: string | null
-          services?: string[] | null
-          skills?: string[] | null
-          theme?: string
-          card_color?: string | null
-          font_style?: string | null
-          profile_image?: string | null
-          company_logo?: string | null
-          background_image?: string | null
-          qr_code?: string | null
-          custom_url?: string | null
-          short_url?: string | null
-          is_active?: boolean
-          is_primary?: boolean
-          view_count?: number
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          name?: string
-          title?: string | null
-          company?: string | null
-          department?: string | null
-          phone?: string | null
-          email?: string | null
-          website?: string | null
-          address?: string | null
-          linkedin?: string | null
-          instagram?: string | null
-          facebook?: string | null
-          twitter?: string | null
-          youtube?: string | null
-          github?: string | null
-          introduction?: string | null
-          services?: string[] | null
-          skills?: string[] | null
-          theme?: string
-          card_color?: string | null
-          font_style?: string | null
-          profile_image?: string | null
-          company_logo?: string | null
-          background_image?: string | null
-          qr_code?: string | null
-          custom_url?: string | null
-          short_url?: string | null
-          is_active?: boolean
-          is_primary?: boolean
-          view_count?: number
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      users: {
-        Row: {
-          id: string
-          email: string
-          name: string | null
-          domain_name: string | null
-          subscription_tier: 'FREE' | 'PREMIUM' | 'BUSINESS'
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          email: string
-          name?: string | null
-          domain_name?: string | null
-          subscription_tier?: 'FREE' | 'PREMIUM' | 'BUSINESS'
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          email?: string
-          name?: string | null
-          domain_name?: string | null
-          subscription_tier?: 'FREE' | 'PREMIUM' | 'BUSINESS'
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      user_profiles: {
-        Row: {
-          id: string
-          user_id: string
-          company: string | null
-          position: string | null
-          bio: string | null
-          phone: string | null
-          address: string | null
-          profile_image: string | null
-          theme_settings: any
-          social_links: any
-          callback_settings: any
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          company?: string | null
-          position?: string | null
-          bio?: string | null
-          phone?: string | null
-          address?: string | null
-          profile_image?: string | null
-          theme_settings?: any
-          social_links?: any
-          callback_settings?: any
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          company?: string | null
-          position?: string | null
-          bio?: string | null
-          phone?: string | null
-          address?: string | null
-          profile_image?: string | null
-          theme_settings?: any
-          social_links?: any
-          callback_settings?: any
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      sidejob_cards: {
-        Row: {
-          id: string
-          user_id: string
-          title: string
-          description: string | null
-          image_url: string | null
-          price: string | null
-          cta_text: string | null
-          cta_link: string | null
-          business_card_id: string | null
-          display_order: number
-          is_active: boolean
-          view_count: number
-          click_count: number
-          category_primary: 'shopping' | 'education' | 'service' | 'subscription' | 'promotion' | null
-          category_secondary: string | null
-          tags: any | null
-          badge: string | null
-          expiry_date: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          title: string
-          description?: string | null
-          image_url?: string | null
-          price?: string | null
-          cta_text?: string | null
-          cta_link?: string | null
-          business_card_id?: string | null
-          display_order?: number
-          is_active?: boolean
-          view_count?: number
-          click_count?: number
-          category_primary?: 'shopping' | 'education' | 'service' | 'subscription' | 'promotion' | null
-          category_secondary?: string | null
-          tags?: any | null
-          badge?: string | null
-          expiry_date?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          title?: string
-          description?: string | null
-          image_url?: string | null
-          price?: string | null
-          cta_text?: string | null
-          cta_link?: string | null
-          business_card_id?: string | null
-          display_order?: number
-          is_active?: boolean
-          view_count?: number
-          click_count?: number
-          category_primary?: 'shopping' | 'education' | 'service' | 'subscription' | 'promotion' | null
-          category_secondary?: string | null
-          tags?: any | null
-          badge?: string | null
-          expiry_date?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      visitor_stats: {
-        Row: {
-          id: string
-          user_id: string
-          visitor_ip: string | null
-          user_agent: string | null
-          referrer: string | null
-          page_visited: string
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          visitor_ip?: string | null
-          user_agent?: string | null
-          referrer?: string | null
-          page_visited: string
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          visitor_ip?: string | null
-          user_agent?: string | null
-          referrer?: string | null
-          page_visited?: string
-          created_at?: string
-        }
-      }
-      callback_logs: {
-        Row: {
-          id: string
-          user_id: string
-          phone_number: string
-          message_sent: string | null
-          status: 'PENDING' | 'SENT' | 'FAILED'
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          phone_number: string
-          message_sent?: string | null
-          status?: 'PENDING' | 'SENT' | 'FAILED'
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          phone_number?: string
-          message_sent?: string | null
-          status?: 'PENDING' | 'SENT' | 'FAILED'
-          created_at?: string
-        }
-      }
-    }
-  }
-}
+// Re-export types for convenience
+import type { Tables as TablesType } from './database.types'
+export type { Database, Tables, TablesInsert, TablesUpdate, Enums } from './database.types'
+
+// Helper type exports for common table types
+export type BusinessCard = TablesType<'business_cards'>
+export type User = TablesType<'users'>
+export type UserProfile = TablesType<'user_profiles'>
+export type SideJobCard = TablesType<'sidejob_cards'>
+export type VisitorStats = TablesType<'visitor_stats'>
+export type CallbackLog = TablesType<'callback_logs'>
+export type QRCode = TablesType<'qr_codes'>
+export type QRScan = TablesType<'qr_scans'>

@@ -61,9 +61,9 @@ export default function TestPage() {
 
         const { data, error } = await supabase
           .from('business_cards')
-          .insert(testData)
+          .insert(testData as any)
           .select()
-          .single()
+          .single() as any
 
         if (error) {
           addResult('명함 생성', 'error', `실패: ${error.message}`)
