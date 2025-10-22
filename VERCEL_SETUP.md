@@ -13,12 +13,14 @@ Vercel 대시보드에서 다음 환경 변수를 설정해야 합니다:
 
 #### Supabase 설정
 ```
-VITE_SUPABASE_URL=https://anwwjowwrxdygqyhhckr.supabase.co
+VITE_SUPABASE_URL=your_supabase_project_url
 ```
 
 ```
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFud3dqb3d3cnhkeWdxeWhoY2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5ODg0OTUsImV4cCI6MjA3NDU2NDQ5NX0.uKtcf8jpHuY6JYb2i3bKhmCayvecc4Ezf6go5Luh5gs
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
+
+> ⚠️ **보안**: 실제 값은 Supabase Dashboard → Project Settings → API에서 확인하세요.
 
 #### 애플리케이션 설정
 ```

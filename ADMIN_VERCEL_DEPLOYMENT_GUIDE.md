@@ -65,11 +65,13 @@ git push origin main
 Vercel 프로젝트 설정에서 다음 환경 변수 추가:
 
 ```env
-VITE_SUPABASE_URL=https://anwwjowwrxdygqyhhckr.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFud3dqb3d3cnhkeWdxeWhoY2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5ODg0OTUsImV4cCI6MjA3NDU2NDQ5NX0.uKtcf8jpHuY6JYb2i3bKhmCayvecc4Ezf6go5Luh5gs
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 VITE_APP_NAME=G-PLAT Admin
 VITE_APP_URL=https://admin.g-plat.com
 ```
+
+> ⚠️ **보안**: 실제 Supabase URL과 Anon Key는 Supabase Dashboard의 Project Settings → API에서 확인하세요.
 
 ### Step 5: 커스텀 도메인 설정
 
