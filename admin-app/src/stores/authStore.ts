@@ -174,7 +174,7 @@ export const useAuthStore = create<AuthState>()(
 )
 
 // Setup auth state change listener
-supabase.auth.onAuthStateChange(async (event, session) => {
+supabase.auth.onAuthStateChange(async (event, _session) => {
   console.log('Auth state changed:', event)
 
   if (event === 'SIGNED_OUT') {
