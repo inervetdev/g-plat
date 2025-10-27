@@ -7,12 +7,27 @@ import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 function App() {
-  const { checkAuth } = useAuthStore()
+  const { checkAuth, initAuthListener } = useAuthStore()
 
-  // Check authentication on app mount
+  // Initialize auth on app mount
   useEffect(() => {
+    console.log('🚀 App mounting - initializing auth...')
+
+    // Initialize auth listener first
+    const unsubscribe = initAuthListener()
+
+    // Then check current auth state
     checkAuth()
-  }, [checkAuth])
+
+    // Cleanup on unmount
+    return () => {
+      console.log('🧹 App unmounting - cleaning up...')
+      if (typeof unsubscribe === 'function') {
+        unsubscribe()
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <BrowserRouter>

@@ -109,7 +109,7 @@ const CardThumbnail = ({
 
 // Main component - React Compiler will optimize all functions automatically
 function DashboardPageOptimized() {
-  const { user: authUser } = useAuth()
+  const { user: authUser, signOut } = useAuth()
   const [user, setUser] = useState<User | null>(null)
   const [userData, setUserData] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -196,8 +196,14 @@ function DashboardPageOptimized() {
 
   // Simple functions - no manual optimization needed!
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    window.location.href = '/'
+    try {
+      await signOut()
+      window.location.href = '/'
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Force navigation even on error
+      window.location.href = '/'
+    }
   }
 
   const handleCardPreview = (cardId: string) => {

@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 
@@ -9,22 +8,17 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ children, requiredRole }: ProtectedRouteProps) {
   const location = useLocation()
-  const { isAuthenticated, isLoading, adminUser, checkAuth } = useAuthStore()
-
-  useEffect(() => {
-    // Check authentication on mount
-    if (!isAuthenticated && !isLoading) {
-      checkAuth()
-    }
-  }, [isAuthenticated, isLoading, checkAuth])
+  const { isAuthenticated, isLoading, adminUser } = useAuthStore()
 
   // Show loading state while checking authentication
   if (isLoading) {
+    console.log('🔒 ProtectedRoute: isLoading =', isLoading, 'isAuthenticated =', isAuthenticated)
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">인증 확인 중...</p>
+          <p className="text-xs text-gray-400 mt-2">최대 10초 소요</p>
         </div>
       </div>
     )
