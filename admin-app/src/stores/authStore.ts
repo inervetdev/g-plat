@@ -224,10 +224,11 @@ export const useAuthStore = create<AuthState>()(
 
         // Setup auth state change listener
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event: AuthChangeEvent, session: Session | null) => {
+          async (event: AuthChangeEvent, _session: Session | null) => {
             console.log('🔐 Admin auth state changed:', event)
 
-            // Only handle specific events to avoid loops
+            // Only handle SIGNED_OUT event
+            // Don't handle SIGNED_IN here - let checkAuth() handle it to avoid duplicates
             if (event === 'SIGNED_OUT') {
               console.log('👋 User signed out')
               set({
@@ -236,36 +237,9 @@ export const useAuthStore = create<AuthState>()(
                 isAuthenticated: false,
                 isLoading: false,
               })
-            } else if (event === 'SIGNED_IN' && session) {
-              console.log('👤 User signed in, fetching admin profile...')
-              // Fetch admin profile
-              const { data: adminData, error: adminError } = await supabase
-                .from('admin_users')
-                .select('*')
-                .eq('id', session.user.id)
-                .eq('is_active', true)
-                .single()
-
-              if (adminError || !adminData) {
-                console.error('❌ Admin profile not found, signing out...')
-                await supabase.auth.signOut()
-                set({
-                  user: null,
-                  adminUser: null,
-                  isAuthenticated: false,
-                  isLoading: false,
-                })
-              } else {
-                console.log('✅ Admin profile loaded:', adminData.email)
-                set({
-                  user: session.user,
-                  adminUser: adminData,
-                  isAuthenticated: true,
-                  isLoading: false,
-                })
-              }
             }
-            // Ignore TOKEN_REFRESHED and other events to prevent infinite loops
+            // Ignore SIGNED_IN, TOKEN_REFRESHED, INITIAL_SESSION to avoid duplicates
+            // checkAuth() will handle authentication on app mount
           }
         )
 
