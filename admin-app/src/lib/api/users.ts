@@ -3,6 +3,58 @@
 import { supabase } from '../supabase'
 import type { User, UserWithStats, UserFilters, PaginationParams, PaginatedResponse } from '@/types/admin'
 
+export interface UserStats {
+  total: number
+  active: number
+  premium: number
+  business: number
+  today_signups: number
+}
+
+/**
+ * Fetch user statistics
+ */
+export async function fetchUserStats(): Promise<UserStats> {
+  // Get total users count
+  const { count: totalCount } = await supabase
+    .from('users')
+    .select('*', { count: 'exact', head: true })
+
+  // Get active users count
+  const { count: activeCount } = await supabase
+    .from('users')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+
+  // Get premium users count
+  const { count: premiumCount } = await supabase
+    .from('users')
+    .select('*', { count: 'exact', head: true })
+    .eq('subscription_tier', 'premium')
+
+  // Get business users count
+  const { count: businessCount } = await supabase
+    .from('users')
+    .select('*', { count: 'exact', head: true })
+    .eq('subscription_tier', 'business')
+
+  // Get today's signups (users created today)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const { count: todayCount } = await supabase
+    .from('users')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', today.toISOString())
+
+  return {
+    total: totalCount || 0,
+    active: activeCount || 0,
+    premium: premiumCount || 0,
+    business: businessCount || 0,
+    today_signups: todayCount || 0,
+  }
+}
+
 /**
  * Fetch users with filters and pagination
  */

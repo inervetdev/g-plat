@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Users as UsersIcon, Search, Download } from 'lucide-react'
-import { useUsers } from '@/hooks/useUsers'
+import { Users as UsersIcon, Search, Download, TrendingUp } from 'lucide-react'
+import { useUsers, useUserStats } from '@/hooks/useUsers'
 import type { UserFilters, PaginationParams } from '@/types/admin'
 
 export function UsersPage() {
@@ -18,6 +18,7 @@ export function UsersPage() {
   })
 
   const { data, isLoading, error } = useUsers(filters, pagination)
+  const { data: stats, isLoading: statsLoading } = useUserStats()
 
   const handleSearchChange = (search: string) => {
     setFilters(prev => ({ ...prev, search }))
@@ -53,13 +54,18 @@ export function UsersPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        {/* Total Users */}
         <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">전체 사용자</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
-                {data?.total.toLocaleString() || '0'}
-              </p>
+              {statsLoading ? (
+                <div className="w-16 h-8 bg-gray-200 animate-pulse rounded mt-1" />
+              ) : (
+                <p className="text-2xl font-bold text-gray-900 mt-1">
+                  {stats?.total.toLocaleString() || '0'}
+                </p>
+              )}
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
               <UsersIcon className="w-6 h-6 text-blue-600" />
@@ -67,11 +73,25 @@ export function UsersPage() {
           </div>
         </div>
 
+        {/* Active Users */}
         <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">활성 사용자</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">-</p>
+              {statsLoading ? (
+                <div className="w-16 h-8 bg-gray-200 animate-pulse rounded mt-1" />
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                    {stats?.active.toLocaleString() || '0'}
+                  </p>
+                  {stats && stats.total > 0 && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {((stats.active / stats.total) * 100).toFixed(1)}%
+                    </p>
+                  )}
+                </>
+              )}
             </div>
             <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
               <UsersIcon className="w-6 h-6 text-green-600" />
@@ -79,11 +99,23 @@ export function UsersPage() {
           </div>
         </div>
 
+        {/* Premium Users */}
         <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">프리미엄 사용자</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">-</p>
+              {statsLoading ? (
+                <div className="w-16 h-8 bg-gray-200 animate-pulse rounded mt-1" />
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                    {((stats?.premium || 0) + (stats?.business || 0)).toLocaleString()}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Premium: {stats?.premium || 0} · Business: {stats?.business || 0}
+                  </p>
+                </>
+              )}
             </div>
             <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
               <UsersIcon className="w-6 h-6 text-purple-600" />
@@ -91,11 +123,26 @@ export function UsersPage() {
           </div>
         </div>
 
+        {/* Today Signups */}
         <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">오늘 가입</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">-</p>
+              {statsLoading ? (
+                <div className="w-16 h-8 bg-gray-200 animate-pulse rounded mt-1" />
+              ) : (
+                <>
+                  <p className="text-2xl font-bold text-gray-900 mt-1">
+                    {stats?.today_signups.toLocaleString() || '0'}
+                  </p>
+                  {stats && stats.today_signups > 0 && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <TrendingUp className="w-3 h-3 text-green-600" />
+                      <p className="text-xs text-green-600 font-medium">신규 가입</p>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
               <UsersIcon className="w-6 h-6 text-orange-600" />

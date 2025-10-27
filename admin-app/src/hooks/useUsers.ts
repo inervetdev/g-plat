@@ -5,10 +5,22 @@ import type { UserFilters, PaginationParams } from '@/types/admin'
 import {
   fetchUsers,
   fetchUser,
+  fetchUserStats,
   updateUserStatus,
   updateUserSubscription,
   deleteUser
 } from '@/lib/api/users'
+
+/**
+ * Fetch user statistics
+ */
+export function useUserStats() {
+  return useQuery({
+    queryKey: ['userStats'],
+    queryFn: fetchUserStats,
+    staleTime: 60000, // 1 minute
+  })
+}
 
 /**
  * Fetch users list with filters and pagination
