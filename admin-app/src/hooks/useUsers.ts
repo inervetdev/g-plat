@@ -1,11 +1,13 @@
 // React Query hooks for user management
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import type { UserFilters, PaginationParams } from '@/types/admin'
+import type { User, UserFilters, PaginationParams } from '@/types/admin'
 import {
   fetchUsers,
   fetchUser,
   fetchUserStats,
+  fetchUserCards,
+  updateUser,
   updateUserStatus,
   updateUserSubscription,
   deleteUser
@@ -92,5 +94,35 @@ export function useDeleteUser() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
     },
+  })
+}
+
+/**
+ * Update user mutation
+ */
+export function useUpdateUser() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ userId, data }: { userId: string; data: Partial<User> }) =>
+      updateUser(userId, data),
+    onSuccess: (_data, variables) => {
+      // Invalidate both the user detail and users list
+      queryClient.invalidateQueries({ queryKey: ['user', variables.userId] })
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['userStats'] })
+    },
+  })
+}
+
+/**
+ * Fetch user's business cards
+ */
+export function useUserCards(userId: string) {
+  return useQuery({
+    queryKey: ['userCards', userId],
+    queryFn: () => fetchUserCards(userId),
+    enabled: !!userId,
+    staleTime: 30000, // 30 seconds
   })
 }

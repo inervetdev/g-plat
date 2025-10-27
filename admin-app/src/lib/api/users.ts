@@ -141,9 +141,9 @@ export async function fetchUsers(
 }
 
 /**
- * Fetch single user by ID
+ * Fetch single user by ID with stats
  */
-export async function fetchUser(userId: string): Promise<User | null> {
+export async function fetchUser(userId: string): Promise<UserWithStats | null> {
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -155,7 +155,89 @@ export async function fetchUser(userId: string): Promise<User | null> {
     throw error
   }
 
-  return data
+  if (!data) return null
+
+  // Get card counts
+  const { count: cardCount } = await supabase
+    .from('business_cards')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+
+  const { count: sidejobCount } = await supabase
+    .from('sidejob_cards')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId)
+
+  return {
+    ...data,
+    card_count: cardCount || 0,
+    sidejob_count: sidejobCount || 0,
+    qr_scan_count: 0,
+    total_views: 0,
+  }
+}
+
+/**
+ * Fetch user's business cards
+ */
+export async function fetchUserCards(userId: string) {
+  const { data, error } = await supabase
+    .from('business_cards')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching user cards:', error)
+    throw error
+  }
+
+  // Get sidejob count for each card
+  const cardsWithStats = await Promise.all(
+    (data || []).map(async (card: any) => {
+      const { count: sidejobCount } = await supabase
+        .from('sidejob_cards')
+        .select('*', { count: 'exact', head: true })
+        .eq('card_id', card.id)
+
+      // Get view count from visitor_stats
+      const { count: viewCount } = await supabase
+        .from('visitor_stats')
+        .select('*', { count: 'exact', head: true })
+        .eq('card_id', card.id)
+
+      return {
+        ...card,
+        sidejob_count: sidejobCount || 0,
+        view_count: viewCount || 0,
+      }
+    })
+  )
+
+  return cardsWithStats
+}
+
+/**
+ * Update user information
+ */
+export async function updateUser(userId: string, data: Partial<User>): Promise<void> {
+  const { error } = await supabase
+    .from('users')
+    .update({ ...data, updated_at: new Date().toISOString() })
+    .eq('id', userId)
+
+  if (error) {
+    console.error('Error updating user:', error)
+    throw error
+  }
+
+  // Log the action
+  await logAdminAction({
+    action: 'user_updated',
+    target_type: 'user',
+    target_id: userId,
+    details: { updated_fields: Object.keys(data) },
+  })
 }
 
 /**

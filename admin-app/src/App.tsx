@@ -4,6 +4,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { DashboardPage } from '@/pages/dashboard/DashboardPage'
 import { UsersPage } from '@/pages/users/UsersPage'
+import { UserDetailPage } from '@/pages/users/UserDetailPage'
 import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
@@ -53,6 +54,7 @@ function App() {
 
           {/* User Management */}
           <Route path="users" element={<UsersPage />} />
+          <Route path="users/:userId" element={<UserDetailPage />} />
 
           {/* Business Card Management */}
           <Route

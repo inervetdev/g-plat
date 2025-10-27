@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Users as UsersIcon, Search, Download, TrendingUp } from 'lucide-react'
 import { useUsers, useUserStats } from '@/hooks/useUsers'
 import type { UserFilters, PaginationParams } from '@/types/admin'
 
 export function UsersPage() {
+  const navigate = useNavigate()
   const [filters, setFilters] = useState<UserFilters>({
     search: '',
     subscription_tier: 'all',
@@ -289,7 +291,7 @@ export function UsersPage() {
                       {new Date(user.created_at).toLocaleDateString('ko-KR')}
                     </td>
                     <td className="px-6 py-4">
-                      <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      <button onClick={() => navigate(`/users/${user.id}`)} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
                         상세보기
                       </button>
                     </td>
