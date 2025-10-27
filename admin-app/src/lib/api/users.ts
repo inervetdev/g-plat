@@ -13,14 +13,10 @@ export async function fetchUsers(
   const { page, per_page } = pagination
   const offset = (page - 1) * per_page
 
-  // Build query
+  // Build query - fetch users only first
   let query = supabase
     .from('users')
-    .select(`
-      *,
-      business_cards:business_cards(count),
-      sidejob_cards:sidejob_cards(count)
-    `, { count: 'exact' })
+    .select('*', { count: 'exact' })
 
   // Apply filters
   if (filters.search) {
@@ -58,14 +54,30 @@ export async function fetchUsers(
     throw error
   }
 
-  // Transform data to include stats
-  const usersWithStats: UserWithStats[] = (data || []).map((user: any) => ({
-    ...user,
-    card_count: user.business_cards?.[0]?.count || 0,
-    sidejob_count: user.sidejob_cards?.[0]?.count || 0,
-    qr_scan_count: 0, // TODO: Calculate from qr_scans
-    total_views: 0, // TODO: Calculate from visitor_stats
-  }))
+  // Fetch card counts separately for each user
+  const usersWithStats: UserWithStats[] = await Promise.all(
+    (data || []).map(async (user: any) => {
+      // Get business card count
+      const { count: cardCount } = await supabase
+        .from('business_cards')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+
+      // Get sidejob card count
+      const { count: sidejobCount } = await supabase
+        .from('sidejob_cards')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+
+      return {
+        ...user,
+        card_count: cardCount || 0,
+        sidejob_count: sidejobCount || 0,
+        qr_scan_count: 0, // TODO: Calculate from qr_scans
+        total_views: 0, // TODO: Calculate from visitor_stats
+      }
+    })
+  )
 
   return {
     data: usersWithStats,
