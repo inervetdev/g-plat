@@ -103,7 +103,7 @@ export function UsersPage() {
         <div className="bg-white rounded-xl shadow p-6 border border-gray-100">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">프리미엄 사용자</p>
+              <p className="text-sm text-gray-600">유료 구독 사용자</p>
               {statsLoading ? (
                 <div className="w-16 h-8 bg-gray-200 animate-pulse rounded mt-1" />
               ) : (
