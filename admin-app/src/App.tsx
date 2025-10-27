@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { DashboardPage } from '@/pages/dashboard/DashboardPage'
+import { UsersPage } from '@/pages/users/UsersPage'
 import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
@@ -51,15 +52,7 @@ function App() {
           <Route path="dashboard" element={<DashboardPage />} />
 
           {/* User Management */}
-          <Route
-            path="users"
-            element={
-              <div className="text-center py-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">사용자 관리</h2>
-                <p className="text-gray-600">개발 예정</p>
-              </div>
-            }
-          />
+          <Route path="users" element={<UsersPage />} />
 
           {/* Business Card Management */}
           <Route
