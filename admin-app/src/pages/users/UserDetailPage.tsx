@@ -4,6 +4,10 @@ import { ArrowLeft, User, CreditCard, QrCode, Activity, DollarSign, Shield } fro
 import { useUser } from '@/hooks/useUsers'
 import { UserInfoTab } from '@/components/users/detail/UserInfoTab'
 import { UserCardsTab } from '@/components/users/detail/UserCardsTab'
+import { UserSideJobsTab } from '@/components/users/detail/UserSideJobsTab'
+import { UserQRTab } from '@/components/users/detail/UserQRTab'
+import { UserActivityTab } from '@/components/users/detail/UserActivityTab'
+import { UserPaymentTab } from '@/components/users/detail/UserPaymentTab'
 import { UserStatusModal } from '@/components/users/UserStatusModal'
 
 type TabType = 'info' | 'cards' | 'sidejob' | 'qr' | 'activity' | 'payment'
@@ -139,26 +143,10 @@ export function UserDetailPage() {
       <div>
         {activeTab === 'info' && <UserInfoTab user={user} />}
         {activeTab === 'cards' && <UserCardsTab userId={user.id} />}
-        {activeTab === 'sidejob' && (
-          <div className="bg-white rounded-xl shadow p-8 border border-gray-100 text-center text-gray-500">
-            부가명함 탭 (개발 예정)
-          </div>
-        )}
-        {activeTab === 'qr' && (
-          <div className="bg-white rounded-xl shadow p-8 border border-gray-100 text-center text-gray-500">
-            QR 코드 탭 (개발 예정)
-          </div>
-        )}
-        {activeTab === 'activity' && (
-          <div className="bg-white rounded-xl shadow p-8 border border-gray-100 text-center text-gray-500">
-            활동 로그 탭 (개발 예정)
-          </div>
-        )}
-        {activeTab === 'payment' && (
-          <div className="bg-white rounded-xl shadow p-8 border border-gray-100 text-center text-gray-500">
-            결제 내역 탭 (개발 예정)
-          </div>
-        )}
+        {activeTab === 'sidejob' && <UserSideJobsTab userId={user.id} />}
+        {activeTab === 'qr' && <UserQRTab userId={user.id} />}
+        {activeTab === 'activity' && <UserActivityTab userId={user.id} />}
+        {activeTab === 'payment' && <UserPaymentTab />}
       </div>
 
       {/* Status Change Modal */}
