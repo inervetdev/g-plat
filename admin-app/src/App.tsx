@@ -5,6 +5,7 @@ import { LoginPage } from '@/pages/auth/LoginPage'
 import { DashboardPage } from '@/pages/dashboard/DashboardPage'
 import { UsersPage } from '@/pages/users/UsersPage'
 import { UserDetailPage } from '@/pages/users/UserDetailPage'
+import { CardsPage } from '@/pages/cards/CardsPage'
 import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
@@ -57,15 +58,7 @@ function App() {
           <Route path="users/:userId" element={<UserDetailPage />} />
 
           {/* Business Card Management */}
-          <Route
-            path="cards"
-            element={
-              <div className="text-center py-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">명함 관리</h2>
-                <p className="text-gray-600">개발 예정</p>
-              </div>
-            }
-          />
+          <Route path="cards" element={<CardsPage />} />
 
           {/* Sidejob Management */}
           <Route
