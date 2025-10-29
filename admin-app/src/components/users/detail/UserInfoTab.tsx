@@ -13,13 +13,13 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
     name: string
     email: string
     phone: string
-    subscription_tier: 'free' | 'premium' | 'business'
+    subscription_tier: 'FREE' | 'PREMIUM' | 'BUSINESS'
     status: 'active' | 'inactive' | 'suspended'
   }>({
     name: user.name || '',
     email: user.email || '',
     phone: user.phone || '',
-    subscription_tier: user.subscription_tier || 'free',
+    subscription_tier: user.subscription_tier || 'FREE',
     status: (user.status as 'active' | 'inactive' | 'suspended') || 'active',
   })
 
@@ -42,7 +42,7 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
       name: user.name || '',
       email: user.email || '',
       phone: user.phone || '',
-      subscription_tier: user.subscription_tier || 'free',
+      subscription_tier: user.subscription_tier || 'FREE',
       status: (user.status as 'active' | 'inactive' | 'suspended') || 'active',
     })
     setIsEditing(false)
@@ -144,26 +144,26 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
             {isEditing ? (
               <select
                 value={formData.subscription_tier}
-                onChange={(e) => setFormData({ ...formData, subscription_tier: e.target.value as 'free' | 'premium' | 'business' })}
+                onChange={(e) => setFormData({ ...formData, subscription_tier: e.target.value as 'FREE' | 'PREMIUM' | 'BUSINESS' })}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="free">무료</option>
-                <option value="premium">프리미엄</option>
-                <option value="business">비즈니스</option>
+                <option value="FREE">무료</option>
+                <option value="PREMIUM">프리미엄</option>
+                <option value="BUSINESS">비즈니스</option>
               </select>
             ) : (
               <span
                 className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                  user.subscription_tier === 'business'
+                  user.subscription_tier === 'BUSINESS'
                     ? 'bg-purple-100 text-purple-700'
-                    : user.subscription_tier === 'premium'
+                    : user.subscription_tier === 'PREMIUM'
                     ? 'bg-blue-100 text-blue-700'
                     : 'bg-gray-100 text-gray-700'
                 }`}
               >
-                {user.subscription_tier === 'business'
+                {user.subscription_tier === 'BUSINESS'
                   ? '비즈니스'
-                  : user.subscription_tier === 'premium'
+                  : user.subscription_tier === 'PREMIUM'
                   ? '프리미엄'
                   : '무료'}
               </span>

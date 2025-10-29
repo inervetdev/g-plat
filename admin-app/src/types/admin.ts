@@ -28,7 +28,7 @@ export interface User {
   email: string
   name: string
   phone?: string
-  subscription_tier: 'free' | 'premium' | 'business'
+  subscription_tier: 'FREE' | 'PREMIUM' | 'BUSINESS'
   status: 'active' | 'inactive' | 'suspended'
   email_verified: boolean
   created_at: string
@@ -55,7 +55,7 @@ export interface UserWithStats extends User {
 
 export interface UserFilters {
   search?: string
-  subscription_tier?: 'free' | 'premium' | 'business' | 'all'
+  subscription_tier?: 'FREE' | 'PREMIUM' | 'BUSINESS' | 'all'
   status?: 'active' | 'inactive' | 'suspended' | 'all'
   date_from?: string
   date_to?: string

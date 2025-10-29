@@ -112,13 +112,13 @@ export async function fetchCards(
       const { count: viewCount } = await supabase
         .from('visitor_stats')
         .select('*', { count: 'exact', head: true })
-        .eq('card_id', card.id)
+        .eq('business_card_id', card.id)
 
       // Get QR scan count
       const { data: qrCodes } = await supabase
         .from('qr_codes')
         .select('id')
-        .eq('card_id', card.id)
+        .eq('business_card_id', card.id)
 
       let qrScanCount = 0
       if (qrCodes && qrCodes.length > 0) {
@@ -130,11 +130,11 @@ export async function fetchCards(
         qrScanCount = scanCount || 0
       }
 
-      // Get sidejob count
+      // Get sidejob count (sidejobs are linked to users, not cards)
       const { count: sidejobCount } = await supabase
         .from('sidejob_cards')
         .select('*', { count: 'exact', head: true })
-        .eq('card_id', card.id)
+        .eq('user_id', card.user_id)
 
       return {
         ...card,

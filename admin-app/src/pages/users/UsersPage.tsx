@@ -178,9 +178,9 @@ export function UsersPage() {
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="all">모든 구독 등급</option>
-              <option value="free">무료</option>
-              <option value="premium">프리미엄</option>
-              <option value="business">비즈니스</option>
+              <option value="FREE">무료</option>
+              <option value="PREMIUM">프리미엄</option>
+              <option value="BUSINESS">비즈니스</option>
             </select>
           </div>
 
@@ -255,16 +255,16 @@ export function UsersPage() {
                     <td className="px-6 py-4">
                       <span
                         className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user.subscription_tier === 'business'
+                          user.subscription_tier === 'BUSINESS'
                             ? 'bg-purple-100 text-purple-700'
-                            : user.subscription_tier === 'premium'
+                            : user.subscription_tier === 'PREMIUM'
                             ? 'bg-blue-100 text-blue-700'
                             : 'bg-gray-100 text-gray-700'
                         }`}
                       >
-                        {user.subscription_tier === 'business'
+                        {user.subscription_tier === 'BUSINESS'
                           ? '비즈니스'
-                          : user.subscription_tier === 'premium'
+                          : user.subscription_tier === 'PREMIUM'
                           ? '프리미엄'
                           : '무료'}
                       </span>

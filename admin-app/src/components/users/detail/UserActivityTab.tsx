@@ -31,8 +31,8 @@ export function UserActivityTab({ userId }: UserActivityTabProps) {
             custom_url
           )
         `)
-        .in('card_id', cardIds)
-        .order('visited_at', { ascending: false })
+        .in('business_card_id', cardIds)
+        .order('created_at', { ascending: false })
         .limit(50)
 
       if (visitsError) throw visitsError
@@ -136,13 +136,13 @@ export function UserActivityTab({ userId }: UserActivityTabProps) {
                   {/* Timestamp */}
                   <div className="flex-shrink-0 text-right">
                     <p className="text-xs text-gray-500">
-                      {new Date(activity.visited_at).toLocaleDateString('ko-KR', {
+                      {new Date(activity.created_at).toLocaleDateString('ko-KR', {
                         month: 'short',
                         day: 'numeric',
                       })}
                     </p>
                     <p className="text-xs text-gray-400">
-                      {new Date(activity.visited_at).toLocaleTimeString('ko-KR', {
+                      {new Date(activity.created_at).toLocaleTimeString('ko-KR', {
                         hour: '2-digit',
                         minute: '2-digit',
                       })}

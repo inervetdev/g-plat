@@ -30,13 +30,13 @@ export async function fetchUserStats(): Promise<UserStats> {
   const { count: premiumCount } = await supabase
     .from('users')
     .select('*', { count: 'exact', head: true })
-    .eq('subscription_tier', 'premium')
+    .eq('subscription_tier', 'PREMIUM')
 
   // Get business users count
   const { count: businessCount } = await supabase
     .from('users')
     .select('*', { count: 'exact', head: true })
-    .eq('subscription_tier', 'business')
+    .eq('subscription_tier', 'BUSINESS')
 
   // Get today's signups (users created today)
   const today = new Date()
@@ -195,16 +195,17 @@ export async function fetchUserCards(userId: string) {
   // Get sidejob count for each card
   const cardsWithStats = await Promise.all(
     (data || []).map(async (card: any) => {
+      // Note: sidejobs are linked to users, not individual cards
       const { count: sidejobCount } = await supabase
         .from('sidejob_cards')
         .select('*', { count: 'exact', head: true })
-        .eq('card_id', card.id)
+        .eq('user_id', card.user_id)
 
       // Get view count from visitor_stats
       const { count: viewCount } = await supabase
         .from('visitor_stats')
         .select('*', { count: 'exact', head: true })
-        .eq('card_id', card.id)
+        .eq('business_card_id', card.id)
 
       return {
         ...card,
@@ -248,15 +249,22 @@ export async function updateUserStatus(
   status: 'active' | 'inactive' | 'suspended',
   reason?: string
 ): Promise<void> {
-  const { error } = await supabase
+  console.log('🔄 Updating user status:', { userId, status, reason })
+
+  const { data, error } = await supabase
     .from('users')
     .update({ status, updated_at: new Date().toISOString() })
     .eq('id', userId)
+    .select()
+
+  console.log('📊 Update result:', { data, error })
 
   if (error) {
-    console.error('Error updating user status:', error)
+    console.error('❌ Error updating user status:', error)
     throw error
   }
+
+  console.log('✅ User status updated successfully:', data)
 
   // Log the action
   await logAdminAction({

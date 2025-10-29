@@ -33,7 +33,7 @@ export function UserQRTab({ userId }: UserQRTabProps) {
             custom_url
           )
         `)
-        .in('card_id', cardIds)
+        .in('business_card_id', cardIds)
         .order('created_at', { ascending: false })
 
       if (qrError) throw qrError

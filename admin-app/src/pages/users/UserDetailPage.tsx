@@ -77,16 +77,16 @@ export function UserDetailPage() {
               <div className="flex items-center gap-3 mt-2">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    user.subscription_tier === 'business'
+                    user.subscription_tier === 'BUSINESS'
                       ? 'bg-purple-100 text-purple-700'
-                      : user.subscription_tier === 'premium'
+                      : user.subscription_tier === 'PREMIUM'
                       ? 'bg-blue-100 text-blue-700'
                       : 'bg-gray-100 text-gray-700'
                   }`}
                 >
-                  {user.subscription_tier === 'business'
+                  {user.subscription_tier === 'BUSINESS'
                     ? '비즈니스'
-                    : user.subscription_tier === 'premium'
+                    : user.subscription_tier === 'PREMIUM'
                     ? '프리미엄'
                     : '무료'}
                 </span>
