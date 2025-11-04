@@ -101,7 +101,7 @@ export function CardDetailPage() {
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
             <a
-              href={`https://g-plat.com/card/${card.custom_url}`}
+              href={`https://g-plat.com/card/${card.custom_url || card.id}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
