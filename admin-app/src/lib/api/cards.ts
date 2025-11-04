@@ -1,6 +1,7 @@
 // Business card management API functions
 
 import { supabase } from '../supabase'
+import type { CardDetailStats } from '@/types/admin'
 
 export interface CardFilters {
   search?: string
@@ -29,8 +30,26 @@ export interface CardWithUser {
   id: string
   user_id: string
   name: string
+  title?: string | null
   company: string | null
+  department?: string | null
   position: string | null
+  phone?: string | null
+  email?: string | null
+  website?: string | null
+  address?: string | null
+  address_detail?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  linkedin?: string | null
+  instagram?: string | null
+  facebook?: string | null
+  twitter?: string | null
+  youtube?: string | null
+  github?: string | null
+  bio?: string | null
+  profile_image_url?: string | null
+  company_logo_url?: string | null
   theme: string | null
   custom_url: string | null
   is_active: boolean
@@ -312,5 +331,127 @@ async function logAdminAction(params: {
   if (error) {
     console.error('Error logging admin action:', error)
     // Don't throw - logging failure shouldn't break the operation
+  }
+}
+
+/**
+ * Fetch detailed statistics for a single card
+ */
+export async function fetchCardDetailStats(cardId: string): Promise<CardDetailStats> {
+  // Get total views
+  const { count: totalViews } = await supabase
+    .from('visitor_stats')
+    .select('*', { count: 'exact', head: true })
+    .eq('business_card_id', cardId)
+
+  // Get QR codes and scan counts
+  const { data: qrCodes } = await supabase
+    .from('qr_codes')
+    .select('id')
+    .eq('business_card_id', cardId)
+
+  let totalQrScans = 0
+  if (qrCodes && qrCodes.length > 0) {
+    const qrIds = qrCodes.map(qr => qr.id)
+    const { count: scanCount } = await supabase
+      .from('qr_scans')
+      .select('*', { count: 'exact', head: true })
+      .in('qr_code_id', qrIds)
+    totalQrScans = scanCount || 0
+  }
+
+  // Get sidejob count
+  const { data: card } = await supabase
+    .from('business_cards')
+    .select('user_id')
+    .eq('id', cardId)
+    .single()
+
+  const { count: sidejobCount } = await supabase
+    .from('sidejob_cards')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', card?.user_id || '')
+
+  // Get views by day (last 30 days)
+  const thirtyDaysAgo = new Date()
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+  const { data: viewsByDay } = await supabase
+    .from('visitor_stats')
+    .select('created_at')
+    .eq('business_card_id', cardId)
+    .gte('created_at', thirtyDaysAgo.toISOString())
+    .order('created_at', { ascending: true })
+
+  // Group by date
+  const viewsByDayGrouped = (viewsByDay || []).reduce((acc: Record<string, number>, visit) => {
+    const date = new Date(visit.created_at).toISOString().split('T')[0]
+    acc[date] = (acc[date] || 0) + 1
+    return acc
+  }, {})
+
+  const viewsByDayArray = Object.entries(viewsByDayGrouped).map(([date, views]) => ({
+    date,
+    views: views as number
+  }))
+
+  // Get recent visitors (last 50)
+  const { data: recentVisitors } = await supabase
+    .from('visitor_stats')
+    .select('id, created_at, user_agent, referrer, visitor_ip')
+    .eq('business_card_id', cardId)
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  // Parse device and browser from user_agent
+  const visitorsWithDeviceInfo = (recentVisitors || []).map(visitor => {
+    const ua = visitor.user_agent || ''
+    const device = ua.includes('Mobile') ? 'Mobile' : 'Desktop'
+    let browser = 'Other'
+    if (ua.includes('Chrome')) browser = 'Chrome'
+    else if (ua.includes('Firefox')) browser = 'Firefox'
+    else if (ua.includes('Safari')) browser = 'Safari'
+    else if (ua.includes('Edge')) browser = 'Edge'
+
+    return {
+      id: visitor.id,
+      visited_at: visitor.created_at,
+      device,
+      browser,
+      referrer: visitor.referrer,
+      visitor_ip: visitor.visitor_ip
+    }
+  })
+
+  // Count by device
+  const deviceCounts = visitorsWithDeviceInfo.reduce((acc: Record<string, number>, v) => {
+    acc[v.device] = (acc[v.device] || 0) + 1
+    return acc
+  }, {})
+
+  const viewsByDevice = Object.entries(deviceCounts).map(([device, count]) => ({
+    device,
+    count: count as number
+  }))
+
+  // Count by browser
+  const browserCounts = visitorsWithDeviceInfo.reduce((acc: Record<string, number>, v) => {
+    acc[v.browser] = (acc[v.browser] || 0) + 1
+    return acc
+  }, {})
+
+  const viewsByBrowser = Object.entries(browserCounts).map(([browser, count]) => ({
+    browser,
+    count: count as number
+  }))
+
+  return {
+    total_views: totalViews || 0,
+    total_qr_scans: totalQrScans,
+    total_sidejobs: sidejobCount || 0,
+    views_by_day: viewsByDayArray,
+    views_by_device: viewsByDevice,
+    views_by_browser: viewsByBrowser,
+    recent_visitors: visitorsWithDeviceInfo
   }
 }

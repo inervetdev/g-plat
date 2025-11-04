@@ -6,6 +6,7 @@ import { DashboardPage } from '@/pages/dashboard/DashboardPage'
 import { UsersPage } from '@/pages/users/UsersPage'
 import { UserDetailPage } from '@/pages/users/UserDetailPage'
 import { CardsPage } from '@/pages/cards/CardsPage'
+import { CardDetailPage } from '@/pages/cards/CardDetailPage'
 import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
@@ -59,6 +60,7 @@ function App() {
 
           {/* Business Card Management */}
           <Route path="cards" element={<CardsPage />} />
+          <Route path="cards/:id" element={<CardDetailPage />} />
 
           {/* Sidejob Management */}
           <Route

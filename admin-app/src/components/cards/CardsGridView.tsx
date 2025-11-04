@@ -1,4 +1,5 @@
 import { Eye, Trash2, Edit, QrCode } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import type { CardWithUser } from '@/lib/api/cards'
 
 interface CardsGridViewProps {
@@ -8,6 +9,8 @@ interface CardsGridViewProps {
 }
 
 export function CardsGridView({ cards, selectedCards, onSelectCard }: CardsGridViewProps) {
+  const navigate = useNavigate()
+
   if (cards.length === 0) {
     return (
       <div className="bg-white rounded-xl shadow p-12 border border-gray-100 text-center">
@@ -52,9 +55,10 @@ export function CardsGridView({ cards, selectedCards, onSelectCard }: CardsGridV
 
           {/* Card Preview */}
           <div
+            onClick={() => navigate(`/cards/${card.id}`)}
             className={`aspect-video bg-gradient-to-br ${getThemeColor(
               card.theme
-            )} p-6 flex flex-col justify-between text-white m-4 rounded-lg`}
+            )} p-6 flex flex-col justify-between text-white m-4 rounded-lg cursor-pointer hover:opacity-90 transition`}
           >
             <div>
               <h3 className="text-xl font-bold">{card.name || '이름 없음'}</h3>
