@@ -14,6 +14,10 @@ import {
   MapPin
 } from 'lucide-react'
 import { fetchCard, fetchCardDetailStats } from '@/lib/api/cards'
+import { ViewsChart } from '@/components/stats/ViewsChart'
+import { DeviceChart } from '@/components/stats/DeviceChart'
+import { BrowserChart } from '@/components/stats/BrowserChart'
+import { VisitorsTable } from '@/components/stats/VisitorsTable'
 
 export function CardDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -395,8 +399,24 @@ export function CardDetailPage() {
       )}
 
       {activeTab === 'stats' && (
-        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-          <p className="text-gray-500">통계 차트 구현 예정</p>
+        <div className="space-y-6">
+          {/* Views Trend Chart */}
+          <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
+            <h3 className="font-semibold text-gray-900 mb-4">일별 조회수 추이</h3>
+            <ViewsChart data={stats?.views_by_day || []} />
+          </div>
+
+          {/* Device and Browser Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">디바이스별 분포</h3>
+              <DeviceChart data={stats?.views_by_device || []} />
+            </div>
+            <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
+              <h3 className="font-semibold text-gray-900 mb-4">브라우저별 분포</h3>
+              <BrowserChart data={stats?.views_by_browser || []} />
+            </div>
+          </div>
         </div>
       )}
 
@@ -407,8 +427,12 @@ export function CardDetailPage() {
       )}
 
       {activeTab === 'visitors' && (
-        <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-          <p className="text-gray-500">방문자 목록 구현 예정</p>
+        <div className="bg-white rounded-xl shadow border border-gray-100">
+          <div className="p-6 border-b border-gray-200">
+            <h3 className="font-semibold text-gray-900">최근 방문자</h3>
+            <p className="text-sm text-gray-500 mt-1">최근 50명의 방문자 정보</p>
+          </div>
+          <VisitorsTable data={stats?.recent_visitors || []} />
         </div>
       )}
     </div>
