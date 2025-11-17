@@ -661,7 +661,7 @@
     - 환경변수 설정 완료
     - 외부 접속 확인 완료
     - 인증 상태 무한 루프 이슈 수정 (onAuthStateChange 최적화)
-  - [x] **명함 관리 (Week 3)** - **🔄 진행 중 (2025.11.13)**
+  - [x] **명함 관리 (Week 3)** - **✅ 완료 (2025.11.18)**
     - [x] 명함 목록 페이지 (CardsPage)
       - 검색/필터/정렬 (테마, 상태, 생성일/조회수)
       - 그리드뷰/테이블뷰 전환 UI
@@ -675,16 +675,37 @@
       - 테마 변경 드롭다운
     - [x] **명함 편집 모달 (CardEditModal)** - **✅ 완료**
       - React Hook Form + Zod 검증
-      - 프로필 이미지 & 회사 로고 업로드
+      - **프로필 이미지 & 회사 로고 업로드** ✅
+        - Supabase Storage 통합 (card-attachments 버킷)
+        - 이미지 미리보기 및 삭제 기능
+        - profile_image_url, company_logo_url 컬럼 저장
+        - 업로드 진행률 표시
       - 순수 HTML + Tailwind CSS (기존 패턴 유지)
       - 20+ 필드 (기본 정보, 연락처, 소셜 링크, 소개, 커스텀 URL)
       - 5개 테마 선택 (default, trendy, apple, professional, simple)
     - [x] API 함수 (admin-app/src/lib/api/cards.ts)
       - fetchCards, fetchCard, fetchCardDetailStats
       - updateCardStatus, updateCardTheme, deleteCard
-      - bulkUpdateCards, **updateCard** (전체 필드 수정)
+      - bulkUpdateCards, **updateCard** (전체 필드 수정) ✅
     - [x] 타입 시스템 (admin-app/src/types/admin.ts)
       - CardWithUser, CardWithStats, CardDetailStats
+    - [x] **관리자 RLS 정책 수정** - **✅ 완료 (2025.11.18)**
+      - business_cards RLS 정책 업데이트 (admin_users 권한 추가)
+      - Storage RLS 정책 업데이트 (admin이 모든 사용자 폴더 접근 가능)
+      - 3개 RLS 정책 적용: UPDATE, SELECT, DELETE
+      - Admin 사용자가 모든 명함 수정/조회/삭제 가능
+    - [x] **데이터베이스 스키마 업데이트** - **✅ 완료 (2025.11.18)**
+      - profile_image_url 컬럼 추가 (TEXT)
+      - company_logo_url 컬럼 추가 (TEXT)
+      - 컬럼 설명 추가 (COMMENT)
+      - 프로덕션 DB 마이그레이션 완료
+    - [x] **명함 카드 프로필 이미지 표시** - **✅ 완료 (2025.11.18)**
+      - 5개 모든 테마 카드에 프로필 이미지 표시 적용
+        - DefaultCard, TrendyCard, ProfessionalCard ✅
+        - AppleCard, SimpleCard ✅
+      - 사용자 이름 위/옆 원형 영역에 프로필 사진 표시
+      - profile_image_url 우선, fallback to initials
+      - cardDataLoader.ts 업데이트 (profile_image_url 필드 추가)
     - [ ] 명함 생성 기능 (다음)
     - [ ] 부가명함 관리 (다음)
     - [ ] QR 코드 관리 (다음)
@@ -733,9 +754,12 @@
 - Week 9 (2025.10.19): ✅ 관리자 웹 서비스 프로젝트 셋업 완료
 - Week 9-10 (2025.10.19-10.21): ✅ 관리자 인증 시스템 구현 완료
 - Week 10 (2025.10.22): ✅ 대시보드 UI 구현 및 Vercel 배포 완료
-- Week 11 (2025.11.13): 🔄 명함 관리 개발 진행 중
+- Week 11 (2025.11.13-11.18): ✅ 명함 관리 개발 완료
   - ✅ 명함 목록/상세 페이지 완료
-  - ✅ 명함 편집 모달 완료
+  - ✅ 명함 편집 모달 완료 (프로필 이미지 업로드 포함)
+  - ✅ 관리자 RLS 정책 수정 완료 (admin_users 권한 추가)
+  - ✅ 데이터베이스 스키마 업데이트 (profile_image_url, company_logo_url)
+  - ✅ 명함 카드 프로필 이미지 표시 (모든 테마)
   - ⏳ 명함 생성, 부가명함/QR 관리 (다음)
 - Week 11-12: ⏳ 사용자 관리 모듈 개발 (다음 단계)
 - Week 13-14: 콘텐츠 관리 (부가명함, QR 코드)
@@ -800,12 +824,50 @@
 
 ---
 
-*문서 버전: 2.3*
+*문서 버전: 2.4*
 *작성일: 2025년 1월*
-*최종 수정일: 2025년 11월 13일*
+*최종 수정일: 2025년 11월 18일*
 *다음 검토일: 2025년 12월*
 
 ### 변경 이력
+- v2.4 (2025.11.18): Phase 3 관리자 웹 서비스 Week 3 완료 - 프로필 이미지 시스템
+  - ✅ **관리자 명함 관리 개발 완료 (Week 3)**
+    - 명함 목록 페이지 (CardsPage) 구현 완료
+    - 명함 상세 페이지 (CardDetailPage) 구현 완료
+    - **명함 편집 모달 (CardEditModal) 구현 완료** ✅
+      - 전체 필드 편집 (기본 정보, 연락처, 소셜 링크, 소개)
+      - **프로필 이미지 & 회사 로고 업로드 완료** ✅
+        - Supabase Storage 통합 (card-attachments 버킷)
+        - 이미지 미리보기 및 삭제 기능
+        - 업로드 진행률 표시
+      - React Hook Form + Zod 검증
+      - 20+ 필드 지원, 5개 테마 선택
+  - ✅ **관리자 RLS 정책 수정 완료 (2025.11.18)**
+    - business_cards RLS 정책 업데이트
+      - admin_users 테이블 조인으로 관리자 권한 확인
+      - UPDATE, SELECT, DELETE 정책에 admin 접근 추가
+    - Storage RLS 정책 업데이트
+      - admin이 모든 사용자 폴더에 파일 업로드/수정/삭제 가능
+      - INSERT, UPDATE, DELETE, SELECT 정책에 admin 조건 추가
+    - SQL 파일:
+      - fix-business-cards-rls.sql
+      - fix-storage-rls.sql
+  - ✅ **데이터베이스 스키마 업데이트 (2025.11.18)**
+    - business_cards 테이블에 컬럼 추가:
+      - profile_image_url (TEXT) - 프로필 이미지 URL
+      - company_logo_url (TEXT) - 회사 로고 URL
+    - 컬럼 설명 추가 (COMMENT)
+    - SQL 파일: add_image_columns.sql
+    - 프로덕션 DB 적용 완료
+  - ✅ **명함 카드 프로필 이미지 표시 (2025.11.18)**
+    - react-app 5개 모든 테마 카드 업데이트:
+      - DefaultCard, TrendyCard, ProfessionalCard ✅
+      - AppleCard, SimpleCard ✅
+    - 사용자 이름 위/옆 원형 영역에 프로필 사진 표시
+    - profile_image_url 우선, 없으면 이니셜 표시
+    - cardDataLoader.ts 인터페이스 및 로직 업데이트
+    - Vercel 프로덕션 배포 완료 (커밋: 1228aa6)
+  - 🔄 **다음 단계**: 명함 생성 기능, 부가명함 관리, QR 코드 관리
 - v2.3 (2025.11.13): Phase 3 관리자 웹 서비스 Week 3 진행 중 - 명함 관리 기능
   - ✅ **관리자 명함 관리 개발 진행 중 (Week 3)**
     - 명함 목록 페이지 (CardsPage) 구현 완료
