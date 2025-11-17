@@ -18,14 +18,16 @@ import { ViewsChart } from '@/components/stats/ViewsChart'
 import { DeviceChart } from '@/components/stats/DeviceChart'
 import { BrowserChart } from '@/components/stats/BrowserChart'
 import { VisitorsTable } from '@/components/stats/VisitorsTable'
+import { CardEditModal } from '@/components/cards/CardEditModal'
 
 export function CardDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'overview' | 'stats' | 'qr' | 'visitors'>('overview')
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
   // Fetch card data
-  const { data: card, isLoading: cardLoading, error: cardError } = useQuery({
+  const { data: card, isLoading: cardLoading, error: cardError, refetch: refetchCard } = useQuery({
     queryKey: ['card', id],
     queryFn: () => fetchCard(id!),
     enabled: !!id
@@ -114,6 +116,7 @@ export function CardDetailPage() {
               미리보기
             </a>
             <button
+              onClick={() => setIsEditModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
             >
               <Edit className="w-4 h-4" />
@@ -434,6 +437,19 @@ export function CardDetailPage() {
           </div>
           <VisitorsTable data={stats?.recent_visitors || []} />
         </div>
+      )}
+
+      {/* Edit Modal */}
+      {card && (
+        <CardEditModal
+          card={card}
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          onSuccess={() => {
+            refetchCard()
+            alert('명함이 성공적으로 수정되었습니다')
+          }}
+        />
       )}
     </div>
   )

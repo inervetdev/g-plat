@@ -5,13 +5,18 @@ import { CardsGridView } from '@/components/cards/CardsGridView'
 import { CardsTableView } from '@/components/cards/CardsTableView'
 import { CardFilters } from '@/components/cards/CardFilters'
 import { BulkActionsBar } from '@/components/cards/BulkActionsBar'
+import { CardEditModal } from '@/components/cards/CardEditModal'
+import { fetchCard, deleteCard } from '@/lib/api/cards'
 import type { CardFilters as CardFiltersType, PaginationParams } from '@/lib/api/cards'
+import type { CardWithStats } from '@/types/admin'
 
 type ViewMode = 'grid' | 'table'
 
 export function CardsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set())
+  const [editingCard, setEditingCard] = useState<CardWithStats | null>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [filters, setFilters] = useState<CardFiltersType>({
     search: '',
     theme: 'all',
@@ -25,7 +30,7 @@ export function CardsPage() {
     per_page: 50,
   })
 
-  const { data, isLoading, error } = useCards(filters, pagination)
+  const { data, isLoading, error, refetch } = useCards(filters, pagination)
 
   const handleSearchChange = (search: string) => {
     setFilters((prev) => ({ ...prev, search }))
@@ -59,6 +64,38 @@ export function CardsPage() {
 
   const handleClearSelection = () => {
     setSelectedCards(new Set())
+  }
+
+  const handleEdit = async (cardId: string) => {
+    try {
+      const card = await fetchCard(cardId)
+      setEditingCard(card)
+      setIsEditModalOpen(true)
+    } catch (error) {
+      console.error('Failed to fetch card:', error)
+      alert('명함 정보를 불러오는데 실패했습니다')
+    }
+  }
+
+  const handleDelete = async (cardId: string) => {
+    if (!confirm('정말 이 명함을 삭제하시겠습니까?')) {
+      return
+    }
+
+    try {
+      await deleteCard(cardId)
+      alert('명함이 삭제되었습니다')
+      refetch()
+    } catch (error) {
+      console.error('Failed to delete card:', error)
+      alert('명함 삭제에 실패했습니다')
+    }
+  }
+
+  const handleEditSuccess = () => {
+    setIsEditModalOpen(false)
+    setEditingCard(null)
+    refetch()
   }
 
   return (
@@ -214,6 +251,8 @@ export function CardsPage() {
           cards={data?.data || []}
           selectedCards={selectedCards}
           onSelectCard={handleSelectCard}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
         />
       ) : (
         <CardsTableView
@@ -252,6 +291,19 @@ export function CardsPage() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingCard && (
+        <CardEditModal
+          card={editingCard}
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false)
+            setEditingCard(null)
+          }}
+          onSuccess={handleEditSuccess}
+        />
       )}
     </div>
   )

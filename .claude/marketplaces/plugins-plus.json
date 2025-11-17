@@ -1,0 +1,8 @@
+{
+  "name": "claude-code-plugins-plus",
+  "description": "243 production-ready Claude Code plugins - first 100% compliant with Anthropic 2025 Skills schema",
+  "url": "https://github.com/jeremylongshore/claude-code-plugins-plus",
+  "type": "github",
+  "owner": "jeremylongshore",
+  "repo": "claude-code-plugins-plus"
+}

@@ -455,3 +455,28 @@ export async function fetchCardDetailStats(cardId: string): Promise<CardDetailSt
     recent_visitors: visitorsWithDeviceInfo
   }
 }
+
+/**
+ * Update business card
+ * @param cardId - Card ID to update
+ * @param updates - Card data to update
+ */
+export async function updateCard(cardId: string, updates: Partial<CardWithUser>) {
+  console.log('🔧 updateCard called:', { cardId, updates })
+
+  const { data, error } = await supabase
+    .from('business_cards')
+    .update(updates)
+    .eq('id', cardId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('❌ Error updating card:', error)
+    console.error('Error details:', JSON.stringify(error, null, 2))
+    throw new Error(`Failed to update card: ${error.message}`)
+  }
+
+  console.log('✅ Card updated successfully:', data)
+  return data
+}

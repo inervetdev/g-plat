@@ -1,0 +1,159 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - generic [ref=e8]:
+            - generic [ref=e10]: G
+            - generic [ref=e11]:
+              - heading "G-PLAT Admin" [level=1] [ref=e12]
+              - paragraph [ref=e13]: 관리자 대시보드
+          - generic [ref=e14]:
+            - textbox "검색..." [ref=e15]
+            - img [ref=e16]
+        - generic [ref=e19]:
+          - button [ref=e20]:
+            - img [ref=e21]
+          - button "슈퍼 관리자 슈퍼 관리자 Super Admin" [ref=e26]:
+            - img "슈퍼 관리자" [ref=e27]
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: 슈퍼 관리자
+              - paragraph [ref=e30]: Super Admin
+            - img [ref=e31]
+    - complementary [ref=e33]:
+      - navigation [ref=e34]:
+        - link "대시보드" [ref=e35] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e37]
+          - generic [ref=e42]: 대시보드
+        - link "사용자 관리 142" [ref=e43] [cursor=pointer]:
+          - /url: /users
+          - img [ref=e45]
+          - generic [ref=e50]: 사용자 관리
+          - generic [ref=e51]: "142"
+        - link "명함 관리" [ref=e52] [cursor=pointer]:
+          - /url: /cards
+          - img [ref=e54]
+          - generic [ref=e56]: 명함 관리
+        - link "부가명함 관리" [ref=e57] [cursor=pointer]:
+          - /url: /sidejobs
+          - img [ref=e59]
+          - generic [ref=e62]: 부가명함 관리
+        - link "QR 코드" [ref=e63] [cursor=pointer]:
+          - /url: /qr
+          - img [ref=e65]
+          - generic [ref=e71]: QR 코드
+        - paragraph [ref=e73]: 운영
+        - link "신고 관리 8" [ref=e74] [cursor=pointer]:
+          - /url: /reports
+          - img [ref=e76]
+          - generic [ref=e78]: 신고 관리
+          - generic [ref=e79]: "8"
+        - link "통계 분석" [ref=e80] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e82]
+          - generic [ref=e84]: 통계 분석
+        - link "마케팅 캠페인" [ref=e85] [cursor=pointer]:
+          - /url: /campaigns
+          - img [ref=e87]
+          - generic [ref=e90]: 마케팅 캠페인
+        - paragraph [ref=e92]: 시스템
+        - link "설정" [ref=e93] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e95]
+          - generic [ref=e98]: 설정
+        - link "감사 로그" [ref=e99] [cursor=pointer]:
+          - /url: /logs
+          - img [ref=e101]
+          - generic [ref=e105]: 감사 로그
+    - main [ref=e106]:
+      - generic [ref=e107]:
+        - generic [ref=e108]:
+          - button "명함 목록으로" [ref=e109]:
+            - img [ref=e110]
+            - generic [ref=e112]: 명함 목록으로
+          - generic [ref=e113]:
+            - generic [ref=e114]:
+              - heading "신은경 명함" [level=1] [ref=e115]
+              - paragraph [ref=e116]: 신은경 (shinek3515@naver.com)
+            - generic [ref=e117]:
+              - link "미리보기" [ref=e118] [cursor=pointer]:
+                - /url: https://g-plat.com/card/ef31d6be-025f-4a9d-ac36-c08d9357539d
+                - img [ref=e119]
+                - text: 미리보기
+              - button "편집" [ref=e122]:
+                - img [ref=e123]
+                - text: 편집
+              - button "QR 생성" [ref=e126]:
+                - img [ref=e127]
+                - text: QR 생성
+              - button "삭제" [ref=e133]:
+                - img [ref=e134]
+                - text: 삭제
+        - generic [ref=e138]:
+          - button "개요" [ref=e139]
+          - button "통계" [ref=e140]
+          - button "QR 코드" [ref=e141]
+          - button "방문자" [ref=e142]
+        - generic [ref=e143]:
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - heading "기본 정보" [level=2] [ref=e146]
+              - generic [ref=e147]:
+                - generic [ref=e148]:
+                  - text: 이름
+                  - paragraph [ref=e149]: 신은경
+                - generic [ref=e150]:
+                  - text: 직함
+                  - paragraph [ref=e151]: 실장
+                - generic [ref=e152]:
+                  - text: 회사
+                  - paragraph [ref=e153]: 지플랫컴퍼니
+                - generic [ref=e154]:
+                  - text: 부서
+                  - paragraph [ref=e155]: 관리부
+            - generic [ref=e156]:
+              - heading "연락처 정보" [level=2] [ref=e157]
+              - generic [ref=e158]:
+                - generic [ref=e159]:
+                  - img [ref=e160]
+                  - generic [ref=e162]: "01085653648"
+                - generic [ref=e163]:
+                  - img [ref=e164]
+                  - generic [ref=e167]: 인천 서구 봉수대로162번길 7 7층
+          - generic [ref=e168]:
+            - generic [ref=e169]:
+              - heading "테마" [level=3] [ref=e170]
+              - generic [ref=e171]: 트렌디
+            - generic [ref=e172]:
+              - heading "통계 요약" [level=3] [ref=e173]
+              - generic [ref=e174]:
+                - generic [ref=e175]:
+                  - generic [ref=e176]: 총 조회수
+                  - generic [ref=e177]: "0"
+                - generic [ref=e178]:
+                  - generic [ref=e179]: QR 스캔
+                  - generic [ref=e180]: "0"
+                - generic [ref=e181]:
+                  - generic [ref=e182]: 부가 명함
+                  - generic [ref=e183]: "0"
+            - generic [ref=e184]:
+              - heading "상태" [level=3] [ref=e185]
+              - generic [ref=e186]:
+                - generic [ref=e187]:
+                  - generic [ref=e188]: 활성 상태
+                  - generic [ref=e189]: 활성
+                - generic [ref=e190]:
+                  - generic [ref=e191]: 생성일
+                  - generic [ref=e192]: 2025. 11. 5.
+                - generic [ref=e193]:
+                  - generic [ref=e194]: 수정일
+                  - generic [ref=e195]: 2025. 11. 5.
+            - generic [ref=e196]:
+              - heading "커스텀 URL" [level=3] [ref=e197]
+              - code [ref=e199]: g-plat.com/card/
+  - generic [ref=e200]: "0"
+```

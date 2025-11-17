@@ -64,3 +64,38 @@ sessions/
 
 # Claude Code settings (contains tokens)
 .claude/settings.local.json
+
+# Claude/AI working files (개발 과정 문서)
+CLAUDE.md
+MCP_SETUP_GUIDE.md
+*_GUIDE.md
+*_SUMMARY.md
+*_COMPLETE.md
+*_APPLIED.md
+READY_TO_EXECUTE.md
+
+# SQL scripts (임시 스크립트)
+*.sql
+!**/migrations/*.sql
+!**/supabase/migrations/**/*.sql
+
+# Temporary files
+nul
+temp_*.txt
+temp_*.js
+test-*.js
+apply-*.js
+verify_*.mjs
+check_*.mjs
+
+# Issue tracking files (스크린샷, PDF 등)
+issue/
+admin-design-*.html
+
+# Development documentation
+*_PATCH.md
+*_TROUBLESHOOTING.md
+*_SOLUTIONS.md
+*_EXPLAINED.md
+*_COMPARISON.md
+*_INTEGRATION.md

@@ -6,9 +6,11 @@ interface CardsGridViewProps {
   cards: CardWithUser[]
   selectedCards: Set<string>
   onSelectCard: (cardId: string) => void
+  onEdit: (cardId: string) => void
+  onDelete: (cardId: string) => void
 }
 
-export function CardsGridView({ cards, selectedCards, onSelectCard }: CardsGridViewProps) {
+export function CardsGridView({ cards, selectedCards, onSelectCard, onEdit, onDelete }: CardsGridViewProps) {
   const navigate = useNavigate()
 
   if (cards.length === 0) {
@@ -106,12 +108,17 @@ export function CardsGridView({ cards, selectedCards, onSelectCard }: CardsGridV
             {/* Actions */}
             <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
               <button
+                onClick={() => navigate(`/cards/${card.id}`)}
                 className="flex-1 flex items-center justify-center gap-1 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition"
                 title="미리보기"
               >
                 <Eye className="w-4 h-4" />
               </button>
               <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onEdit(card.id)
+                }}
                 className="flex items-center justify-center px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition"
                 title="수정"
               >
@@ -124,6 +131,10 @@ export function CardsGridView({ cards, selectedCards, onSelectCard }: CardsGridV
                 <QrCode className="w-4 h-4" />
               </button>
               <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDelete(card.id)
+                }}
                 className="flex items-center justify-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition"
                 title="삭제"
               >
