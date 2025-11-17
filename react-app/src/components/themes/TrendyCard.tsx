@@ -122,7 +122,7 @@ export function TrendyCard({ userId }: { userId: string }) {
           longitude: (businessCard as any).longitude,
           introduction: (businessCard as any).introduction || '',
           services: (businessCard as any).services || [],
-          profileImage: businessCard.profile_image || '',
+          profileImage: (businessCard as any).profile_image_url || (businessCard as any).profile_image || '',
           attachments: attachments
         })
       } else {

@@ -140,7 +140,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           longitude: (businessCard as any).longitude,
           introduction: (businessCard as any).introduction || '',
           services: (businessCard as any).services || [],
-          profileImage: businessCard.profile_image || '',
+          profileImage: businessCard.profile_image_url || businessCard.profile_image || '',
           attachment_title: businessCard.attachment_title || '',
           attachment_url: businessCard.attachment_url || '',
           attachment_filename: businessCard.attachment_filename || ''
