@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { X, Upload, Loader2 } from 'lucide-react'
 import { updateCard } from '@/lib/api/cards'
-// import { supabase } from '@/lib/supabase' // Temporarily disabled
+import { supabase } from '@/lib/supabase'
 import type { CardWithStats } from '@/types/admin'
 
 // Form validation schema
@@ -44,9 +44,8 @@ interface CardEditModalProps {
  */
 export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  // Temporarily disabled for debugging
-  // const [profileImage, setProfileImage] = useState<File | null>(null)
-  // const [companyLogo, setCompanyLogo] = useState<File | null>(null)
+  const [profileImage, setProfileImage] = useState<File | null>(null)
+  const [companyLogo, setCompanyLogo] = useState<File | null>(null)
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
     card.profile_image_url || null
   )
@@ -91,7 +90,7 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
         alert('파일 크기는 5MB 이하여야 합니다')
         return
       }
-      // setProfileImage(file)
+      setProfileImage(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setProfileImagePreview(reader.result as string)
@@ -108,7 +107,7 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
         alert('파일 크기는 5MB 이하여야 합니다')
         return
       }
-      // setCompanyLogo(file)
+      setCompanyLogo(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setCompanyLogoPreview(reader.result as string)
@@ -117,40 +116,60 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
     }
   }
 
-  // Upload image to Supabase Storage - Temporarily disabled
-  // const _uploadImage = async (file: File, type: 'profile' | 'logo'): Promise<string | null> => {
-  //   try {
-  //     const fileExt = file.name.split('.').pop()
-  //     const fileName = `${card.user_id}/${type}-${Date.now()}.${fileExt}`
-  //     const bucket = 'card-attachments'
+  // Upload image to Supabase Storage
+  const uploadImage = async (file: File, type: 'profile' | 'logo'): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${card.user_id}/${type}-${Date.now()}.${fileExt}`
+      const bucket = 'card-attachments'
 
-  //     const { error: uploadError } = await supabase.storage
-  //       .from(bucket)
-  //       .upload(fileName, file, {
-  //         cacheControl: '3600',
-  //         upsert: false,
-  //       })
+      console.log('📤 Uploading image:', { fileName, bucket, fileSize: file.size })
 
-  //     if (uploadError) {
-  //       console.error('Upload error:', uploadError)
-  //       return null
-  //     }
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        })
 
-  //     const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(fileName)
+      if (uploadError) {
+        console.error('❌ Upload error:', uploadError)
+        throw uploadError
+      }
 
-  //     return urlData.publicUrl
-  //   } catch (error) {
-  //     console.error('Error uploading image:', error)
-  //     return null
-  //   }
-  // }
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(fileName)
+
+      console.log('✅ Upload success:', urlData.publicUrl)
+      return urlData.publicUrl
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      throw error
+    }
+  }
 
   // Handle form submission
   const onSubmit = async (data: CardEditFormData) => {
     setIsSubmitting(true)
     try {
-      // TEMPORARY: Skip image upload to isolate the issue
       console.log('🔍 Submitting card update...', { cardId: card.id, userId: card.user_id })
+
+      // Upload images if selected
+      let profileImageUrl: string | null | undefined = card.profile_image_url
+      let companyLogoUrl: string | null | undefined = card.company_logo_url
+
+      if (profileImage) {
+        console.log('📤 Uploading profile image...')
+        setUploadProgress({ profile: 50 })
+        profileImageUrl = await uploadImage(profileImage, 'profile')
+        setUploadProgress({ profile: 100 })
+      }
+
+      if (companyLogo) {
+        console.log('📤 Uploading company logo...')
+        setUploadProgress({ logo: 50 })
+        companyLogoUrl = await uploadImage(companyLogo, 'logo')
+        setUploadProgress({ logo: 100 })
+      }
 
       // Transform form data to match database schema
       const updateData: any = {
@@ -169,19 +188,22 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
         instagram: data.instagram_url || null,
         theme: data.theme || null,
         custom_url: data.custom_url || null,
+        profile_image_url: profileImageUrl,
+        company_logo_url: companyLogoUrl,
         updated_at: new Date().toISOString()
       }
 
       console.log('📝 Update data:', updateData)
 
-      // Update card (skip image upload for now)
+      // Update card with images
       await updateCard(card.id, updateData)
 
+      alert('명함이 성공적으로 수정되었습니다')
       onSuccess()
       onClose()
     } catch (error) {
-      console.error('Error updating card:', error)
-      alert('명함 수정에 실패했습니다')
+      console.error('❌ Error updating card:', error)
+      alert(`명함 수정에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`)
     } finally {
       setIsSubmitting(false)
       setUploadProgress({})
