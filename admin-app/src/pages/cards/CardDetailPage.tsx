@@ -442,7 +442,12 @@ export function CardDetailPage() {
       {/* Edit Modal */}
       {card && (
         <CardEditModal
-          card={card}
+          card={{
+            ...card,
+            view_count: card.view_count || 0,
+            qr_scan_count: card.qr_scan_count || 0,
+            sidejob_count: card.sidejob_count || 0,
+          } as any}
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           onSuccess={() => {

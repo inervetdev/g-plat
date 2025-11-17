@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { X, Upload, Loader2 } from 'lucide-react'
 import { updateCard } from '@/lib/api/cards'
-import { supabase } from '@/lib/supabase'
+// import { supabase } from '@/lib/supabase' // Temporarily disabled
 import type { CardWithStats } from '@/types/admin'
 
 // Form validation schema
@@ -44,8 +44,9 @@ interface CardEditModalProps {
  */
 export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [profileImage, setProfileImage] = useState<File | null>(null)
-  const [companyLogo, setCompanyLogo] = useState<File | null>(null)
+  // Temporarily disabled for debugging
+  // const [profileImage, setProfileImage] = useState<File | null>(null)
+  // const [companyLogo, setCompanyLogo] = useState<File | null>(null)
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
     card.profile_image_url || null
   )
@@ -61,7 +62,6 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<CardEditFormData>({
     resolver: zodResolver(cardEditSchema),
     defaultValues: {
@@ -83,8 +83,6 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
     },
   })
 
-  const selectedTheme = watch('theme')
-
   // Handle profile image selection
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -93,7 +91,7 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
         alert('파일 크기는 5MB 이하여야 합니다')
         return
       }
-      setProfileImage(file)
+      // setProfileImage(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setProfileImagePreview(reader.result as string)
@@ -110,7 +108,7 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
         alert('파일 크기는 5MB 이하여야 합니다')
         return
       }
-      setCompanyLogo(file)
+      // setCompanyLogo(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setCompanyLogoPreview(reader.result as string)
@@ -119,33 +117,33 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
     }
   }
 
-  // Upload image to Supabase Storage
-  const uploadImage = async (file: File, type: 'profile' | 'logo'): Promise<string | null> => {
-    try {
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${card.user_id}/${type}-${Date.now()}.${fileExt}`
-      const bucket = 'card-attachments'
+  // Upload image to Supabase Storage - Temporarily disabled
+  // const _uploadImage = async (file: File, type: 'profile' | 'logo'): Promise<string | null> => {
+  //   try {
+  //     const fileExt = file.name.split('.').pop()
+  //     const fileName = `${card.user_id}/${type}-${Date.now()}.${fileExt}`
+  //     const bucket = 'card-attachments'
 
-      const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false,
-        })
+  //     const { error: uploadError } = await supabase.storage
+  //       .from(bucket)
+  //       .upload(fileName, file, {
+  //         cacheControl: '3600',
+  //         upsert: false,
+  //       })
 
-      if (uploadError) {
-        console.error('Upload error:', uploadError)
-        return null
-      }
+  //     if (uploadError) {
+  //       console.error('Upload error:', uploadError)
+  //       return null
+  //     }
 
-      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(fileName)
+  //     const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(fileName)
 
-      return urlData.publicUrl
-    } catch (error) {
-      console.error('Error uploading image:', error)
-      return null
-    }
-  }
+  //     return urlData.publicUrl
+  //   } catch (error) {
+  //     console.error('Error uploading image:', error)
+  //     return null
+  //   }
+  // }
 
   // Handle form submission
   const onSubmit = async (data: CardEditFormData) => {

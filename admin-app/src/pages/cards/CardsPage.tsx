@@ -69,7 +69,13 @@ export function CardsPage() {
   const handleEdit = async (cardId: string) => {
     try {
       const card = await fetchCard(cardId)
-      setEditingCard(card)
+      // Convert CardWithUser to CardWithStats
+      setEditingCard(card ? {
+        ...card,
+        view_count: card.view_count || 0,
+        qr_scan_count: card.qr_scan_count || 0,
+        sidejob_count: card.sidejob_count || 0,
+      } as any : null)
       setIsEditModalOpen(true)
     } catch (error) {
       console.error('Failed to fetch card:', error)
