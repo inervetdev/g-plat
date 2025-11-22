@@ -54,7 +54,9 @@ CREATE POLICY "Users can delete own business cards" ON public.business_cards
     );
 
 -- 5. Add RLS policy for users table to block deleted users from viewing their profile
-CREATE POLICY IF NOT EXISTS "Users cannot access deleted profiles" ON public.users
+DROP POLICY IF EXISTS "Users cannot access deleted profiles" ON public.users;
+
+CREATE POLICY "Users cannot access deleted profiles" ON public.users
     FOR SELECT USING (
         id = auth.uid()
         AND deleted_at IS NULL
