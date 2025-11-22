@@ -35,11 +35,10 @@ export function UserDeleteModal({ user, isOpen, onClose, onSuccess }: UserDelete
     setError(null)
 
     try {
-      // 1. users 테이블에 삭제 사유 및 삭제 상태 기록
+      // 1. users 테이블에 삭제 사유 및 삭제 시각 기록 (status는 유지)
       const { error: updateError } = await supabase
         .from('users')
         .update({
-          status: 'deleted',
           deleted_at: new Date().toISOString(),
           deletion_reason: reason,
           updated_at: new Date().toISOString()
@@ -58,11 +57,10 @@ export function UserDeleteModal({ user, isOpen, onClose, onSuccess }: UserDelete
 
       if (authDeleteError) {
         console.error('Auth delete error:', authDeleteError)
-        // Auth 삭제 실패 시 users 테이블 상태 되돌리기
+        // Auth 삭제 실패 시 users 테이블 삭제 기록 되돌리기
         await supabase
           .from('users')
           .update({
-            status: user.status,
             deleted_at: null,
             deletion_reason: null
           })

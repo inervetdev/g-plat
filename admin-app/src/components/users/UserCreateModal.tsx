@@ -26,13 +26,17 @@ export function UserCreateModal({ isOpen, onClose, onSuccess }: UserCreateModalP
     setError(null)
 
     try {
-      // 1. Supabase Auth에 사용자 생성
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // 1. Supabase Auth에 사용자 생성 (일반 회원가입 방식)
+      // Note: Admin API는 service_role 키가 필요하므로 프론트엔드에서 사용 불가
+      // 대신 일반 signUp을 사용하되, 이메일 인증은 Supabase Dashboard에서 수동으로 처리
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        email_confirm: true, // 이메일 자동 확인 (관리자 생성이므로)
-        user_metadata: {
-          name: formData.name
+        options: {
+          data: {
+            name: formData.name
+          },
+          emailRedirectTo: undefined // OTP 방식이 아닌 일반 회원가입
         }
       })
 
@@ -46,6 +50,7 @@ export function UserCreateModal({ isOpen, onClose, onSuccess }: UserCreateModalP
       }
 
       console.log('✅ Auth user created:', authData.user.id)
+      console.log('⚠️  이메일 인증 필요: Supabase Dashboard에서 이메일을 확인해주세요')
 
       // 2. users 테이블에 데이터 삽입
       const { error: userInsertError } = await supabase
@@ -60,8 +65,9 @@ export function UserCreateModal({ isOpen, onClose, onSuccess }: UserCreateModalP
 
       if (userInsertError) {
         console.error('User table insert error:', userInsertError)
-        // Auth 사용자는 생성되었으므로 삭제 시도
-        await supabase.auth.admin.deleteUser(authData.user.id)
+        // Auth 사용자는 생성되었으므로 삭제 시도 (일반 signUp은 자동 삭제 안됨)
+        // 수동으로 Supabase Dashboard에서 삭제 필요
+        console.warn('⚠️  users 테이블 삽입 실패. Supabase Dashboard에서 auth.users의 orphan 레코드를 삭제하세요:', authData.user.id)
         throw new Error(userInsertError.message)
       }
 
@@ -78,7 +84,7 @@ export function UserCreateModal({ isOpen, onClose, onSuccess }: UserCreateModalP
         console.warn('⚠️ Profile creation failed (non-critical):', profileInsertError)
       }
 
-      alert(`사용자가 성공적으로 생성되었습니다.\n\n이메일: ${formData.email}\n비밀번호: ${formData.password}\n\n사용자에게 로그인 정보를 전달해주세요.`)
+      alert(`사용자가 성공적으로 생성되었습니다.\n\n이메일: ${formData.email}\n비밀번호: ${formData.password}\n\n⚠️ 중요: 사용자가 로그인하려면 이메일 인증이 필요합니다.\nSupabase Dashboard에서 수동으로 이메일을 확인 처리하거나,\n사용자에게 이메일 인증 링크를 클릭하도록 안내해주세요.`)
 
       // 폼 초기화
       setFormData({
