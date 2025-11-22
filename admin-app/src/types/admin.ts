@@ -34,6 +34,8 @@ export interface User {
   created_at: string
   updated_at: string
   last_login_at: string | null
+  deleted_at?: string | null
+  deletion_reason?: string | null
 }
 
 export interface UserProfile {

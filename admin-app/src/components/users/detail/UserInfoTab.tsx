@@ -178,23 +178,33 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'suspended' })}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={!!user.deleted_at}
               >
                 <option value="active">활성</option>
                 <option value="inactive">비활성</option>
                 <option value="suspended">정지</option>
               </select>
             ) : (
-              <span
-                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                  user.status === 'active'
-                    ? 'bg-green-100 text-green-700'
-                    : user.status === 'suspended'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                {user.status === 'active' ? '활성' : user.status === 'suspended' ? '정지' : '비활성'}
-              </span>
+              <>
+                {/* 삭제 대상이면 "삭제대기"만 표시 */}
+                {user.deleted_at ? (
+                  <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">
+                    삭제대기
+                  </span>
+                ) : (
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                      user.status === 'active'
+                        ? 'bg-green-100 text-green-700'
+                        : user.status === 'suspended'
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    {user.status === 'active' ? '활성' : user.status === 'suspended' ? '정지' : '비활성'}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -249,6 +259,44 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
             </div>
           </div>
         </div>
+
+        {/* Deletion Info - 삭제 대상인 경우에만 표시 */}
+        {user.deleted_at && (
+          <div className="bg-orange-50 border border-orange-200 rounded-xl shadow p-6">
+            <h3 className="text-lg font-semibold text-orange-900 mb-4">상태 정보</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-orange-700 mb-2">삭제대기</p>
+                <p className="text-sm text-orange-600">
+                  이 계정은 삭제 대상으로 지정되었습니다. 로그인이 차단되며 모든 서비스 이용이 제한됩니다.
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Calendar className="w-5 h-5 text-orange-500 mt-0.5" />
+                <div>
+                  <p className="text-sm text-orange-600">삭제 지정일</p>
+                  <p className="text-sm font-medium text-orange-900 mt-1">
+                    {new Date(user.deleted_at).toLocaleDateString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
+                </div>
+              </div>
+              {user.deletion_reason && (
+                <div>
+                  <p className="text-sm text-orange-600 mb-1">삭제 사유</p>
+                  <p className="text-sm font-medium text-orange-900 bg-white rounded-lg p-3 border border-orange-200">
+                    {user.deletion_reason}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
