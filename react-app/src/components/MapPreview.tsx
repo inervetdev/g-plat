@@ -66,7 +66,13 @@ export function MapPreview({
     if (window.kakao && window.kakao.maps) {
       initMap()
     } else {
-      // SDK 로드 대기
+      // 커스텀 이벤트 리스너 등록
+      const handleKakaoMapsLoaded = () => {
+        initMap()
+      }
+      window.addEventListener('kakao-maps-loaded', handleKakaoMapsLoaded)
+
+      // SDK 로드 대기 (fallback)
       const checkInterval = setInterval(() => {
         if (window.kakao && window.kakao.maps) {
           clearInterval(checkInterval)
@@ -74,7 +80,10 @@ export function MapPreview({
         }
       }, 100)
 
-      return () => clearInterval(checkInterval)
+      return () => {
+        window.removeEventListener('kakao-maps-loaded', handleKakaoMapsLoaded)
+        clearInterval(checkInterval)
+      }
     }
   }, [latitude, longitude, address, level])
 
