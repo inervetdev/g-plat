@@ -1,5 +1,8 @@
 ---
 title: "G-Plat 문서 인덱스"
+category: "documentation"
+tier: 1
+status: "active"
 last_updated: "2025-11-22"
 ---
 

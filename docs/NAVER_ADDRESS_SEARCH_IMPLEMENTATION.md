@@ -1,3 +1,22 @@
+---
+title: "Naver Maps Address Search Implementation"
+category: "features"
+subcategory: "maps"
+tier: 3
+status: "active"
+last_updated: "2025-10-17"
+related_docs:
+  - path: "docs/NAVER_ADDRESS_SEARCH.md"
+    description: "네이버 주소 검색 API 통합 가이드"
+  - path: "react-app/src/components/AddressSearchModal.tsx"
+    description: "주소 검색 모달 컴포넌트"
+tags:
+  - naver-maps
+  - javascript-api
+  - client-side
+  - geocoding
+---
+
 # Naver Maps Address Search Implementation
 
 ## Overview

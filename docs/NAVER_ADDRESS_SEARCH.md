@@ -1,3 +1,19 @@
+---
+title: "네이버 주소 검색 API 통합 가이드"
+category: "features"
+subcategory: "maps"
+tier: 3
+status: "active"
+last_updated: "2025-10-16"
+related_docs:
+  - path: "docs/NAVER_ADDRESS_SEARCH_IMPLEMENTATION.md"
+    description: "네이버 Maps 주소 검색 구현 세부사항"
+tags:
+  - naver-maps
+  - geocoding
+  - address-search
+---
+
 # 네이버 주소 검색 API 통합 가이드
 
 ## 개요

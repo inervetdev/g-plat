@@ -1,3 +1,18 @@
+---
+title: "프로젝트 문서 작성 표준안"
+category: "documentation"
+tier: 1
+status: "active"
+last_updated: "2025-11-22"
+version: "1.0"
+scope: "universal"
+tags:
+  - documentation
+  - standards
+  - best-practices
+  - guidelines
+---
+
 # 프로젝트 문서 작성 표준안
 
 **버전**: 1.0

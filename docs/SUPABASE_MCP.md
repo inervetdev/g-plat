@@ -1,3 +1,21 @@
+---
+title: "Supabase MCP 설정 가이드"
+category: "infrastructure"
+subcategory: "supabase"
+tier: 4
+status: "active"
+last_updated: "2025-10-16"
+related_docs:
+  - path: "CLAUDE.md"
+    description: "Claude Code 개발 가이드"
+tags:
+  - supabase
+  - mcp
+  - database
+  - postgresql
+  - claude-code
+---
+
 # Supabase MCP 설정 가이드
 
 ## 개요

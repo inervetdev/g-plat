@@ -1,56 +1,26 @@
 {
-  "totalFiles": 10,
-  "passedFiles": 2,
+  "totalFiles": 16,
+  "passedFiles": 12,
   "errors": [
-    {
-      "file": "docs\\CLAUDE_KO.md",
-      "type": "missing-frontmatter",
-      "message": "YAML frontmatter가 없습니다"
-    },
     {
       "file": "docs\\history\\archived\\CLAUDE-full-2025-11-22.md",
       "type": "missing-frontmatter",
       "message": "YAML frontmatter가 없습니다"
     },
     {
-      "file": "docs\\INDEX.md",
+      "file": "docs\\history\\archived\\CLAUDE_KO-2025-11-22.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    },
+    {
+      "file": "docs\\history\\archived\\prd-full-2025-11-22.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    },
+    {
+      "file": "docs\\history\\versions\\v2.4-profile-images.md",
       "type": "missing-field",
-      "message": "필수 필드 누락: category"
-    },
-    {
-      "file": "docs\\INDEX.md",
-      "type": "missing-field",
-      "message": "필수 필드 누락: tier"
-    },
-    {
-      "file": "docs\\INDEX.md",
-      "type": "missing-field",
-      "message": "필수 필드 누락: status"
-    },
-    {
-      "file": "docs\\NAVER_ADDRESS_SEARCH.md",
-      "type": "missing-frontmatter",
-      "message": "YAML frontmatter가 없습니다"
-    },
-    {
-      "file": "docs\\NAVER_ADDRESS_SEARCH_IMPLEMENTATION.md",
-      "type": "missing-frontmatter",
-      "message": "YAML frontmatter가 없습니다"
-    },
-    {
-      "file": "docs\\QR_SETUP_GUIDE.md",
-      "type": "missing-frontmatter",
-      "message": "YAML frontmatter가 없습니다"
-    },
-    {
-      "file": "docs\\SUPABASE_MCP.md",
-      "type": "missing-frontmatter",
-      "message": "YAML frontmatter가 없습니다"
-    },
-    {
-      "file": "DOCUMENTATION_STANDARD.md",
-      "type": "missing-frontmatter",
-      "message": "YAML frontmatter가 없습니다"
+      "message": "필수 필드 누락: last_updated"
     }
   ],
   "warnings": [
@@ -157,22 +127,142 @@
     {
       "file": "CLAUDE.md",
       "type": "broken-link",
-      "message": "깨진 링크: [v2.4 프로필 이미지](docs/history/versions/v2.4-profile-images.md)"
-    },
-    {
-      "file": "CLAUDE.md",
-      "type": "broken-link",
       "message": "깨진 링크: [Supabase MCP Setup](docs/infrastructure/supabase/mcp-setup.md)"
     },
     {
       "file": "prd.md",
       "type": "line-limit",
-      "message": "Hot Doc 라인 수 초과: 1174줄 (권장 200줄 이하)"
+      "message": "Tier 1 라인 수 초과: 285줄 (최대 200줄)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [React App 기능 목록](docs/services/react-app/FEATURES.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기술 스택](docs/architecture/tech-stack.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [성공 지표](docs/business/success-metrics.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 1 완료 내역](docs/roadmap/phase-1-completed.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 2 완료 내역](docs/roadmap/phase-2-completed.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 3 계획](docs/roadmap/phase-3-planned.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [리스크 관리](docs/business/risk-management.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [타겟 사용자](docs/business/target-users.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [성공 지표](docs/business/success-metrics.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [리스크 관리](docs/business/risk-management.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기술 스택](docs/architecture/tech-stack.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [데이터베이스 스키마](docs/architecture/database-schema.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [React App 개요](docs/services/react-app/README.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 1 완료](docs/roadmap/phase-1-completed.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 2 완료](docs/roadmap/phase-2-completed.md)"
+    },
+    {
+      "file": "docs\\business\\business-model.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [타겟 사용자](target-users.md)"
+    },
+    {
+      "file": "docs\\business\\business-model.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [성공 지표](success-metrics.md)"
+    },
+    {
+      "file": "docs\\business\\business-model.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [리스크 관리](risk-management.md)"
+    },
+    {
+      "file": "docs\\business\\product-vision.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [타겟 사용자](target-users.md)"
+    },
+    {
+      "file": "docs\\business\\product-vision.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [성공 지표](success-metrics.md)"
     },
     {
       "file": "docs\\history\\archived\\CLAUDE-full-2025-11-22.md",
       "type": "broken-link",
       "message": "깨진 링크: [docs/SUPABASE_MCP.md](docs/SUPABASE_MCP.md)"
+    },
+    {
+      "file": "docs\\history\\archived\\CLAUDE_KO-2025-11-22.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [docs/SUPABASE_MCP.md](SUPABASE_MCP.md)"
+    },
+    {
+      "file": "docs\\history\\archived\\prd-full-2025-11-22.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [ADMIN_SERVICE_SPECIFICATION.md](ADMIN_SERVICE_SPECIFICATION.md)"
+    },
+    {
+      "file": "docs\\history\\archived\\prd-full-2025-11-22.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [ADMIN_DEVELOPMENT_ROADMAP.md](ADMIN_DEVELOPMENT_ROADMAP.md)"
+    },
+    {
+      "file": "docs\\history\\archived\\prd-full-2025-11-22.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [ADMIN_VERCEL_DEPLOYMENT_GUIDE.md](ADMIN_VERCEL_DEPLOYMENT_GUIDE.md)"
+    },
+    {
+      "file": "docs\\history\\archived\\prd-full-2025-11-22.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [ADMIN_SERVICE_SPECIFICATION.md](ADMIN_SERVICE_SPECIFICATION.md)"
     },
     {
       "file": "docs\\INDEX.md",
@@ -422,16 +512,6 @@
     {
       "file": "docs\\INDEX.md",
       "type": "broken-link",
-      "message": "깨진 링크: [제품 비전](business/product-vision.md)"
-    },
-    {
-      "file": "docs\\INDEX.md",
-      "type": "broken-link",
-      "message": "깨진 링크: [비즈니스 모델](business/business-model.md)"
-    },
-    {
-      "file": "docs\\INDEX.md",
-      "type": "broken-link",
       "message": "깨진 링크: [타겟 사용자](business/target-users.md)"
     },
     {
@@ -443,11 +523,6 @@
       "file": "docs\\INDEX.md",
       "type": "broken-link",
       "message": "깨진 링크: [리스크 관리](business/risk-management.md)"
-    },
-    {
-      "file": "docs\\INDEX.md",
-      "type": "broken-link",
-      "message": "깨진 링크: [현재 Phase](roadmap/current-phase.md)"
     },
     {
       "file": "docs\\INDEX.md",
@@ -487,11 +562,6 @@
     {
       "file": "docs\\INDEX.md",
       "type": "broken-link",
-      "message": "깨진 링크: [v2.4 - 프로필 이미지 시스템](history/versions/v2.4-profile-images.md)"
-    },
-    {
-      "file": "docs\\INDEX.md",
-      "type": "broken-link",
       "message": "깨진 링크: [v2.0 - React Compiler 최적화](history/versions/v2.0-react-compiler.md)"
     },
     {
@@ -503,6 +573,31 @@
       "file": "docs\\INDEX.md",
       "type": "broken-link",
       "message": "깨진 링크: [기여 가이드](../CONTRIBUTING.md)"
+    },
+    {
+      "file": "docs\\NAVER_ADDRESS_SEARCH_IMPLEMENTATION.md",
+      "type": "line-limit",
+      "message": "Tier 3 라인 수 초과: 328줄 (최대 300줄)"
+    },
+    {
+      "file": "docs\\roadmap\\current-phase.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 1 완료 내역](phase-1-completed.md)"
+    },
+    {
+      "file": "docs\\roadmap\\current-phase.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 2 완료 내역](phase-2-completed.md)"
+    },
+    {
+      "file": "docs\\roadmap\\current-phase.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 3 계획](phase-3-planned.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "line-limit",
+      "message": "Tier 1 라인 수 초과: 1125줄 (최대 200줄)"
     },
     {
       "file": "DOCUMENTATION_STANDARD.md",
@@ -667,11 +762,6 @@
     {
       "file": "DOCUMENTATION_STANDARD.md",
       "type": "broken-link",
-      "message": "깨진 링크: [Business Goals](docs/business/business-model.md)"
-    },
-    {
-      "file": "DOCUMENTATION_STANDARD.md",
-      "type": "broken-link",
       "message": "깨진 링크: [Target Users](docs/business/target-users.md)"
     },
     {
@@ -683,16 +773,6 @@
       "file": "DOCUMENTATION_STANDARD.md",
       "type": "broken-link",
       "message": "깨진 링크: [Feature 2](docs/features/[category]/[feature-2].md)"
-    },
-    {
-      "file": "DOCUMENTATION_STANDARD.md",
-      "type": "broken-link",
-      "message": "깨진 링크: [Current Phase](docs/roadmap/current-phase.md)"
-    },
-    {
-      "file": "DOCUMENTATION_STANDARD.md",
-      "type": "broken-link",
-      "message": "깨진 링크: [docs/business/product-vision.md](docs/business/product-vision.md)"
     },
     {
       "file": "DOCUMENTATION_STANDARD.md",
@@ -832,12 +912,20 @@
   ],
   "stats": {
     "byTier": {
-      "1": 0,
-      "2": 0,
-      "3": 0,
-      "4": 0
+      "1": 3,
+      "2": 3,
+      "3": 3,
+      "4": 3
     },
-    "byCategory": {},
-    "totalLines": 1389
+    "byCategory": {
+      "product": 1,
+      "business": 2,
+      "history": 1,
+      "documentation": 3,
+      "features": 3,
+      "roadmap": 1,
+      "infrastructure": 1
+    },
+    "totalLines": 3704
   }
 }

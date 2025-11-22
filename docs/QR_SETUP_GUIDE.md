@@ -1,3 +1,22 @@
+---
+title: "QR 코드 기능 설정 가이드"
+category: "features"
+subcategory: "qr-system"
+tier: 3
+status: "active"
+last_updated: "2025-01-30"
+related_docs:
+  - path: "react-app/supabase/migrations/20250130_create_qr_tables.sql"
+    description: "QR 코드 데이터베이스 마이그레이션"
+  - path: "supabase/functions/qr-redirect/"
+    description: "QR 리다이렉트 Edge Function"
+tags:
+  - qr-code
+  - setup
+  - database
+  - analytics
+---
+
 # QR 코드 기능 설정 가이드
 
 ## 📋 Supabase 데이터베이스 설정

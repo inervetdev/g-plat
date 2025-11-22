@@ -1,3 +1,22 @@
+---
+title: "문서 구조 리팩토링 테스트 리포트"
+category: "documentation"
+tier: 4
+status: "active"
+last_updated: "2025-11-22"
+version: "1.0"
+related_docs:
+  - path: "DOCUMENTATION_STANDARD.md"
+    description: "프로젝트 문서 작성 표준안"
+  - path: "scripts/validate-docs.js"
+    description: "문서 검증 스크립트"
+tags:
+  - testing
+  - validation
+  - refactoring
+  - report
+---
+
 # 문서 구조 리팩토링 테스트 리포트
 
 **테스트 일자**: 2025-11-22
