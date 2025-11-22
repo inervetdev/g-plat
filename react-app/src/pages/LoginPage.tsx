@@ -44,7 +44,7 @@ function LoginPage() {
         .from('users')
         .select('deleted_at, deletion_reason')
         .eq('email', email)
-        .single()
+        .single() as { data: { deleted_at: string | null; deletion_reason: string | null } | null; error: any }
 
       // 2. 삭제된 계정이면 로그인 차단
       if (userData?.deleted_at) {
