@@ -39,6 +39,24 @@ function LoginPage() {
     setMessage(null)
 
     try {
+      // 1. 먼저 사용자 상태 확인 (삭제된 계정 체크)
+      const { data: userData } = await supabase
+        .from('users')
+        .select('deleted_at, deletion_reason')
+        .eq('email', email)
+        .single()
+
+      // 2. 삭제된 계정이면 로그인 차단
+      if (userData?.deleted_at) {
+        setMessage({
+          type: 'error',
+          text: '삭제 대상 계정입니다.\n관리자에게 복구를 요청하세요.'
+        })
+        setLoading(false)
+        return
+      }
+
+      // 3. 정상 계정만 로그인 진행
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
