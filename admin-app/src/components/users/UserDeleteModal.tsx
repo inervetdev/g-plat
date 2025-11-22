@@ -52,26 +52,11 @@ export function UserDeleteModal({ user, isOpen, onClose, onSuccess }: UserDelete
 
       console.log('✅ User marked as deleted in database')
 
-      // 2. Supabase Auth에서 사용자 삭제 (영구 삭제)
-      const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id)
+      // Note: Auth 사용자는 soft delete로 유지 (로그인 불가능하게 하려면 RLS로 제어)
+      // Admin API deleteUser()는 service_role 키가 필요하므로 프론트엔드에서 사용 불가
+      // 필요 시 Supabase Dashboard에서 수동으로 Auth 사용자 삭제 가능
 
-      if (authDeleteError) {
-        console.error('Auth delete error:', authDeleteError)
-        // Auth 삭제 실패 시 users 테이블 삭제 기록 되돌리기
-        await supabase
-          .from('users')
-          .update({
-            deleted_at: null,
-            deletion_reason: null
-          })
-          .eq('id', user.id)
-
-        throw new Error(authDeleteError.message)
-      }
-
-      console.log('✅ User deleted from Auth')
-
-      alert(`사용자가 성공적으로 삭제되었습니다.\n\n이름: ${user.name}\n이메일: ${user.email}\n삭제 사유: ${reason}`)
+      alert(`사용자가 성공적으로 삭제되었습니다.\n\n이름: ${user.name}\n이메일: ${user.email}\n삭제 사유: ${reason}\n\n⚠️ Auth 계정은 유지됩니다.\n완전 삭제가 필요하면 Supabase Dashboard에서 처리하세요.`)
 
       onSuccess()
       onClose()

@@ -65,8 +65,13 @@ export function UserCreateModal({ isOpen, onClose, onSuccess }: UserCreateModalP
 
       if (userInsertError) {
         console.error('User table insert error:', userInsertError)
-        // Auth 사용자는 생성되었으므로 삭제 시도 (일반 signUp은 자동 삭제 안됨)
-        // 수동으로 Supabase Dashboard에서 삭제 필요
+
+        // 중복 이메일 에러 처리
+        if (userInsertError.code === '23505') {
+          throw new Error('이미 존재하는 이메일입니다. 다른 이메일을 사용하거나, Supabase Dashboard에서 기존 사용자를 확인하세요.')
+        }
+
+        // Auth 사용자는 생성되었으므로 orphan 레코드 경고
         console.warn('⚠️  users 테이블 삽입 실패. Supabase Dashboard에서 auth.users의 orphan 레코드를 삭제하세요:', authData.user.id)
         throw new Error(userInsertError.message)
       }
