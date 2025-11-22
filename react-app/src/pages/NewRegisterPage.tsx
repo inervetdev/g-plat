@@ -99,7 +99,7 @@ export default function NewRegisterPage() {
       const { data, error } = await supabase.auth.verifyOtp({
         email,
         token: otp,
-        type: 'signup'
+        type: 'email'  // Updated: 'signup' is deprecated, use 'email' for signup OTP
       })
 
       if (error) {

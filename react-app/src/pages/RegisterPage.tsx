@@ -88,7 +88,7 @@ function RegisterPage() {
       const { data, error } = await supabase.auth.verifyOtp({
         email: formData.email,
         token: otp,
-        type: 'signup'
+        type: 'email'  // Updated: 'signup' is deprecated, use 'email' for signup OTP
       })
 
       if (error) {
@@ -139,7 +139,7 @@ function RegisterPage() {
 
     try {
       const { error } = await supabase.auth.resend({
-        type: 'signup',
+        type: 'signup',  // Note: resend still uses 'signup' type
         email: formData.email
       })
 
