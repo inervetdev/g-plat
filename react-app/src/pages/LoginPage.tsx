@@ -39,24 +39,7 @@ function LoginPage() {
     setMessage(null)
 
     try {
-      // 1. 먼저 사용자 상태 확인 (삭제된 계정 체크)
-      const { data: userData } = await supabase
-        .from('users')
-        .select('deleted_at, deletion_reason')
-        .eq('email', email)
-        .single() as { data: { deleted_at: string | null; deletion_reason: string | null } | null; error: any }
-
-      // 2. 삭제된 계정이면 로그인 차단
-      if (userData?.deleted_at) {
-        setMessage({
-          type: 'error',
-          text: '삭제 대상 계정입니다.\n관리자에게 복구를 요청하세요.'
-        })
-        setLoading(false)
-        return
-      }
-
-      // 3. 정상 계정만 로그인 진행
+      // 1. 로그인 시도
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -74,13 +57,25 @@ function LoginPage() {
         }
         setMessage({ type: 'error', text: errorMessage })
       } else if (data.user) {
-        // 사용자 프로필이 없는 경우 생성 (첫 로그인 시)
-        const { error: userError } = await supabase
+        // 로그인 성공 후 사용자 상태 확인 (deleted_at, status 체크)
+        const { data: userData, error: userError } = (await supabase
           .from('users')
-          .select('id')
+          .select('id, deleted_at, deletion_reason, status')
           .eq('id', data.user.id)
-          .single()
+          .single()) as { data: { id: string; deleted_at: string | null; deletion_reason: string | null; status: string } | null; error: any }
 
+        // 삭제된 계정이면 즉시 로그아웃
+        if (userData?.deleted_at) {
+          await supabase.auth.signOut()
+          setMessage({
+            type: 'error',
+            text: '삭제 대상 계정입니다.\n관리자에게 복구를 요청하세요.'
+          })
+          setLoading(false)
+          return
+        }
+
+        // 프로필이 없는 경우 생성 (첫 로그인 시)
         if (userError && userError.code === 'PGRST116') {
           // 사용자 데이터가 없으면 생성
           await supabase

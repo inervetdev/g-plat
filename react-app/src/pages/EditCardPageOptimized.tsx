@@ -383,7 +383,15 @@ export function EditCardPageOptimized() {
         .eq('id', cardId)
         .eq('user_id', user.id)
 
-      if (error) throw error
+      // Check for RLS policy errors (deleted or suspended users)
+      if (error) {
+        if (error.message?.includes('row-level security') || error.message?.includes('RLS') || error.message?.includes('permission denied')) {
+          alert('계정이 정지되었거나 삭제되었습니다.\n관리자에게 문의하시기 바랍니다.')
+          setSaving(false)
+          return
+        }
+        throw error
+      }
 
       // Upload new attachments (including YouTube)
       const newAttachments = attachmentFiles.filter(att => !att.isExisting)
@@ -466,7 +474,14 @@ export function EditCardPageOptimized() {
         .eq('id', cardId)
         .eq('user_id', user.id)
 
-      if (error) throw error
+      // Check for RLS policy errors (deleted or suspended users)
+      if (error) {
+        if ((error as any).message?.includes('row-level security') || (error as any).message?.includes('RLS') || (error as any).message?.includes('permission denied')) {
+          alert('계정이 정지되었거나 삭제되었습니다.\n관리자에게 문의하시기 바랍니다.')
+          return
+        }
+        throw error
+      }
 
       alert('명함이 삭제되었습니다')
       navigate('/dashboard')

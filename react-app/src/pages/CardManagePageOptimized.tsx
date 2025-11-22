@@ -252,7 +252,12 @@ function CardManagePageOptimized() {
         alert('명함이 삭제되었습니다')
         checkUser()
       } else {
-        alert('명함 삭제에 실패했습니다')
+        // Check for RLS policy errors (deleted or suspended users)
+        if ((error as any).message?.includes('row-level security') || (error as any).message?.includes('RLS') || (error as any).message?.includes('permission denied')) {
+          alert('계정이 정지되었거나 삭제되었습니다.\n관리자에게 문의하시기 바랍니다.')
+        } else {
+          alert('명함 삭제에 실패했습니다')
+        }
       }
     }
   }
