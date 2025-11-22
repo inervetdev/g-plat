@@ -422,6 +422,8 @@ export default function CreateCardPageOptimized() {
           alert('로그인이 필요합니다. 다시 로그인해주세요.')
         } else if (cardError.message?.includes('permission denied')) {
           alert('권한이 없습니다. 로그인 상태를 확인해주세요.')
+        } else if (cardError.message?.includes('row-level security') || cardError.message?.includes('RLS')) {
+          alert('계정이 정지되었거나 삭제되었습니다.\n관리자에게 문의하시기 바랍니다.')
         } else {
           alert(`명함 생성 중 오류가 발생했습니다: ${cardError.message}`)
         }
