@@ -144,7 +144,7 @@ docs/              # 📚 문서 시스템 (계층적 구조)
 ## 핵심 기능
 
 ### 사용자 앱 (react-app)
-- ✅ 인증 (이메일, Google OAuth)
+- ✅ 인증 (이메일 OTP, Google OAuth UI)
 - ✅ 명함 CRUD, 커스텀 URL
 - ✅ 부가명함 (카테고리, 드래그 앤 드롭)
 - ✅ QR 코드 생성 및 추적
@@ -180,6 +180,7 @@ docs/              # 📚 문서 시스템 (계층적 구조)
 
 ### 🔧 기능
 - [인증](docs/features/authentication/README.md)
+  - [이메일 OTP](docs/features/authentication/email-otp.md) ⭐
 - [명함 관리](docs/features/business-cards/README.md)
 - [부가명함](docs/features/sidejob-cards/README.md)
 - [QR 시스템](docs/features/qr-system/README.md)

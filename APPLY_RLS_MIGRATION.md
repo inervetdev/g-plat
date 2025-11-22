@@ -31,11 +31,31 @@ COMMENT ON COLUMN public.users.deletion_reason IS 'Admin-provided reason for use
 
 ### 2. 삭제된 사용자의 데이터 접근 차단 RLS (필수!)
 
-```sql
--- Block deleted users from accessing their data via RLS
--- This prevents soft-deleted users from logging in and accessing data
+**⚠️ 중요: 2025-11-22 업데이트됨 - v2.5.4**
 
--- 1. Update RLS policy for business_cards to exclude deleted users
+이전 버전의 RLS 정책에 버그가 있었습니다. 아래 수정된 SQL을 사용하세요.
+
+```sql
+-- Fix RLS policies to properly block deleted users
+-- The issue: previous policy prevented deleted users from reading users table,
+-- which caused the NOT EXISTS check in business_cards policies to fail
+
+-- 1. Fix users table SELECT policy to allow deleted users to read their own record
+--    (This is needed so the business_cards policies can check deleted_at)
+DROP POLICY IF EXISTS "Users cannot access deleted profiles" ON public.users;
+DROP POLICY IF EXISTS "Users can view own profile" ON public.users;
+
+CREATE POLICY "Users can view own profile" ON public.users
+    FOR SELECT USING (
+        id = auth.uid()
+        -- Allow users to read their own profile even if deleted
+        -- This enables the business_cards RLS checks to work correctly
+    );
+
+-- 2. Ensure all business_cards policies properly check deleted_at
+--    (Re-applying to ensure correct behavior)
+
+-- SELECT policy
 DROP POLICY IF EXISTS "Users can view own business cards" ON public.business_cards;
 
 CREATE POLICY "Users can view own business cards" ON public.business_cards
@@ -48,7 +68,7 @@ CREATE POLICY "Users can view own business cards" ON public.business_cards
         )
     );
 
--- 2. Update RLS policy for business_cards insert to exclude deleted users
+-- INSERT policy
 DROP POLICY IF EXISTS "Users can create own business cards" ON public.business_cards;
 
 CREATE POLICY "Users can create own business cards" ON public.business_cards
@@ -61,7 +81,7 @@ CREATE POLICY "Users can create own business cards" ON public.business_cards
         )
     );
 
--- 3. Update RLS policy for business_cards update to exclude deleted users
+-- UPDATE policy
 DROP POLICY IF EXISTS "Users can update own business cards" ON public.business_cards;
 
 CREATE POLICY "Users can update own business cards" ON public.business_cards
@@ -74,7 +94,7 @@ CREATE POLICY "Users can update own business cards" ON public.business_cards
         )
     );
 
--- 4. Update RLS policy for business_cards delete to exclude deleted users
+-- DELETE policy
 DROP POLICY IF EXISTS "Users can delete own business cards" ON public.business_cards;
 
 CREATE POLICY "Users can delete own business cards" ON public.business_cards
@@ -87,16 +107,10 @@ CREATE POLICY "Users can delete own business cards" ON public.business_cards
         )
     );
 
--- 5. Add RLS policy for users table to block deleted users from viewing their profile
-DROP POLICY IF EXISTS "Users cannot access deleted profiles" ON public.users;
+-- 3. Add comments for documentation
+COMMENT ON POLICY "Users can view own profile" ON public.users IS
+'Allows users to view their own profile even if deleted. This is necessary for business_cards RLS policies to check deleted_at status.';
 
-CREATE POLICY "Users cannot access deleted profiles" ON public.users
-    FOR SELECT USING (
-        id = auth.uid()
-        AND deleted_at IS NULL
-    );
-
--- 6. Add comment for documentation
 COMMENT ON COLUMN public.users.deleted_at IS 'Soft delete timestamp. Users with deleted_at set cannot access the system via RLS policies.';
 ```
 
@@ -177,5 +191,43 @@ Supabase Dashboard → Authentication → Users → 해당 사용자 → Delete 
 
 ---
 
+## 🐛 RLS 버그 수정 (v2.5.4)
+
+### 문제점
+이전 버전의 RLS 정책에서 삭제된 사용자가 여전히 명함을 생성할 수 있는 버그가 발견되었습니다.
+
+**원인:**
+```sql
+-- ❌ 문제가 있던 정책 (v2.5.2)
+CREATE POLICY "Users cannot access deleted profiles" ON public.users
+    FOR SELECT USING (
+        id = auth.uid()
+        AND deleted_at IS NULL  -- 삭제된 사용자는 자신의 프로필 조회 불가
+    );
+```
+
+위 정책으로 인해:
+1. 삭제된 사용자가 `users` 테이블에서 자신의 레코드를 볼 수 없음
+2. `business_cards` INSERT 정책의 `NOT EXISTS` 서브쿼리가 실행될 때도 RLS가 적용됨
+3. 서브쿼리에서 아무것도 찾지 못함 (RLS가 차단) → `NOT EXISTS` = TRUE
+4. 결과적으로 삭제된 사용자도 명함 생성 가능!
+
+### 해결 방법
+삭제된 사용자도 자신의 프로필을 조회할 수 있도록 허용 (단, 명함 생성/조회는 차단):
+
+```sql
+-- ✅ 수정된 정책 (v2.5.4)
+CREATE POLICY "Users can view own profile" ON public.users
+    FOR SELECT USING (
+        id = auth.uid()
+        -- deleted_at 체크 제거: 서브쿼리에서 deleted_at을 확인할 수 있도록 허용
+    );
+```
+
+이제 `business_cards` 정책의 `NOT EXISTS` 서브쿼리가 정상적으로 `deleted_at`을 확인할 수 있습니다.
+
+---
+
 **작성일**: 2025-11-22
-**버전**: v2.5.2
+**최종 수정일**: 2025-11-22
+**버전**: v2.5.4

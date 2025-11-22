@@ -33,9 +33,9 @@ Claude Code가 항상 읽는 필수 문서:
 
 ### 인증 시스템
 - [개요](features/authentication/README.md)
-- [이메일 인증](features/authentication/email-auth.md)
-- [소셜 로그인](features/authentication/social-login.md)
-- [OAuth 설정](features/authentication/oauth-setup.md)
+- [이메일 OTP 인증](features/authentication/email-otp.md) ⭐
+- [소셜 로그인](features/authentication/social-login.md) (예정)
+- [OAuth 설정](features/authentication/oauth-setup.md) (예정)
 
 ### 명함 관리
 - [개요](features/business-cards/README.md)
