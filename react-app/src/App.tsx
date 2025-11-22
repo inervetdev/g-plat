@@ -36,6 +36,9 @@ const OptimizationTestPage = lazy(() => import('./pages/OptimizationTestPage'))
 const TermsPage = lazy(() => import('./pages/TermsPage'))
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
 
+// Auth pages
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
+
 function App() {
 
   return (
@@ -48,6 +51,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<NewLoginPage />} />
               <Route path="/register" element={<NewRegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/terms" element={<TermsPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
               <Route path="/demo" element={<DemoCardPage />} />

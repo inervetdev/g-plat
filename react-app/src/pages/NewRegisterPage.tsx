@@ -2,15 +2,20 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
+type Step = 'form' | 'verify-otp'
+
 export default function NewRegisterPage() {
   const navigate = useNavigate()
+  const [step, setStep] = useState<Step>('form')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [name, setName] = useState('')
+  const [otp, setOtp] = useState('')
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [message, setMessage] = useState<string>('')
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -40,22 +45,24 @@ export default function NewRegisterPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!validateForm()) return
 
     setLoading(true)
     setErrors({})
+    setMessage('')
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             name
-          }
+          },
+          emailRedirectTo: undefined // OTP 방식 사용
         }
       })
 
@@ -65,12 +72,90 @@ export default function NewRegisterPage() {
         } else {
           setErrors({ general: '회원가입에 실패했습니다. 다시 시도해주세요' })
         }
-      } else if (data.user) {
-        alert('회원가입이 완료되었습니다! 이메일을 확인하여 인증을 완료해주세요.')
-        navigate('/login')
+      } else {
+        setMessage(`${email}로 인증 코드를 발송했습니다. 이메일을 확인해주세요.`)
+        setStep('verify-otp')
       }
     } catch (err) {
       setErrors({ general: '회원가입 중 오류가 발생했습니다' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerifyOTP = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setErrors({})
+    setMessage('')
+
+    if (!otp || otp.length !== 6) {
+      setErrors({ general: '6자리 인증 코드를 입력해주세요.' })
+      setLoading(false)
+      return
+    }
+
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token: otp,
+        type: 'signup'
+      })
+
+      if (error) {
+        setErrors({ general: '인증 코드가 올바르지 않습니다. 다시 확인해주세요.' })
+      } else if (data.user) {
+        // users 테이블에 데이터 저장
+        try {
+          const { error: userInsertError } = await supabase
+            .from('users')
+            .insert({
+              id: data.user.id,
+              email,
+              name
+            } as any)
+
+          if (!userInsertError) {
+            await supabase
+              .from('user_profiles')
+              .insert({
+                user_id: data.user.id
+              } as any)
+          }
+        } catch (err) {
+          console.log('Profile creation deferred:', err)
+        }
+
+        setMessage('이메일 인증이 완료되었습니다! 로그인 페이지로 이동합니다...')
+        setTimeout(() => {
+          navigate('/login')
+        }, 2000)
+      }
+    } catch (err) {
+      setErrors({ general: 'OTP 검증 중 오류가 발생했습니다.' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleResendOTP = async () => {
+    setLoading(true)
+    setErrors({})
+    setMessage('')
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email
+      })
+
+      if (error) {
+        setErrors({ general: '인증 코드 재전송에 실패했습니다.' })
+      } else {
+        setMessage('인증 코드를 다시 전송했습니다.')
+      }
+    } catch (err) {
+      setErrors({ general: '재전송 중 오류가 발생했습니다.' })
     } finally {
       setLoading(false)
     }
@@ -104,245 +189,234 @@ export default function NewRegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-100 to-gray-200">
-      <div className="grid md:grid-cols-2 max-w-6xl w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
-        {/* Left Panel */}
-        <div className="bg-gradient-to-br from-indigo-600 to-pink-600 p-12 flex flex-col justify-center text-white relative overflow-hidden hidden md:flex">
-          <div className="absolute top-0 right-0 w-full h-full opacity-10">
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px)',
-              backgroundSize: '50px 50px',
-              animation: 'float 20s linear infinite'
-            }} />
-          </div>
-
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 text-3xl font-extrabold mb-8">
-              <span>🎯</span>
-              <span>지플랫</span>
-            </div>
-
-            <h1 className="text-3xl font-bold mb-4">지금 바로 시작하세요!</h1>
-            <p className="text-xl opacity-90 leading-relaxed mb-12">
-              3분이면 충분합니다<br/>
-              무료로 모바일 명함을 만들고 부업을 시작해보세요
-            </p>
-
-            <div className="space-y-6">
-              {[
-                { icon: '✨', title: '무료 시작', desc: '신용카드 없이 바로 시작' },
-                { icon: '🚀', title: '3분 완성', desc: '빠르고 간편한 명함 제작' },
-                { icon: '📈', title: '실시간 통계', desc: '방문자 분석과 성과 측정' }
-              ].map((feature, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">
-                    {feature.icon}
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold">{feature.title}</h3>
-                    <p className="text-sm opacity-90">{feature.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-md mx-auto pt-12 pb-24 px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            {step === 'form' ? '회원가입' : '이메일 인증'}
+          </h1>
+          <p className="text-gray-600">
+            {step === 'form' ? 'G-Plat에서 나만의 명함을 만들어보세요' : '이메일로 전송된 인증 코드를 입력하세요'}
+          </p>
         </div>
 
-        {/* Right Panel */}
-        <div className="p-12 flex flex-col justify-center overflow-y-auto max-h-screen">
-          <Link to="/" className="inline-flex items-center gap-2 text-gray-600 hover:text-indigo-600 mb-8 transition-colors">
-            ← 홈으로 돌아가기
-          </Link>
-
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">회원가입</h2>
-            <p className="text-gray-600">지플랫 계정을 만들어보세요</p>
-          </div>
-
-          <form onSubmit={handleRegister} className="max-w-md w-full mx-auto">
-            {errors.general && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                {errors.general}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          {step === 'form' ? (
+            <form onSubmit={handleSendOTP} className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  이름
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.name ? 'border-red-500' : 'border-gray-300'
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition`}
+                  placeholder="홍길동"
+                />
+                {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name}</p>}
               </div>
-            )}
 
-            <div className="mb-4">
-              <label htmlFor="name" className="block mb-2 font-medium text-gray-700">
-                이름
-              </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value)
-                  setErrors({})
-                }}
-                className={`w-full px-4 py-3 border rounded-lg transition-all ${
-                  errors.name ? 'border-red-500' : 'border-gray-300 focus:border-indigo-600'
-                } focus:outline-none focus:ring-4 focus:ring-indigo-600/10`}
-                placeholder="홍길동"
-                required
-              />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-              )}
-            </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  이메일
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition`}
+                  placeholder="example@email.com"
+                />
+                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email}</p>}
+              </div>
 
-            <div className="mb-4">
-              <label htmlFor="email" className="block mb-2 font-medium text-gray-700">
-                이메일
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                  setErrors({})
-                }}
-                className={`w-full px-4 py-3 border rounded-lg transition-all ${
-                  errors.email ? 'border-red-500' : 'border-gray-300 focus:border-indigo-600'
-                } focus:outline-none focus:ring-4 focus:ring-indigo-600/10`}
-                placeholder="example@email.com"
-                required
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-              )}
-            </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  비밀번호
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition`}
+                  placeholder="최소 6자 이상"
+                />
+                {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password}</p>}
+              </div>
 
-            <div className="mb-4">
-              <label htmlFor="password" className="block mb-2 font-medium text-gray-700">
-                비밀번호
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value)
-                  setErrors({})
-                }}
-                className={`w-full px-4 py-3 border rounded-lg transition-all ${
-                  errors.password ? 'border-red-500' : 'border-gray-300 focus:border-indigo-600'
-                } focus:outline-none focus:ring-4 focus:ring-indigo-600/10`}
-                placeholder="최소 6자 이상"
-                required
-              />
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-              )}
-            </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  비밀번호 확인
+                </label>
+                <input
+                  type="password"
+                  value={passwordConfirm}
+                  onChange={(e) => setPasswordConfirm(e.target.value)}
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.passwordConfirm ? 'border-red-500' : 'border-gray-300'
+                  } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition`}
+                  placeholder="비밀번호를 다시 입력하세요"
+                />
+                {errors.passwordConfirm && (
+                  <p className="mt-1 text-sm text-red-500">{errors.passwordConfirm}</p>
+                )}
+              </div>
 
-            <div className="mb-6">
-              <label htmlFor="passwordConfirm" className="block mb-2 font-medium text-gray-700">
-                비밀번호 확인
-              </label>
-              <input
-                type="password"
-                id="passwordConfirm"
-                value={passwordConfirm}
-                onChange={(e) => {
-                  setPasswordConfirm(e.target.value)
-                  setErrors({})
-                }}
-                className={`w-full px-4 py-3 border rounded-lg transition-all ${
-                  errors.passwordConfirm ? 'border-red-500' : 'border-gray-300 focus:border-indigo-600'
-                } focus:outline-none focus:ring-4 focus:ring-indigo-600/10`}
-                placeholder="비밀번호를 다시 입력하세요"
-                required
-              />
-              {errors.passwordConfirm && (
-                <p className="mt-1 text-sm text-red-600">{errors.passwordConfirm}</p>
-              )}
-            </div>
-
-            <div className="mb-6">
-              <label className="flex items-start gap-2 cursor-pointer">
+              <div className="flex items-start">
                 <input
                   type="checkbox"
                   checked={agreeTerms}
-                  onChange={(e) => {
-                    setAgreeTerms(e.target.checked)
-                    setErrors({})
-                  }}
-                  className="w-5 h-5 text-indigo-600 rounded focus:ring-2 focus:ring-indigo-600 mt-0.5"
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <span className="text-gray-700 text-sm">
-                  <Link to="/terms" className="text-indigo-600 hover:underline">이용약관</Link> 및{' '}
-                  <Link to="/privacy" className="text-indigo-600 hover:underline">개인정보처리방침</Link>에 동의합니다
-                </span>
-              </label>
-              {errors.terms && (
-                <p className="mt-1 text-sm text-red-600">{errors.terms}</p>
+                <label className="ml-2 text-sm text-gray-700">
+                  <Link to="/terms" className="text-blue-600 hover:underline">이용약관</Link> 및{' '}
+                  <Link to="/privacy" className="text-blue-600 hover:underline">개인정보처리방침</Link>에
+                  동의합니다
+                </label>
+              </div>
+              {errors.terms && <p className="text-sm text-red-500">{errors.terms}</p>}
+
+              {message && (
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+                  {message}
+                </div>
               )}
-            </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 hover:shadow-lg"
-            >
-              {loading ? '가입 중...' : '무료로 시작하기'}
-            </button>
-
-            <div className="flex items-center gap-4 my-6">
-              <div className="flex-1 h-px bg-gray-300" />
-              <span className="text-sm text-gray-500">또는</span>
-              <div className="flex-1 h-px bg-gray-300" />
-            </div>
-
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={() => handleSocialLogin('카카오')}
-                className="w-full py-3 bg-white border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-              >
-                <div className="w-5 h-5 bg-yellow-400 rounded-full" />
-                카카오로 시작하기
-              </button>
+              {errors.general && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                  {errors.general}
+                </div>
+              )}
 
               <button
-                type="button"
-                onClick={() => handleSocialLogin('네이버')}
-                className="w-full py-3 bg-white border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
               >
-                <div className="w-5 h-5 bg-green-500 rounded-full" />
-                네이버로 시작하기
+                {loading ? '인증 코드 발송 중...' : '인증 코드 받기'}
               </button>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-4 bg-white text-gray-500">또는</span>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {['구글', '카카오', '애플'].map((provider) => (
+                  <button
+                    key={provider}
+                    type="button"
+                    onClick={() => handleSocialLogin(provider)}
+                    disabled={loading}
+                    className={`w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border-2 transition ${
+                      provider === '구글'
+                        ? 'border-gray-300 hover:bg-gray-50'
+                        : 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
+                    }`}
+                  >
+                    <span className="font-medium text-gray-700">
+                      {provider}로 계속하기
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOTP} className="space-y-6">
+              <div className="text-center mb-6">
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>{email}</strong>로
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    6자리 인증 코드를 발송했습니다.
+                  </p>
+                  <p className="text-xs text-gray-500 mt-2">
+                    이메일이 도착하지 않았다면 스팸 폴더를 확인해주세요.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 text-center">
+                  인증 코드 (6자리)
+                </label>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-center text-2xl font-mono tracking-widest"
+                  placeholder="000000"
+                  maxLength={6}
+                />
+              </div>
+
+              {message && (
+                <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+                  {message}
+                </div>
+              )}
+
+              {errors.general && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                  {errors.general}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading || otp.length !== 6}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:shadow-lg transition disabled:opacity-50"
+              >
+                {loading ? '인증 중...' : '인증 완료'}
+              </button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={handleResendOTP}
+                  disabled={loading}
+                  className="text-sm text-blue-600 hover:text-blue-700 underline disabled:opacity-50"
+                >
+                  인증 코드 다시 받기
+                </button>
+              </div>
 
               <button
                 type="button"
-                onClick={() => handleSocialLogin('구글')}
-                className="w-full py-3 bg-white border border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+                onClick={() => {
+                  setStep('form')
+                  setOtp('')
+                  setMessage('')
+                  setErrors({})
+                }}
+                className="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition"
               >
-                <svg className="w-5 h-5" viewBox="0 0 20 20">
-                  <path d="M19.545 10.23c0-.637-.057-1.251-.164-1.84H10v3.481h5.372c-.233 1.234-.94 2.279-2.003 2.979v2.48h3.242c1.895-1.745 2.934-4.313 2.934-7.1z" fill="#4285F4"/>
-                  <path d="M10 20c2.7 0 4.964-.896 6.62-2.42l-3.242-2.48c-.896.6-2.04.953-3.378.953-2.603 0-4.81-1.76-5.595-4.123H1.064v2.562A9.996 9.996 0 0010 20z" fill="#34A853"/>
-                  <path d="M4.405 11.93c-.2-.6-.314-1.24-.314-1.93 0-.69.114-1.33.314-1.93V5.508H1.064A9.996 9.996 0 000 10c0 1.614.387 3.138 1.064 4.492l3.34-2.562z" fill="#FBBC05"/>
-                  <path d="M10 3.947c1.468 0 2.785.505 3.823 1.496l2.868-2.868C14.959.99 12.696 0 10 0 6.09 0 2.71 2.24 1.064 5.508l3.34 2.562C5.19 5.707 7.397 3.947 10 3.947z" fill="#EA4335"/>
-                </svg>
-                구글로 시작하기
+                이전 단계로
               </button>
-            </div>
-          </form>
+            </form>
+          )}
 
-          <div className="text-center mt-8 text-gray-600">
+          <div className="mt-6 text-center text-sm text-gray-600">
             이미 계정이 있으신가요?{' '}
-            <Link to="/login" className="text-indigo-600 hover:underline font-semibold">
+            <Link to="/login" className="text-blue-600 hover:underline font-semibold">
               로그인
             </Link>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes float {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(-50px, -50px); }
-        }
-      `}</style>
     </div>
   )
 }
