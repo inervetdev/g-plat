@@ -1,0 +1,843 @@
+{
+  "totalFiles": 10,
+  "passedFiles": 2,
+  "errors": [
+    {
+      "file": "docs\\CLAUDE_KO.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    },
+    {
+      "file": "docs\\history\\archived\\CLAUDE-full-2025-11-22.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "missing-field",
+      "message": "필수 필드 누락: category"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "missing-field",
+      "message": "필수 필드 누락: tier"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "missing-field",
+      "message": "필수 필드 누락: status"
+    },
+    {
+      "file": "docs\\NAVER_ADDRESS_SEARCH.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    },
+    {
+      "file": "docs\\NAVER_ADDRESS_SEARCH_IMPLEMENTATION.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    },
+    {
+      "file": "docs\\QR_SETUP_GUIDE.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    },
+    {
+      "file": "docs\\SUPABASE_MCP.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "missing-frontmatter",
+      "message": "YAML frontmatter가 없습니다"
+    }
+  ],
+  "warnings": [
+    {
+      "file": "CLAUDE.md",
+      "type": "line-limit",
+      "message": "Hot Doc 라인 수 초과: 215줄 (권장 200줄 이하)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [React App Development](docs/services/react-app/DEVELOPMENT.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Architecture Overview](docs/architecture/overview.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 3 Planned](docs/roadmap/phase-3-planned.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Tech Stack](docs/architecture/tech-stack.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Database Schema](docs/architecture/database-schema.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [React App Features](docs/services/react-app/FEATURES.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](docs/architecture/overview.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [데이터베이스 스키마](docs/architecture/database-schema.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기술 스택](docs/architecture/tech-stack.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [React App](docs/services/react-app/README.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Admin App](docs/services/admin-app/README.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [인증](docs/features/authentication/README.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [명함 관리](docs/features/business-cards/README.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [부가명함](docs/features/sidejob-cards/README.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [QR 시스템](docs/features/qr-system/README.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Supabase](docs/infrastructure/supabase/README.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Vercel](docs/infrastructure/vercel/deployment.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [보안](docs/infrastructure/security/checklist.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [2025년 11월](docs/history/changelog/2025-11.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [v2.4 프로필 이미지](docs/history/versions/v2.4-profile-images.md)"
+    },
+    {
+      "file": "CLAUDE.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Supabase MCP Setup](docs/infrastructure/supabase/mcp-setup.md)"
+    },
+    {
+      "file": "prd.md",
+      "type": "line-limit",
+      "message": "Hot Doc 라인 수 초과: 1174줄 (권장 200줄 이하)"
+    },
+    {
+      "file": "docs\\history\\archived\\CLAUDE-full-2025-11-22.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [docs/SUPABASE_MCP.md](docs/SUPABASE_MCP.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](services/react-app/README.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기능 목록](services/react-app/FEATURES.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개발 환경](services/react-app/DEVELOPMENT.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [배포 가이드](services/react-app/DEPLOYMENT.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](services/admin-app/README.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [상세 스펙](services/admin-app/SPECIFICATION.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [로드맵](services/admin-app/ROADMAP.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [제공형 부가명함](services/admin-app/PROVIDED_SIDEJOBS.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](features/authentication/README.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [이메일 인증](features/authentication/email-auth.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [소셜 로그인](features/authentication/social-login.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [OAuth 설정](features/authentication/oauth-setup.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](features/business-cards/README.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [CRUD 작업](features/business-cards/crud-operations.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [커스텀 URL](features/business-cards/custom-url.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [테마 시스템](features/business-cards/themes.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [프로필 이미지](features/business-cards/profile-images.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](features/sidejob-cards/README.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [카테고리 시스템](features/sidejob-cards/category-system.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [드래그 앤 드롭](features/sidejob-cards/drag-drop.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Storage 통합](features/sidejob-cards/storage-integration.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](features/qr-system/README.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [설정 가이드](features/qr-system/setup-guide.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Edge Function](features/qr-system/edge-function.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [분석 기능](features/qr-system/analytics.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [파일 업로드](features/attachments/file-upload.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [YouTube 통합](features/attachments/youtube-integration.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [프로덕션 설정](features/attachments/production-setup.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Naver Maps 설정](features/maps/naver-maps-setup.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [주소 검색](features/maps/address-search.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [구현 가이드](features/maps/implementation.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [대시보드](features/analytics/dashboard.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [방문자 추적](features/analytics/visitor-tracking.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [QR 분석](features/analytics/qr-analytics.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](architecture/overview.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [데이터베이스 스키마](architecture/database-schema.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기술 스택](architecture/tech-stack.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기술 결정](architecture/tech-decisions.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](infrastructure/supabase/README.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [MCP 설정](infrastructure/supabase/mcp-setup.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [로컬 개발](infrastructure/supabase/local-development.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [RLS 정책](infrastructure/supabase/rls-policies.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [마이그레이션](infrastructure/supabase/migrations.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [배포 가이드](infrastructure/vercel/deployment.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [환경 설정](infrastructure/vercel/environment-setup.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [CI/CD](infrastructure/vercel/ci-cd.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [체크리스트](infrastructure/security/checklist.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [인증 보안](infrastructure/security/authentication.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [데이터 보호](infrastructure/security/data-protection.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [제품 비전](business/product-vision.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [비즈니스 모델](business/business-model.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [타겟 사용자](business/target-users.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [성공 지표](business/success-metrics.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [리스크 관리](business/risk-management.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [현재 Phase](roadmap/current-phase.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 1 완료](roadmap/phase-1-completed.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 2 완료](roadmap/phase-2-completed.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Phase 3 계획](roadmap/phase-3-planned.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [장기 비전](roadmap/long-term-vision.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [2025년 11월](history/changelog/2025-11.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [2025년 10월](history/changelog/2025-10.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [2025년 9월](history/changelog/2025-09.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [v2.4 - 프로필 이미지 시스템](history/versions/v2.4-profile-images.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [v2.0 - React Compiler 최적화](history/versions/v2.0-react-compiler.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [v1.10 - Google OAuth](history/versions/v1.10-google-oauth.md)"
+    },
+    {
+      "file": "docs\\INDEX.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기여 가이드](../CONTRIBUTING.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [문서 제목](docs/category/document.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [문서 제목](./document.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [문서 제목](./subdirectory/document.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [문서 제목](../another-category/document.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [문서 제목](../../architecture/overview.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [섹션 제목](docs/document.md#section-name)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [데이터베이스 스키마](docs/architecture/database.md#business-cards-table)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [이메일/비밀번호 인증](docs/features/authentication/email-auth.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [소셜 로그인](docs/features/authentication/social-login.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [OAuth 2.0 설정](docs/features/authentication/oauth-setup.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [인증 시스템 개요](../README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Supabase Auth 설정](../../infrastructure/supabase/auth-setup.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [소셜 로그인 구현](./social-login.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [사용자 관리](../../services/backend-api/user-management.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [카테고리 개요](../README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [선행 문서 1](path/to/prerequisite-1.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [선행 문서 2](path/to/prerequisite-2.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [연관 기능 1](path/to/related-1.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [연관 기능 2](path/to/related-2.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [다음 문서 1](path/to/next-1.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [다음 문서 2](path/to/next-2.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [관련 인프라 1](path/to/infra-1.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [인증 시스템 개요](../README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Supabase Auth 설정](../../infrastructure/supabase/auth-setup.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [보안 체크리스트](../../infrastructure/security/checklist.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [소셜 로그인 구현](./social-login.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [사용자 프로필 관리](../../services/backend-api/user-profiles.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Kakao OAuth 설정](./kakao-oauth.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Apple Sign-In 설정](./apple-signin.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Google Cloud Console 설정](../../infrastructure/gcp/oauth-setup.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Architecture Overview](docs/architecture/overview.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Tech Stack](docs/architecture/tech-stack.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Business Goals](docs/business/business-model.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Target Users](docs/business/target-users.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Feature 1](docs/features/[category]/[feature-1].md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Feature 2](docs/features/[category]/[feature-2].md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Current Phase](docs/roadmap/current-phase.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [docs/business/product-vision.md](docs/business/product-vision.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [docs/business/success-metrics.md](docs/business/success-metrics.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [FEATURES.md](./FEATURES.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [DEVELOPMENT.md](./DEVELOPMENT.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [API.md](./API.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [전체 서비스 개요](../README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [다른 서비스](../[other-service]/README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기능 1](../../features/[category]/[feature].md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [카테고리 개요](../README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [선행 문서](../../path/to/prerequisite.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [연관 기능](../path/to/related.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [다음 문서](./next-doc.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Database Schema](docs/architecture/database-schema.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [CLAUDE.md](../CLAUDE.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [prd.md](../prd.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](services/service-1/README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [기능](services/service-1/FEATURES.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개발](services/service-1/DEVELOPMENT.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](services/service-2/README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [개요](features/authentication/README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [이메일 인증](features/authentication/email-auth.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [소셜 로그인](features/authentication/social-login.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Supabase](infrastructure/supabase/README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [Vercel](infrastructure/vercel/README.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [보안](infrastructure/security/checklist.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [2025년 11월](history/changelog/2025-11.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [2025년 10월](history/changelog/2025-10.md)"
+    },
+    {
+      "file": "DOCUMENTATION_STANDARD.md",
+      "type": "broken-link",
+      "message": "깨진 링크: [대체 텍스트](path/to/image.png)"
+    }
+  ],
+  "stats": {
+    "byTier": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    "byCategory": {},
+    "totalLines": 1389
+  }
+}
