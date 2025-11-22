@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Users as UsersIcon, Search, Download, TrendingUp } from 'lucide-react'
+import { Users as UsersIcon, Search, Download, TrendingUp, UserPlus } from 'lucide-react'
 import { useUsers, useUserStats } from '@/hooks/useUsers'
+import { UserCreateModal } from '@/components/users/UserCreateModal'
 import type { UserFilters, PaginationParams } from '@/types/admin'
 
 export function UsersPage() {
   const navigate = useNavigate()
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const [filters, setFilters] = useState<UserFilters>({
     search: '',
     subscription_tier: 'all',
@@ -19,8 +21,8 @@ export function UsersPage() {
     per_page: 50,
   })
 
-  const { data, isLoading, error } = useUsers(filters, pagination)
-  const { data: stats, isLoading: statsLoading } = useUserStats()
+  const { data, isLoading, error, refetch } = useUsers(filters, pagination)
+  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useUserStats()
 
   const handleSearchChange = (search: string) => {
     setFilters(prev => ({ ...prev, search }))
@@ -47,10 +49,19 @@ export function UsersPage() {
             </p>
           </div>
 
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
-            <Download className="w-4 h-4" />
-            CSV 다운로드
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2"
+            >
+              <UserPlus className="w-4 h-4" />
+              신규 사용자 추가
+            </button>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              CSV 다운로드
+            </button>
+          </div>
         </div>
       </div>
 
@@ -331,6 +342,16 @@ export function UsersPage() {
           </div>
         )}
       </div>
+
+      {/* Create User Modal */}
+      <UserCreateModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => {
+          refetch()
+          refetchStats()
+        }}
+      />
     </div>
   )
 }

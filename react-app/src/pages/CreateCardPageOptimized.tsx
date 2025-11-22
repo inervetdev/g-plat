@@ -31,6 +31,10 @@ export default function CreateCardPageOptimized() {
   const [showAddressSearch, setShowAddressSearch] = useState(false)
   const [showMap, setShowMap] = useState(false)
   const [mapCoords, setMapCoords] = useState<{latitude: number, longitude: number} | null>(null)
+  const [profileImage, setProfileImage] = useState<File | null>(null)
+  const [companyLogo, setCompanyLogo] = useState<File | null>(null)
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null)
+  const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -190,6 +194,79 @@ export default function CreateCardPageOptimized() {
     }
   }
 
+  // React Compiler가 자동으로 최적화 - 프로필 이미지 처리
+  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('파일 크기는 5MB 이하여야 합니다')
+        return
+      }
+      if (!file.type.startsWith('image/')) {
+        alert('이미지 파일만 업로드 가능합니다')
+        return
+      }
+      setProfileImage(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setProfileImagePreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  // React Compiler가 자동으로 최적화 - 회사 로고 처리
+  const handleCompanyLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('파일 크기는 5MB 이하여야 합니다')
+        return
+      }
+      if (!file.type.startsWith('image/')) {
+        alert('이미지 파일만 업로드 가능합니다')
+        return
+      }
+      setCompanyLogo(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setCompanyLogoPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  // React Compiler가 자동으로 최적화 - 이미지 업로드
+  const uploadImage = async (file: File, type: 'profile' | 'logo', userId: string): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${userId}/${type}-${Date.now()}.${fileExt}`
+      const bucket = 'card-attachments'
+
+      console.log('📤 Uploading image:', { fileName, bucket, fileSize: file.size })
+
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        })
+
+      if (uploadError) {
+        console.error('❌ Upload error:', uploadError)
+        throw uploadError
+      }
+
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(fileName)
+
+      console.log('✅ Upload success:', urlData.publicUrl)
+      return urlData.publicUrl
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      throw error
+    }
+  }
+
   // React Compiler가 자동으로 최적화
   const uploadAttachments = async (files: AttachmentFile[], userId: string) => {
     const results = []
@@ -253,6 +330,29 @@ export default function CreateCardPageOptimized() {
   // React Compiler가 자동으로 최적화
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // 필수 항목 검증
+    if (!formData.name.trim()) {
+      alert('이름을 입력해주세요.')
+      return
+    }
+    if (!formData.phone.trim()) {
+      alert('연락처를 입력해주세요.')
+      return
+    }
+    if (!formData.email.trim()) {
+      alert('이메일을 입력해주세요.')
+      return
+    }
+    if (!formData.custom_url.trim()) {
+      alert('커스텀 URL을 입력해주세요.')
+      return
+    }
+    if (urlAvailable === false) {
+      alert('이미 사용 중인 커스텀 URL입니다. 다른 URL을 선택해주세요.')
+      return
+    }
+
     setLoading(true)
 
     try {
@@ -262,6 +362,20 @@ export default function CreateCardPageOptimized() {
         alert('로그인이 필요합니다.')
         navigate('/login')
         return
+      }
+
+      // 이미지 업로드
+      let profileImageUrl: string | null = null
+      let companyLogoUrl: string | null = null
+
+      if (profileImage) {
+        console.log('📤 Uploading profile image...')
+        profileImageUrl = await uploadImage(profileImage, 'profile', user.id)
+      }
+
+      if (companyLogo) {
+        console.log('📤 Uploading company logo...')
+        companyLogoUrl = await uploadImage(companyLogo, 'logo', user.id)
       }
 
       const servicesArray = formData.services.split(',').map(s => s.trim()).filter(s => s)
@@ -293,6 +407,8 @@ export default function CreateCardPageOptimized() {
           skills: skillsArray,
           theme: formData.theme,
           custom_url: formData.custom_url || null,
+          profile_image_url: profileImageUrl,
+          company_logo_url: companyLogoUrl,
           is_primary: true
         })
         .select()
@@ -475,31 +591,149 @@ export default function CreateCardPageOptimized() {
               </div>
             </div>
 
+            {/* 프로필 이미지 & 회사 로고 */}
+            <div className="border-b pb-6">
+              <h2 className="text-lg font-semibold mb-4">이미지</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* 프로필 사진 */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    프로필 사진
+                  </label>
+                  <div className="flex items-center gap-4">
+                    {profileImagePreview ? (
+                      <div className="relative">
+                        <img
+                          src={profileImagePreview}
+                          alt="Profile preview"
+                          className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setProfileImage(null)
+                            setProfileImagePreview(null)
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 rounded-full bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleProfileImageChange}
+                        className="hidden"
+                        id="profile-image-upload"
+                      />
+                      <label
+                        htmlFor="profile-image-upload"
+                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        사진 선택
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">
+                        최대 5MB, JPG/PNG
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 회사 로고 */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    회사 로고
+                  </label>
+                  <div className="flex items-center gap-4">
+                    {companyLogoPreview ? (
+                      <div className="relative">
+                        <img
+                          src={companyLogoPreview}
+                          alt="Logo preview"
+                          className="w-24 h-24 rounded-lg object-cover border-2 border-gray-200"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCompanyLogo(null)
+                            setCompanyLogoPreview(null)
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 rounded-lg bg-gray-100 border-2 border-dashed border-gray-300 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCompanyLogoChange}
+                        className="hidden"
+                        id="company-logo-upload"
+                      />
+                      <label
+                        htmlFor="company-logo-upload"
+                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        로고 선택
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">
+                        최대 5MB, JPG/PNG
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* 연락처 정보 */}
             <div className="border-b pb-6">
               <h2 className="text-lg font-semibold mb-4">연락처</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    전화번호
+                    전화번호 *
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
+                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    이메일
+                    이메일 *
                   </label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
+                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -743,7 +977,7 @@ export default function CreateCardPageOptimized() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    커스텀 URL
+                    커스텀 URL *
                   </label>
                   <div className="relative">
                     <input
@@ -751,6 +985,7 @@ export default function CreateCardPageOptimized() {
                       name="custom_url"
                       value={formData.custom_url}
                       onChange={handleChange}
+                      required
                       placeholder="john-doe"
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500 ${
                         urlAvailable === false ? 'border-red-500' :

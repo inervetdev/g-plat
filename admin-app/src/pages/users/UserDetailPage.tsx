@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, User, CreditCard, QrCode, Activity, DollarSign, Shield } from 'lucide-react'
+import { ArrowLeft, User, CreditCard, QrCode, Activity, DollarSign, Shield, Trash2 } from 'lucide-react'
 import { useUser } from '@/hooks/useUsers'
 import { UserInfoTab } from '@/components/users/detail/UserInfoTab'
 import { UserCardsTab } from '@/components/users/detail/UserCardsTab'
@@ -9,6 +9,7 @@ import { UserQRTab } from '@/components/users/detail/UserQRTab'
 import { UserActivityTab } from '@/components/users/detail/UserActivityTab'
 import { UserPaymentTab } from '@/components/users/detail/UserPaymentTab'
 import { UserStatusModal } from '@/components/users/UserStatusModal'
+import { UserDeleteModal } from '@/components/users/UserDeleteModal'
 
 type TabType = 'info' | 'cards' | 'sidejob' | 'qr' | 'activity' | 'payment'
 
@@ -17,6 +18,7 @@ export function UserDetailPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<TabType>('info')
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   const { data: user, isLoading, error, refetch } = useUser(userId || '')
 
@@ -105,14 +107,23 @@ export function UserDetailPage() {
             </div>
           </div>
 
-          {/* Status Change Button */}
-          <button
-            onClick={() => setIsStatusModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-          >
-            <Shield className="w-5 h-5" />
-            상태 변경
-          </button>
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => setIsStatusModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+            >
+              <Shield className="w-5 h-5" />
+              상태 변경
+            </button>
+            <button
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+            >
+              <Trash2 className="w-5 h-5" />
+              사용자 삭제
+            </button>
+          </div>
         </div>
       </div>
 
@@ -156,6 +167,16 @@ export function UserDetailPage() {
         onClose={() => setIsStatusModalOpen(false)}
         onSuccess={() => {
           refetch()
+        }}
+      />
+
+      {/* Delete User Modal */}
+      <UserDeleteModal
+        user={user}
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onSuccess={() => {
+          navigate('/users')
         }}
       />
     </div>
