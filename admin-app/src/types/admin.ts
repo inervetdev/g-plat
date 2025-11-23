@@ -58,7 +58,7 @@ export interface UserWithStats extends User {
 export interface UserFilters {
   search?: string
   subscription_tier?: 'FREE' | 'PREMIUM' | 'BUSINESS' | 'all'
-  status?: 'active' | 'inactive' | 'suspended' | 'deleted' | 'all'
+  status?: 'active' | 'inactive' | 'suspended' | 'all'
   date_from?: string
   date_to?: string
   sort_by?: 'created_at' | 'last_login_at' | 'card_count'

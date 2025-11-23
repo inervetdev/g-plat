@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, User, CreditCard, QrCode, Activity, DollarSign, Shield, Trash2 } from 'lucide-react'
+import { ArrowLeft, User, CreditCard, QrCode, Activity, DollarSign, Shield } from 'lucide-react'
 import { useUser } from '@/hooks/useUsers'
 import { UserInfoTab } from '@/components/users/detail/UserInfoTab'
 import { UserCardsTab } from '@/components/users/detail/UserCardsTab'
@@ -9,7 +9,6 @@ import { UserQRTab } from '@/components/users/detail/UserQRTab'
 import { UserActivityTab } from '@/components/users/detail/UserActivityTab'
 import { UserPaymentTab } from '@/components/users/detail/UserPaymentTab'
 import { UserStatusModal } from '@/components/users/UserStatusModal'
-import { UserDeleteModal } from '@/components/users/UserDeleteModal'
 
 type TabType = 'info' | 'cards' | 'sidejob' | 'qr' | 'activity' | 'payment'
 
@@ -18,7 +17,6 @@ export function UserDetailPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<TabType>('info')
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false)
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
 
   const { data: user, isLoading, error, refetch } = useUser(userId || '')
 
@@ -92,24 +90,17 @@ export function UserDetailPage() {
                     ? '프리미엄'
                     : '무료'}
                 </span>
-                {/* 삭제 대상이면 "삭제대기"만 표시, 그 외에는 기존 상태 표시 */}
-                {user.deleted_at ? (
-                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
-                    삭제대기
-                  </span>
-                ) : (
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      user.status === 'active'
-                        ? 'bg-green-100 text-green-700'
-                        : user.status === 'suspended'
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}
-                  >
-                    {user.status === 'active' ? '활성' : user.status === 'suspended' ? '정지' : '비활성'}
-                  </span>
-                )}
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    user.status === 'active'
+                      ? 'bg-green-100 text-green-700'
+                      : user.status === 'suspended'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  {user.status === 'active' ? '활성' : user.status === 'suspended' ? '정지' : '비활성'}
+                </span>
               </div>
             </div>
           </div>
@@ -118,17 +109,10 @@ export function UserDetailPage() {
           <div className="flex gap-3">
             <button
               onClick={() => setIsStatusModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
             >
               <Shield className="w-5 h-5" />
               상태 변경
-            </button>
-            <button
-              onClick={() => setIsDeleteModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-            >
-              <Trash2 className="w-5 h-5" />
-              사용자 삭제
             </button>
           </div>
         </div>
@@ -173,17 +157,11 @@ export function UserDetailPage() {
         isOpen={isStatusModalOpen}
         onClose={() => setIsStatusModalOpen(false)}
         onSuccess={() => {
-          refetch()
-        }}
-      />
-
-      {/* Delete User Modal */}
-      <UserDeleteModal
-        user={user}
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onSuccess={() => {
-          navigate('/users')
+          // If user was deleted, navigate to users list
+          // Otherwise just refetch
+          refetch().catch(() => {
+            navigate('/users')
+          })
         }}
       />
     </div>

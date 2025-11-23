@@ -206,7 +206,6 @@ export function UsersPage() {
               <option value="active">활성</option>
               <option value="inactive">비활성</option>
               <option value="suspended">정지</option>
-              <option value="deleted">삭제대기</option>
             </select>
           </div>
         </div>
@@ -283,28 +282,21 @@ export function UsersPage() {
                     </td>
                     <td className="px-6 py-4 text-gray-900">{user.card_count || 0}</td>
                     <td className="px-6 py-4">
-                      {/* 삭제 대상이면 "삭제대기"만 표시 */}
-                      {user.deleted_at ? (
-                        <span className="px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
-                          삭제대기
-                        </span>
-                      ) : (
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            user.status === 'active'
-                              ? 'bg-green-100 text-green-700'
-                              : user.status === 'suspended'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-gray-100 text-gray-700'
-                          }`}
-                        >
-                          {user.status === 'active'
-                            ? '활성'
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          user.status === 'active'
+                            ? 'bg-green-100 text-green-700'
                             : user.status === 'suspended'
-                            ? '정지'
-                            : '비활성'}
-                        </span>
-                      )}
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}
+                      >
+                        {user.status === 'active'
+                          ? '활성'
+                          : user.status === 'suspended'
+                          ? '정지'
+                          : '비활성'}
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">
                       {new Date(user.created_at).toLocaleDateString('ko-KR')}

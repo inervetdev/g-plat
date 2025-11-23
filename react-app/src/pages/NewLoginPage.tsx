@@ -52,18 +52,18 @@ export default function NewLoginPage() {
           setErrors({ general: '로그인에 실패했습니다. 다시 시도해주세요' })
         }
       } else if (data.user) {
-        // 2. 로그인 성공 후 사용자 상태 확인 (deleted_at, status 체크)
+        // 2. 로그인 성공 후 사용자 상태 확인 (status 체크)
         const { data: userData, error: userError } = (await supabase
           .from('users')
-          .select('id, deleted_at, deletion_reason, status')
+          .select('id, status')
           .eq('id', data.user.id)
-          .single()) as { data: { id: string; deleted_at: string | null; deletion_reason: string | null; status: string } | null; error: any }
+          .single()) as { data: { id: string; status: string } | null; error: any }
 
-        // 3. 삭제된 계정이면 즉시 로그아웃
-        if (userData?.deleted_at) {
+        // 3. 정지된 계정이면 즉시 로그아웃
+        if (userData?.status === 'suspended') {
           await supabase.auth.signOut()
           setErrors({
-            general: '삭제 대상 계정입니다.\n관리자에게 복구를 요청하세요.'
+            general: '계정이 정지되었습니다.\n관리자에게 문의하세요.'
           })
           setLoading(false)
           return

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { X, AlertTriangle, CheckCircle, Ban } from 'lucide-react'
-import { useUpdateUserStatus } from '@/hooks/useUsers'
+import { X, AlertTriangle, CheckCircle, Ban, Trash2 } from 'lucide-react'
+import { useUpdateUserStatus, useDeleteUser } from '@/hooks/useUsers'
 import type { UserWithStats } from '@/types/admin'
 
 interface UserStatusModalProps {
@@ -10,18 +10,56 @@ interface UserStatusModalProps {
   onSuccess?: () => void
 }
 
-type StatusAction = 'activate' | 'deactivate' | 'suspend' | null
+type StatusAction = 'activate' | 'deactivate' | 'suspend' | 'delete' | null
 
 export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatusModalProps) {
   const [action, setAction] = useState<StatusAction>(null)
   const [reason, setReason] = useState('')
+  const [emailConfirmation, setEmailConfirmation] = useState('')
   const updateStatusMutation = useUpdateUserStatus()
+  const deleteUserMutation = useDeleteUser()
 
   if (!isOpen) return null
 
   const handleSubmit = async () => {
     if (!action) return
 
+    // Handle delete action separately
+    if (action === 'delete') {
+      // Validate email confirmation
+      if (emailConfirmation !== user.email) {
+        alert('이메일 주소가 일치하지 않습니다')
+        return
+      }
+
+      // Validate deletion reason
+      if (!reason.trim()) {
+        alert('삭제 사유를 입력해주세요')
+        return
+      }
+
+      // Confirm deletion
+      if (!confirm(`정말로 사용자를 완전히 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없으며, 사용자의 모든 데이터(명함, 부가명함 등)가 영구적으로 삭제됩니다.\n\n삭제 사유: ${reason.trim()}`)) {
+        return
+      }
+
+      try {
+        await deleteUserMutation.mutateAsync({
+          userId: user.id,
+          permanent: true,
+        })
+
+        alert('사용자가 완전히 삭제되었습니다')
+        onSuccess?.()
+        handleClose()
+      } catch (error) {
+        console.error('Failed to delete user:', error)
+        alert('사용자 삭제에 실패했습니다')
+      }
+      return
+    }
+
+    // Handle status change actions
     let newStatus: 'active' | 'inactive' | 'suspended'
 
     if (action === 'activate') {
@@ -56,6 +94,7 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
   const handleClose = () => {
     setAction(null)
     setReason('')
+    setEmailConfirmation('')
     onClose()
   }
 
@@ -148,6 +187,18 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                   </div>
                 </button>
               )}
+
+              {/* Delete */}
+              <button
+                onClick={() => setAction('delete')}
+                className="w-full flex items-center gap-3 p-4 border-2 border-red-300 rounded-lg hover:border-red-600 hover:bg-red-100 transition bg-red-50"
+              >
+                <Trash2 className="w-6 h-6 text-red-700" />
+                <div className="text-left">
+                  <p className="font-medium text-red-900">삭제 (완전 삭제)</p>
+                  <p className="text-sm text-red-600">사용자 계정을 영구적으로 삭제합니다 (복구 불가능)</p>
+                </div>
+              </button>
             </div>
           ) : (
             /* Confirmation Form */
@@ -158,6 +209,8 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                     ? 'bg-green-50 border border-green-200'
                     : action === 'deactivate'
                     ? 'bg-gray-50 border border-gray-200'
+                    : action === 'delete'
+                    ? 'bg-red-100 border-2 border-red-400'
                     : 'bg-red-50 border border-red-200'
                 }`}
               >
@@ -165,40 +218,67 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                   {action === 'activate' && <CheckCircle className="w-5 h-5 text-green-600" />}
                   {action === 'deactivate' && <Ban className="w-5 h-5 text-gray-600" />}
                   {action === 'suspend' && <AlertTriangle className="w-5 h-5 text-red-600" />}
+                  {action === 'delete' && <Trash2 className="w-5 h-5 text-red-700" />}
                   <p className="font-medium text-gray-900">
                     {action === 'activate' && '활성화'}
                     {action === 'deactivate' && '비활성화'}
                     {action === 'suspend' && '정지'}
+                    {action === 'delete' && '완전 삭제'}
                   </p>
                 </div>
                 <p className="text-sm text-gray-600">
                   {action === 'activate' &&
                     '사용자가 정상적으로 서비스를 이용할 수 있습니다.'}
                   {action === 'deactivate' &&
-                    '사용자는 로그인할 수 없으며, 명함도 비공개 처리됩니다.'}
+                    '사용자는 로그인은 가능하되 생성/수정이 불가능하며, 삭제만 가능합니다. 모든 명함과 부가명함이 비활성화됩니다.'}
                   {action === 'suspend' &&
-                    '사용자는 로그인할 수 없으며, 모든 기능이 차단됩니다.'}
+                    '사용자는 로그인할 수 없으며, 모든 기능이 차단됩니다. 모든 명함과 부가명함이 비활성화됩니다.'}
+                  {action === 'delete' &&
+                    '⚠️ 사용자의 모든 데이터(명함, 부가명함, QR 코드 등)가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.'}
                 </p>
               </div>
 
-              {/* Reason Input for Suspend */}
-              {action === 'suspend' && (
+              {/* Email Confirmation for Delete */}
+              {action === 'delete' && (
+                <div>
+                  <label className="block text-sm font-medium text-red-700 mb-2">
+                    이메일 주소 확인 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={emailConfirmation}
+                    onChange={(e) => setEmailConfirmation(e.target.value)}
+                    placeholder={`확인을 위해 "${user.email}"을 입력하세요`}
+                    className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                  />
+                  <p className="text-xs text-red-600 mt-1">
+                    사용자의 이메일 주소를 정확히 입력해야 삭제가 진행됩니다
+                  </p>
+                </div>
+              )}
+
+              {/* Reason Input for Suspend and Delete */}
+              {(action === 'suspend' || action === 'delete') && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    정지 사유 <span className="text-red-500">*</span>
+                    {action === 'delete' ? '삭제' : '정지'} 사유 <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
-                    placeholder="정지 사유를 입력하세요 (필수)"
+                    placeholder={`${action === 'delete' ? '삭제' : '정지'} 사유를 입력하세요 (필수)`}
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
+                      action === 'delete'
+                        ? 'border-red-300 focus:ring-red-500'
+                        : 'border-gray-200 focus:ring-red-500'
+                    }`}
                   />
                 </div>
               )}
 
               {/* Optional Note for Other Actions */}
-              {action !== 'suspend' && (
+              {action !== 'suspend' && action !== 'delete' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     메모 (선택사항)
@@ -223,16 +303,22 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={updateStatusMutation.isPending}
+                  disabled={updateStatusMutation.isPending || deleteUserMutation.isPending}
                   className={`flex-1 px-4 py-2 text-white rounded-lg transition disabled:opacity-50 ${
                     action === 'activate'
                       ? 'bg-green-600 hover:bg-green-700'
                       : action === 'deactivate'
                       ? 'bg-gray-600 hover:bg-gray-700'
+                      : action === 'delete'
+                      ? 'bg-red-700 hover:bg-red-800 font-bold'
                       : 'bg-red-600 hover:bg-red-700'
                   }`}
                 >
-                  {updateStatusMutation.isPending ? '처리 중...' : '확인'}
+                  {(updateStatusMutation.isPending || deleteUserMutation.isPending)
+                    ? '처리 중...'
+                    : action === 'delete'
+                    ? '영구 삭제'
+                    : '확인'}
                 </button>
               </div>
             </div>
