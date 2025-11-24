@@ -10,12 +10,11 @@ interface UserStatusModalProps {
   onSuccess?: () => void
 }
 
-type StatusAction = 'activate' | 'deactivate' | 'suspend' | 'delete' | null
+type StatusAction = 'activate' | 'deactivate' | 'suspend' | 'deleted' | null
 
 export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatusModalProps) {
   const [action, setAction] = useState<StatusAction>(null)
   const [reason, setReason] = useState('')
-  const [emailConfirmation, setEmailConfirmation] = useState('')
   const updateStatusMutation = useUpdateUserStatus()
   const deleteUserMutation = useDeleteUser()
 
@@ -24,14 +23,8 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
   const handleSubmit = async () => {
     if (!action) return
 
-    // Handle delete action separately
-    if (action === 'delete') {
-      // Validate email confirmation
-      if (emailConfirmation !== user.email) {
-        alert('이메일 주소가 일치하지 않습니다')
-        return
-      }
-
+    // Handle soft delete (deleted status - 삭제대기)
+    if (action === 'deleted') {
       // Validate deletion reason
       if (!reason.trim()) {
         alert('삭제 사유를 입력해주세요')
@@ -39,22 +32,23 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
       }
 
       // Confirm deletion
-      if (!confirm(`정말로 사용자를 완전히 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없으며, 사용자의 모든 데이터(명함, 부가명함 등)가 영구적으로 삭제됩니다.\n\n삭제 사유: ${reason.trim()}`)) {
+      if (!confirm(`사용자를 삭제대기 상태로 변경하시겠습니까?\n\n사용자는 로그인할 수 없으며, 삭제 정보 카드에서 완전 삭제 또는 복구를 선택할 수 있습니다.\n\n삭제 사유: ${reason.trim()}`)) {
         return
       }
 
       try {
+        // Soft delete: permanent = false
         await deleteUserMutation.mutateAsync({
           userId: user.id,
-          permanent: true,
+          permanent: false,
         })
 
-        alert('사용자가 완전히 삭제되었습니다')
+        alert('사용자가 삭제대기 상태로 변경되었습니다')
         onSuccess?.()
         handleClose()
       } catch (error) {
-        console.error('Failed to delete user:', error)
-        alert('사용자 삭제에 실패했습니다')
+        console.error('Failed to mark user as deleted:', error)
+        alert('삭제대기 처리에 실패했습니다')
       }
       return
     }
@@ -94,7 +88,6 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
   const handleClose = () => {
     setAction(null)
     setReason('')
-    setEmailConfirmation('')
     onClose()
   }
 
@@ -188,15 +181,15 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                 </button>
               )}
 
-              {/* Delete */}
+              {/* Deleted (삭제대기) */}
               <button
-                onClick={() => setAction('delete')}
-                className="w-full flex items-center gap-3 p-4 border-2 border-red-300 rounded-lg hover:border-red-600 hover:bg-red-100 transition bg-red-50"
+                onClick={() => setAction('deleted')}
+                className="w-full flex items-center gap-3 p-4 border-2 border-orange-300 rounded-lg hover:border-orange-600 hover:bg-orange-100 transition bg-orange-50"
               >
-                <Trash2 className="w-6 h-6 text-red-700" />
+                <Trash2 className="w-6 h-6 text-orange-700" />
                 <div className="text-left">
-                  <p className="font-medium text-red-900">삭제 (완전 삭제)</p>
-                  <p className="text-sm text-red-600">사용자 계정을 영구적으로 삭제합니다 (복구 불가능)</p>
+                  <p className="font-medium text-orange-900">삭제대기</p>
+                  <p className="text-sm text-orange-600">사용자를 삭제대기 상태로 변경합니다 (복구 가능)</p>
                 </div>
               </button>
             </div>
@@ -209,8 +202,8 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                     ? 'bg-green-50 border border-green-200'
                     : action === 'deactivate'
                     ? 'bg-gray-50 border border-gray-200'
-                    : action === 'delete'
-                    ? 'bg-red-100 border-2 border-red-400'
+                    : action === 'deleted'
+                    ? 'bg-orange-100 border-2 border-orange-400'
                     : 'bg-red-50 border border-red-200'
                 }`}
               >
@@ -218,12 +211,12 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                   {action === 'activate' && <CheckCircle className="w-5 h-5 text-green-600" />}
                   {action === 'deactivate' && <Ban className="w-5 h-5 text-gray-600" />}
                   {action === 'suspend' && <AlertTriangle className="w-5 h-5 text-red-600" />}
-                  {action === 'delete' && <Trash2 className="w-5 h-5 text-red-700" />}
+                  {action === 'deleted' && <Trash2 className="w-5 h-5 text-orange-700" />}
                   <p className="font-medium text-gray-900">
                     {action === 'activate' && '활성화'}
                     {action === 'deactivate' && '비활성화'}
                     {action === 'suspend' && '정지'}
-                    {action === 'delete' && '완전 삭제'}
+                    {action === 'deleted' && '삭제대기'}
                   </p>
                 </div>
                 <p className="text-sm text-gray-600">
@@ -233,44 +226,25 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                     '사용자는 로그인은 가능하되 생성/수정이 불가능하며, 삭제만 가능합니다. 모든 명함과 부가명함이 비활성화됩니다.'}
                   {action === 'suspend' &&
                     '사용자는 로그인할 수 없으며, 모든 기능이 차단됩니다. 모든 명함과 부가명함이 비활성화됩니다.'}
-                  {action === 'delete' &&
-                    '⚠️ 사용자의 모든 데이터(명함, 부가명함, QR 코드 등)가 영구적으로 삭제됩니다. 이 작업은 되돌릴 수 없습니다.'}
+                  {action === 'deleted' &&
+                    '⚠️ 사용자는 로그인할 수 없으며, 삭제대기 상태가 됩니다. 사용자 상세 페이지에서 완전 삭제 또는 복구를 선택할 수 있습니다.'}
                 </p>
               </div>
 
-              {/* Email Confirmation for Delete */}
-              {action === 'delete' && (
-                <div>
-                  <label className="block text-sm font-medium text-red-700 mb-2">
-                    이메일 주소 확인 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={emailConfirmation}
-                    onChange={(e) => setEmailConfirmation(e.target.value)}
-                    placeholder={`확인을 위해 "${user.email}"을 입력하세요`}
-                    className="w-full px-4 py-2 border-2 border-red-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                  <p className="text-xs text-red-600 mt-1">
-                    사용자의 이메일 주소를 정확히 입력해야 삭제가 진행됩니다
-                  </p>
-                </div>
-              )}
-
-              {/* Reason Input for Suspend and Delete */}
-              {(action === 'suspend' || action === 'delete') && (
+              {/* Reason Input for Suspend and Deleted */}
+              {(action === 'suspend' || action === 'deleted') && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {action === 'delete' ? '삭제' : '정지'} 사유 <span className="text-red-500">*</span>
+                    {action === 'deleted' ? '삭제' : '정지'} 사유 <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
-                    placeholder={`${action === 'delete' ? '삭제' : '정지'} 사유를 입력하세요 (필수)`}
+                    placeholder={`${action === 'deleted' ? '삭제' : '정지'} 사유를 입력하세요 (필수)`}
                     rows={4}
                     className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 ${
-                      action === 'delete'
-                        ? 'border-red-300 focus:ring-red-500'
+                      action === 'deleted'
+                        ? 'border-orange-300 focus:ring-orange-500'
                         : 'border-gray-200 focus:ring-red-500'
                     }`}
                   />
@@ -278,7 +252,7 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
               )}
 
               {/* Optional Note for Other Actions */}
-              {action !== 'suspend' && action !== 'delete' && (
+              {action !== 'suspend' && action !== 'deleted' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     메모 (선택사항)
@@ -309,15 +283,15 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
                       ? 'bg-green-600 hover:bg-green-700'
                       : action === 'deactivate'
                       ? 'bg-gray-600 hover:bg-gray-700'
-                      : action === 'delete'
-                      ? 'bg-red-700 hover:bg-red-800 font-bold'
+                      : action === 'deleted'
+                      ? 'bg-orange-600 hover:bg-orange-700 font-bold'
                       : 'bg-red-600 hover:bg-red-700'
                   }`}
                 >
                   {(updateStatusMutation.isPending || deleteUserMutation.isPending)
                     ? '처리 중...'
-                    : action === 'delete'
-                    ? '영구 삭제'
+                    : action === 'deleted'
+                    ? '삭제대기 처리'
                     : '확인'}
                 </button>
               </div>

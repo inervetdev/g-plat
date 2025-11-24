@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Edit2, Save, X, Calendar, Mail, Phone } from 'lucide-react'
-import { useUpdateUser } from '@/hooks/useUsers'
+import { Edit2, Save, X, Calendar, Mail, Phone, Trash2, RotateCcw } from 'lucide-react'
+import { useUpdateUser, useDeleteUser } from '@/hooks/useUsers'
 import type { UserWithStats } from '@/types/admin'
 
 interface UserInfoTabProps {
@@ -24,6 +24,47 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
   })
 
   const updateUserMutation = useUpdateUser()
+  const deleteUserMutation = useDeleteUser()
+
+  const handlePermanentDelete = async () => {
+    if (!confirm(`정말로 사용자를 완전히 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없으며, 사용자의 모든 데이터(명함, 부가명함, QR 코드 등)가 영구적으로 삭제됩니다.`)) {
+      return
+    }
+
+    try {
+      await deleteUserMutation.mutateAsync({
+        userId: user.id,
+        permanent: true,
+      })
+      alert('사용자가 완전히 삭제되었습니다')
+      window.location.href = '/users'
+    } catch (error) {
+      console.error('Failed to permanently delete user:', error)
+      alert('완전 삭제에 실패했습니다')
+    }
+  }
+
+  const handleRestore = async () => {
+    if (!confirm('사용자를 복구하시겠습니까?\n\n삭제대기 상태가 해제되고 활성 상태로 변경됩니다.')) {
+      return
+    }
+
+    try {
+      await updateUserMutation.mutateAsync({
+        userId: user.id,
+        data: {
+          status: 'active',
+          deleted_at: null,
+          deletion_reason: null,
+        },
+      })
+      alert('사용자가 복구되었습니다')
+      window.location.reload()
+    } catch (error) {
+      console.error('Failed to restore user:', error)
+      alert('복구에 실패했습니다')
+    }
+  }
 
   const handleSave = async () => {
     try {
@@ -178,23 +219,33 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
                 value={formData.status}
                 onChange={(e) => setFormData({ ...formData, status: e.target.value as 'active' | 'inactive' | 'suspended' })}
                 className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                disabled={!!user.deleted_at}
               >
                 <option value="active">활성</option>
                 <option value="inactive">비활성</option>
                 <option value="suspended">정지</option>
               </select>
             ) : (
-              <span
-                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                  user.status === 'active'
-                    ? 'bg-green-100 text-green-700'
-                    : user.status === 'suspended'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                {user.status === 'active' ? '활성' : user.status === 'suspended' ? '정지' : '비활성'}
-              </span>
+              <>
+                {/* 삭제 대상이면 "삭제대기"만 표시 */}
+                {user.deleted_at ? (
+                  <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">
+                    삭제대기
+                  </span>
+                ) : (
+                  <span
+                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
+                      user.status === 'active'
+                        ? 'bg-green-100 text-green-700'
+                        : user.status === 'suspended'
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    {user.status === 'active' ? '활성' : user.status === 'suspended' ? '정지' : '비활성'}
+                  </span>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -249,6 +300,64 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
             </div>
           </div>
         </div>
+
+        {/* Deletion Info - 삭제 대상인 경우에만 표시 */}
+        {user.deleted_at && (
+          <div className="bg-orange-50 border border-orange-200 rounded-xl shadow p-6">
+            <h3 className="text-lg font-semibold text-orange-900 mb-4">삭제 정보</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-orange-700 mb-2">삭제대기 상태</p>
+                <p className="text-sm text-orange-600">
+                  이 계정은 삭제 대상으로 지정되었습니다. 로그인이 차단되며 모든 서비스 이용이 제한됩니다.
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <Calendar className="w-5 h-5 text-orange-500 mt-0.5" />
+                <div>
+                  <p className="text-sm text-orange-600">삭제 지정일</p>
+                  <p className="text-sm font-medium text-orange-900 mt-1">
+                    {new Date(user.deleted_at).toLocaleDateString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </p>
+                </div>
+              </div>
+              {user.deletion_reason && (
+                <div>
+                  <p className="text-sm text-orange-600 mb-1">삭제 사유</p>
+                  <p className="text-sm font-medium text-orange-900 bg-white rounded-lg p-3 border border-orange-200">
+                    {user.deletion_reason}
+                  </p>
+                </div>
+              )}
+
+              {/* 완전 삭제 / 복구 버튼 */}
+              <div className="flex gap-3 pt-4 border-t border-orange-200">
+                <button
+                  onClick={handlePermanentDelete}
+                  disabled={deleteUserMutation.isPending}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  완전 삭제
+                </button>
+                <button
+                  onClick={handleRestore}
+                  disabled={updateUserMutation.isPending}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                  복구
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

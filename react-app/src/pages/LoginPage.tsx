@@ -57,12 +57,23 @@ function LoginPage() {
         }
         setMessage({ type: 'error', text: errorMessage })
       } else if (data.user) {
-        // 로그인 성공 후 사용자 상태 확인 (status 체크)
-        const { data: userData, error: userError } = (await supabase
+        // 로그인 성공 후 사용자 상태 확인 (deleted_at, status 체크)
+        const { data: userData, error: userError} = (await supabase
           .from('users')
-          .select('id, status')
+          .select('id, deleted_at, deletion_reason, status')
           .eq('id', data.user.id)
-          .single()) as { data: { id: string; status: string } | null; error: any }
+          .single()) as { data: { id: string; deleted_at: string | null; deletion_reason: string | null; status: string } | null; error: any }
+
+        // 삭제된 계정이면 즉시 로그아웃
+        if (userData?.deleted_at) {
+          await supabase.auth.signOut()
+          setMessage({
+            type: 'error',
+            text: '삭제 대상 계정입니다.\n관리자에게 복구를 요청하세요.'
+          })
+          setLoading(false)
+          return
+        }
 
         // 정지된 계정이면 즉시 로그아웃
         if (userData?.status === 'suspended') {

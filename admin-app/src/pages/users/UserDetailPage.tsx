@@ -90,17 +90,24 @@ export function UserDetailPage() {
                     ? '프리미엄'
                     : '무료'}
                 </span>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    user.status === 'active'
-                      ? 'bg-green-100 text-green-700'
-                      : user.status === 'suspended'
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-gray-100 text-gray-700'
-                  }`}
-                >
-                  {user.status === 'active' ? '활성' : user.status === 'suspended' ? '정지' : '비활성'}
-                </span>
+                {/* 삭제 대상이면 "삭제대기"만 표시, 그 외에는 기존 상태 표시 */}
+                {user.deleted_at ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-700">
+                    삭제대기
+                  </span>
+                ) : (
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      user.status === 'active'
+                        ? 'bg-green-100 text-green-700'
+                        : user.status === 'suspended'
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    {user.status === 'active' ? '활성' : user.status === 'suspended' ? '정지' : '비활성'}
+                  </span>
+                )}
               </div>
             </div>
           </div>
