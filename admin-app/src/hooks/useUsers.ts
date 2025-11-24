@@ -89,10 +89,12 @@ export function useDeleteUser() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ userId, permanent }: { userId: string; permanent?: boolean }) =>
-      deleteUser(userId, permanent),
+    mutationFn: ({ userId, permanent, reason }: { userId: string; permanent?: boolean; reason?: string }) =>
+      deleteUser(userId, permanent, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['user'] })
+      queryClient.invalidateQueries({ queryKey: ['userStats'] })
     },
   })
 }

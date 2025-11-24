@@ -41,6 +41,7 @@ export function UserStatusModal({ user, isOpen, onClose, onSuccess }: UserStatus
         await deleteUserMutation.mutateAsync({
           userId: user.id,
           permanent: false,
+          reason: reason.trim(),
         })
 
         alert('사용자가 삭제대기 상태로 변경되었습니다')

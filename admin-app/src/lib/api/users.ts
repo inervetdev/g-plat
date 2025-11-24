@@ -302,9 +302,9 @@ export async function updateUserSubscription(
 }
 
 /**
- * Delete user (soft delete by setting status to inactive)
+ * Delete user (soft delete by setting deleted_at or permanent delete)
  */
-export async function deleteUser(userId: string, permanent = false): Promise<void> {
+export async function deleteUser(userId: string, permanent = false, reason?: string): Promise<void> {
   if (permanent) {
     // Hard delete - use with caution!
     const { error } = await supabase
@@ -324,8 +324,28 @@ export async function deleteUser(userId: string, permanent = false): Promise<voi
       details: { permanent: true },
     })
   } else {
-    // Soft delete
-    await updateUserStatus(userId, 'inactive')
+    // Soft delete - set deleted_at, deletion_reason, and status to 'inactive'
+    const { error } = await supabase
+      .from('users')
+      .update({
+        deleted_at: new Date().toISOString(),
+        deletion_reason: reason || null,
+        status: 'inactive',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId)
+
+    if (error) {
+      console.error('Error soft deleting user:', error)
+      throw error
+    }
+
+    await logAdminAction({
+      action: 'user_deleted_soft',
+      target_type: 'user',
+      target_id: userId,
+      details: { reason },
+    })
   }
 }
 
