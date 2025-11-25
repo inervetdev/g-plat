@@ -3,8 +3,8 @@ title: "지플랫(G-Plat) 모바일 명함 서비스 PRD"
 category: "product"
 tier: 1
 status: "active"
-last_updated: "2025-11-22"
-version: "2.4"
+last_updated: "2025-11-25"
+version: "3.0"
 related_docs:
   - path: "docs/business/product-vision.md"
     description: "제품 비전 및 가치 제안"
@@ -19,7 +19,7 @@ tags:
 ---
 
 # 지플랫(G-Plat) 모바일 명함 서비스 PRD
-**Product Requirements Document v2.4**
+**Product Requirements Document v3.0**
 
 ---
 
@@ -45,10 +45,19 @@ tags:
 
 ### Phase & Version
 - **Current Phase**: Phase 3, Week 11
-- **Version**: v2.4 (2025-11-18)
-- **진행률**: 약 75%
+- **Version**: v3.0 (2025-11-25)
+- **진행률**: 약 78%
 
-### 최근 완료 (v2.4)
+### 최근 완료 (v3.0 - 2025-11-25)
+- ✅ **사용자 삭제 시스템 v3.0 재설계**
+  - Soft Delete (삭제대기) + Hard Delete (완전 삭제) 2단계 삭제
+  - deleted_at, deletion_reason 필드 기반 삭제 추적
+  - 삭제 정보 카드 (복구/완전 삭제 버튼 포함)
+  - 삭제 사용자 로그인 차단 (react-app LoginPage)
+  - 상태 필터 개선 (삭제대기/비활성 별도 필터링)
+- ✅ Playwright E2E 테스트 스위트 구축
+
+### 이전 완료 (v2.4 - 2025-11-22)
 - ✅ 프로필 이미지 & 회사 로고 업로드 시스템
 - ✅ 명함 편집 모달 (CardEditModal) 구현
 - ✅ 관리자 RLS 정책 수정
@@ -110,6 +119,13 @@ tags:
 
 ### 7. 관리자 웹 서비스 (Phase 3)
 - ✅ 대시보드 (주요 지표, 차트)
+- ✅ **사용자 관리 (v3.0 완료)**
+  - 사용자 목록 (필터링, 검색, 정렬)
+  - 사용자 상세 정보 (기본 정보, 명함, 부가명함, QR 코드, 활동 로그, 결제 내역)
+  - 상태 변경 (활성화, 비활성화, 정지, 삭제대기)
+  - Soft Delete (삭제대기) + Hard Delete (완전 삭제) 2단계 삭제
+  - 삭제 정보 카드 (복구/완전 삭제 기능)
+  - 상태 필터 (활성, 비활성, 정지, 삭제대기)
 - ✅ 명함 관리 (목록, 상세, 편집)
 - 🔄 부가명함 관리 (진행 중)
 - ⏳ QR 코드 관리
