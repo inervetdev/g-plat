@@ -80,7 +80,19 @@ export async function fetchUsers(
   }
 
   if (filters.status && filters.status !== 'all') {
-    query = query.eq('status', filters.status)
+    if (filters.status === 'deleted') {
+      // "삭제대기" filter: show users with deleted_at NOT NULL
+      query = query.not('deleted_at', 'is', null)
+    } else if (filters.status === 'inactive') {
+      // "비활성" filter: show users with deleted_at IS NULL and status='inactive'
+      query = query.is('deleted_at', null).eq('status', 'inactive')
+    } else {
+      // Other statuses: show users with deleted_at IS NULL and matching status
+      query = query.is('deleted_at', null).eq('status', filters.status)
+    }
+  } else {
+    // No filter or "all": exclude deleted users (deleted_at IS NULL)
+    query = query.is('deleted_at', null)
   }
 
   if (filters.date_from) {
