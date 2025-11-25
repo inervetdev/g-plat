@@ -69,7 +69,7 @@ export function Sidebar() {
         <NavLink
           to="/sidejobs"
           icon={<Briefcase className="w-5 h-5" />}
-          label="부가명함 관리"
+          label="제휴 부가명함 관리"
         />
         <NavLink
           to="/qr"

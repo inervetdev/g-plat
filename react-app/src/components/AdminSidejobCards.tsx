@@ -3,6 +3,7 @@
 // 카테고리별 박스로 그룹화하여 표시
 
 import { useEffect, useState, useCallback } from 'react'
+import { X } from 'lucide-react'
 import {
   fetchAdminSidejobsForUser,
   groupSidejobsByCategory,
@@ -28,6 +29,7 @@ export default function AdminSidejobCards({
 }: AdminSidejobCardsProps) {
   const [loading, setLoading] = useState(true)
   const [sidejobsByCategory, setSidejobsByCategory] = useState<AdminSidejobsByCategory[]>([])
+  const [viewingImage, setViewingImage] = useState<{ url: string; title: string } | null>(null)
 
   useEffect(() => {
     loadAdminSidejobs()
@@ -54,6 +56,13 @@ export default function AdminSidejobCards({
     window.open(card.cta_url, '_blank', 'noopener,noreferrer')
   }, [businessCardId, userId])
 
+  const handleImageClick = useCallback((card: AdminSidejobDisplayCard, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent card click
+    if (card.image_url) {
+      setViewingImage({ url: card.image_url, title: card.title })
+    }
+  }, [])
+
   if (loading) {
     return null // Don't show loading state to avoid layout shift
   }
@@ -78,9 +87,19 @@ export default function AdminSidejobCards({
             category={category}
             cards={cards}
             onCardClick={handleCardClick}
+            onImageClick={handleImageClick}
           />
         ))}
       </div>
+
+      {/* Image Viewer Modal */}
+      {viewingImage && (
+        <ImageViewerModal
+          imageUrl={viewingImage.url}
+          title={viewingImage.title}
+          onClose={() => setViewingImage(null)}
+        />
+      )}
     </div>
   )
 }
@@ -93,9 +112,10 @@ interface CategoryBoxProps {
   category: AdminB2BCategory
   cards: AdminSidejobDisplayCard[]
   onCardClick: (card: AdminSidejobDisplayCard) => void
+  onImageClick: (card: AdminSidejobDisplayCard, e: React.MouseEvent) => void
 }
 
-function CategoryBox({ category, cards, onCardClick }: CategoryBoxProps) {
+function CategoryBox({ category, cards, onCardClick, onImageClick }: CategoryBoxProps) {
   const config = ADMIN_CATEGORY_CONFIG[category]
 
   return (
@@ -124,6 +144,7 @@ function CategoryBox({ category, cards, onCardClick }: CategoryBoxProps) {
             key={card.instance_id}
             card={card}
             onClick={() => onCardClick(card)}
+            onImageClick={(e) => onImageClick(card, e)}
           />
         ))}
       </div>
@@ -138,24 +159,34 @@ function CategoryBox({ category, cards, onCardClick }: CategoryBoxProps) {
 interface AdminSidejobCardProps {
   card: AdminSidejobDisplayCard
   onClick: () => void
+  onImageClick: (e: React.MouseEvent) => void
 }
 
-function AdminSidejobCard({ card, onClick }: AdminSidejobCardProps) {
+function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps) {
   return (
     <div
       onClick={onClick}
       className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
     >
       <div className="flex gap-4">
-        {/* Image */}
+        {/* Image - clickable for popup */}
         {card.image_url && (
-          <div className="w-20 h-20 flex-shrink-0">
+          <div
+            className="w-20 h-20 flex-shrink-0 relative group"
+            onClick={onImageClick}
+          >
             <img
               src={card.image_url}
               alt={card.title}
               className="w-full h-full object-cover rounded-lg"
               loading="lazy"
             />
+            {/* Hover overlay with zoom icon */}
+            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+              </svg>
+            </div>
           </div>
         )}
 
@@ -191,6 +222,73 @@ function AdminSidejobCard({ card, onClick }: AdminSidejobCardProps) {
             </span>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+// ============================================================================
+// Image Viewer Modal Component
+// ============================================================================
+
+interface ImageViewerModalProps {
+  imageUrl: string
+  title: string
+  onClose: () => void
+}
+
+function ImageViewerModal({ imageUrl, title, onClose }: ImageViewerModalProps) {
+  // Close on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [onClose])
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+      onClick={onClose}
+    >
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors z-10"
+      >
+        <X className="w-6 h-6 text-white" />
+      </button>
+
+      {/* Title */}
+      <div className="absolute top-4 left-4 text-white font-medium text-lg z-10">
+        {title}
+      </div>
+
+      {/* Image container with scroll for long images */}
+      <div
+        className="max-w-[90vw] max-h-[85vh] overflow-auto bg-white rounded-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={imageUrl}
+          alt={title}
+          className="w-full h-auto"
+          style={{ maxWidth: '100%' }}
+        />
+      </div>
+
+      {/* Hint text */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white/60 text-sm">
+        이미지 외부를 클릭하거나 ESC를 눌러 닫기
       </div>
     </div>
   )
