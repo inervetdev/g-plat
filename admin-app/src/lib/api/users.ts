@@ -90,10 +90,8 @@ export async function fetchUsers(
       // Other statuses: show users with deleted_at IS NULL and matching status
       query = query.is('deleted_at', null).eq('status', filters.status)
     }
-  } else {
-    // No filter or "all": exclude deleted users (deleted_at IS NULL)
-    query = query.is('deleted_at', null)
   }
+  // Note: "all" status shows all users including deleted ones (no filter applied)
 
   if (filters.date_from) {
     query = query.gte('created_at', filters.date_from)
