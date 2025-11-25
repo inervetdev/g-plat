@@ -392,7 +392,7 @@ export default function SideJobCardsPageOptimized() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h1 className="text-2xl font-bold">부가명함 관리 (React Compiler 최적화)</h1>
+            <h1 className="text-2xl font-bold">부가명함 관리</h1>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => navigate('/dashboard')}

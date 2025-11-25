@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function LandingPage() {
   const navigate = useNavigate()
+  const { user, signOut } = useAuth()
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -12,6 +14,14 @@ export default function LandingPage() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id)
@@ -41,18 +51,37 @@ export default function LandingPage() {
             </ul>
 
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate('/login')}
-                className="px-6 py-2 border-2 border-indigo-600 text-indigo-600 rounded-lg font-semibold hover:bg-indigo-600 hover:text-white transition-all"
-              >
-                로그인
-              </button>
-              <button
-                onClick={() => navigate('/register')}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-all"
-              >
-                무료 시작
-              </button>
+              {user ? (
+                <>
+                  <button
+                    onClick={() => navigate('/dashboard')}
+                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-all"
+                  >
+                    대시보드
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="px-6 py-2 border-2 border-gray-400 text-gray-600 rounded-lg font-semibold hover:bg-gray-100 transition-all"
+                  >
+                    로그아웃
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => navigate('/login')}
+                    className="px-6 py-2 border-2 border-indigo-600 text-indigo-600 rounded-lg font-semibold hover:bg-indigo-600 hover:text-white transition-all"
+                  >
+                    로그인
+                  </button>
+                  <button
+                    onClick={() => navigate('/register')}
+                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-all"
+                  >
+                    무료 시작
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

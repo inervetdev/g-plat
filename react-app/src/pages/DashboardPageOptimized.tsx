@@ -11,8 +11,6 @@ type BusinessCard = Database['public']['Tables']['business_cards']['Row']
 type SideJobCard = Database['public']['Tables']['sidejob_cards']['Row']
 type UserData = Database['public']['Tables']['users']['Row']
 
-// React Compiler will automatically optimize this component
-// No need for manual memo, useCallback, or useMemo!
 const StatCard = ({
   title,
   icon,
@@ -48,7 +46,6 @@ const StatCard = ({
   )
 }
 
-// React Compiler will automatically optimize this component
 const CardThumbnail = ({
   card,
   sideJobCount,
@@ -107,7 +104,6 @@ const CardThumbnail = ({
   )
 }
 
-// Main component - React Compiler will optimize all functions automatically
 function DashboardPageOptimized() {
   const { user: authUser, signOut } = useAuth()
   const [user, setUser] = useState<User | null>(null)
@@ -125,7 +121,6 @@ function DashboardPageOptimized() {
     }
   }, [authUser])
 
-  // No need for useCallback - React Compiler handles it!
   const loadUserData = async () => {
     if (!authUser) return
 
@@ -194,7 +189,6 @@ function DashboardPageOptimized() {
     }
   }
 
-  // Simple functions - no manual optimization needed!
   const handleLogout = async () => {
     try {
       await signOut()
@@ -215,7 +209,6 @@ function DashboardPageOptimized() {
     setShowPreviewModal(false)
   }
 
-  // No need for useMemo - React Compiler optimizes these automatically
   const cardCount = businessCards.length
   const sideJobCount = sideJobCards.length
 
@@ -240,9 +233,6 @@ function DashboardPageOptimized() {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-gray-900">
               G-Plat 대시보드
-              <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                React Compiler 최적화
-              </span>
             </h1>
             <button
               onClick={handleLogout}
@@ -266,7 +256,7 @@ function DashboardPageOptimized() {
           </p>
         </div>
 
-        {/* Stats Grid - Automatically optimized by React Compiler */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
           <StatCard
             title="명함 관리"
@@ -306,7 +296,7 @@ function DashboardPageOptimized() {
           />
         </div>
 
-        {/* Card Preview - Optimized rendering */}
+        {/* Card Preview */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">내 명함 미리보기</h3>
 
@@ -394,29 +384,6 @@ function DashboardPageOptimized() {
           </div>
         )}
 
-        {/* React Compiler Info */}
-        <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            ⚡ React Compiler 자동 최적화 적용
-          </h3>
-          <p className="text-gray-600 text-sm mb-3">
-            이 페이지는 React Compiler 1.0으로 자동 최적화되었습니다.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="bg-white p-3 rounded">
-              <span className="text-green-600 font-semibold">✓ 자동 메모이제이션</span>
-              <p className="text-gray-500">memo, useMemo 불필요</p>
-            </div>
-            <div className="bg-white p-3 rounded">
-              <span className="text-green-600 font-semibold">✓ 콜백 최적화</span>
-              <p className="text-gray-500">useCallback 자동 처리</p>
-            </div>
-            <div className="bg-white p-3 rounded">
-              <span className="text-green-600 font-semibold">✓ 리렌더링 최소화</span>
-              <p className="text-gray-500">불필요한 렌더링 제거</p>
-            </div>
-          </div>
-        </div>
       </main>
     </div>
   )

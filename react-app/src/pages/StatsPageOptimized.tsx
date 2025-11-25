@@ -351,7 +351,7 @@ export default function StatsPageOptimized() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">방문자 통계 (React Compiler 최적화)</h1>
+          <h1 className="text-3xl font-bold text-gray-900">방문자 통계</h1>
           <button
             onClick={() => navigate('/dashboard')}
             className="mt-2 text-blue-600 hover:text-blue-800"

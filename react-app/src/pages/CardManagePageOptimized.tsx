@@ -36,7 +36,7 @@ function PageHeader() {
           >
             ← 대시보드
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">명함 관리 (React Compiler 최적화)</h1>
+          <h1 className="text-2xl font-bold text-gray-900">명함 관리</h1>
         </div>
       </div>
     </header>
