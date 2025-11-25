@@ -1,3 +1,24 @@
+---
+title: "명함 테마 표준 규격"
+category: "features"
+subcategory: "business-cards"
+tier: 3
+status: "active"
+last_updated: "2025-11-26"
+version: "1.0"
+related_docs:
+  - path: "docs/features/business-cards/README.md"
+    description: "명함 관리 개요"
+  - path: "docs/features/business-cards/themes.md"
+    description: "테마 시스템"
+tags:
+  - business-cards
+  - themes
+  - standards
+  - ui-ux
+  - sns
+---
+
 # 명함 테마 표준 규격
 
 ## 개요
@@ -233,6 +254,25 @@ interface CardData {
   company_logo_url?: string
 }
 ```
+
+---
+
+## 관련 문서
+
+### 📖 상위 문서
+- [명함 관리 개요](./README.md)
+
+### 🔗 연관 기능
+- [테마 시스템](./themes.md)
+- [프로필 이미지](./profile-images.md)
+- [지도/주소](../maps/README.md)
+
+### 🏗️ 인프라
+- [Supabase Storage](../../infrastructure/supabase/README.md)
+
+### 📚 외부 참고자료
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Kakao Maps API](https://apis.map.kakao.com/)
 
 ---
 

@@ -3,7 +3,7 @@ title: "G-Plat 문서 인덱스"
 category: "documentation"
 tier: 1
 status: "active"
-last_updated: "2025-11-22"
+last_updated: "2025-11-26"
 ---
 
 # G-Plat 문서 인덱스
@@ -42,6 +42,7 @@ Claude Code가 항상 읽는 필수 문서:
 - [CRUD 작업](features/business-cards/crud-operations.md)
 - [커스텀 URL](features/business-cards/custom-url.md)
 - [테마 시스템](features/business-cards/themes.md)
+- [테마 표준 규격](features/business-cards/THEME_STANDARD.md) ⭐ NEW
 - [프로필 이미지](features/business-cards/profile-images.md)
 
 ### 부가명함
@@ -129,7 +130,7 @@ Claude Code가 항상 읽는 필수 문서:
 - **Service Docs**: 8개
 - **Feature Docs**: 예상 25개+
 - **Infrastructure Docs**: 예상 11개+
-- **Last Updated**: 2025-11-22
+- **Last Updated**: 2025-11-26
 
 ## 📘 참고 문서
 - [문서 작성 표준안](../DOCUMENTATION_STANDARD.md)
