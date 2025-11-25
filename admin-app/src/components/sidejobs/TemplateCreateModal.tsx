@@ -1,10 +1,11 @@
 // Template Create Modal Component
 // 템플릿 생성 모달 컴포넌트
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { X, Upload, Loader2 } from 'lucide-react'
 import { useCreateTemplate } from '@/hooks/useSidejobs'
 import { CATEGORY_LABELS } from '@/types/sidejob'
+import { supabase } from '@/lib/supabase'
 import type { AdminSidejobTemplateInput, AdminB2BCategory } from '@/types/sidejob'
 
 interface TemplateCreateModalProps {
@@ -17,6 +18,8 @@ const BADGE_OPTIONS = ['', 'HOT', 'NEW', '추천', '인기', '한정']
 
 export function TemplateCreateModal({ isOpen, onClose, onSuccess }: TemplateCreateModalProps) {
   const createMutation = useCreateTemplate()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   const [formData, setFormData] = useState<AdminSidejobTemplateInput>({
     title: '',
@@ -66,6 +69,55 @@ export function TemplateCreateModal({ isOpen, onClose, onSuccess }: TemplateCrea
       return true
     } catch {
       return false
+    }
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드할 수 있습니다')
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('파일 크기는 5MB 이하여야 합니다')
+      return
+    }
+
+    setIsUploading(true)
+    try {
+      const fileExt = file.name.split('.').pop()
+      const fileName = `sidejob-templates/${Date.now()}.${fileExt}`
+      const bucket = 'card-attachments'
+
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        })
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError)
+        alert('이미지 업로드에 실패했습니다')
+        return
+      }
+
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(fileName)
+      handleChange('image_url', urlData.publicUrl)
+    } catch (error) {
+      console.error('Error uploading image:', error)
+      alert('이미지 업로드에 실패했습니다')
+    } finally {
+      setIsUploading(false)
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
     }
   }
 
@@ -179,12 +231,25 @@ export function TemplateCreateModal({ isOpen, onClose, onSuccess }: TemplateCrea
                   placeholder="https://example.com/image.jpg"
                   className="flex-1 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
                 <button
                   type="button"
-                  className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition flex items-center gap-2"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition flex items-center gap-2 disabled:opacity-50"
                 >
-                  <Upload className="w-4 h-4" />
-                  업로드
+                  {isUploading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Upload className="w-4 h-4" />
+                  )}
+                  {isUploading ? '업로드 중...' : '업로드'}
                 </button>
               </div>
               {formData.image_url && (

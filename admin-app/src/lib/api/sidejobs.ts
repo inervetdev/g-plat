@@ -221,8 +221,7 @@ export async function fetchInstances(
     .from('admin_sidejob_instances')
     .select(`
       *,
-      template:admin_sidejob_templates(*),
-      user:users(id, name, email, subscription_tier)
+      template:admin_sidejob_templates(*)
     `, { count: 'exact' })
 
   // Apply filters
@@ -280,8 +279,7 @@ export async function fetchInstance(
     .from('admin_sidejob_instances')
     .select(`
       *,
-      template:admin_sidejob_templates(*),
-      user:users(id, name, email, subscription_tier)
+      template:admin_sidejob_templates(*)
     `)
     .eq('id', instanceId)
     .single()
@@ -304,8 +302,7 @@ export async function fetchInstancesByTemplate(
     .from('admin_sidejob_instances')
     .select(`
       *,
-      template:admin_sidejob_templates(*),
-      user:users(id, name, email, subscription_tier)
+      template:admin_sidejob_templates(*)
     `)
     .eq('template_id', templateId)
     .order('assigned_at', { ascending: false })
