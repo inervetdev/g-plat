@@ -3,6 +3,7 @@ import { ProfessionalCard } from './themes/ProfessionalCard'
 import { TrendyCard } from './themes/TrendyCard'
 import { AppleCard } from './themes/AppleCard'
 import { DefaultCard } from './themes/DefaultCard'
+import AdminSidejobCards from './AdminSidejobCards'
 import type { CategoryPrimary } from '../types/sidejob'
 import { CATEGORY_CONFIG, isCardExpired, isCardExpiringSoon } from '../types/sidejob'
 
@@ -173,6 +174,15 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
           ))}
         </div>
       )}
+
+      {/* 제휴 부가명함 - 관리자가 할당한 제휴 카드 */}
+      <div className="max-w-md mx-auto">
+        <AdminSidejobCards
+          userId={businessCard.user_id}
+          businessCardId={businessCard.id}
+          className={activeSideJobs.length > 0 ? '' : 'rounded-b-2xl overflow-hidden'}
+        />
+      </div>
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { UsersPage } from '@/pages/users/UsersPage'
 import { UserDetailPage } from '@/pages/users/UserDetailPage'
 import { CardsPage } from '@/pages/cards/CardsPage'
 import { CardDetailPage } from '@/pages/cards/CardDetailPage'
+import { SidejobsPage } from '@/pages/sidejobs/SidejobsPage'
 import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
@@ -63,15 +64,7 @@ function App() {
           <Route path="cards/:id" element={<CardDetailPage />} />
 
           {/* Sidejob Management */}
-          <Route
-            path="sidejobs"
-            element={
-              <div className="text-center py-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">부가명함 관리</h2>
-                <p className="text-gray-600">개발 예정</p>
-              </div>
-            }
-          />
+          <Route path="sidejobs" element={<SidejobsPage />} />
 
           {/* QR Code Management */}
           <Route
