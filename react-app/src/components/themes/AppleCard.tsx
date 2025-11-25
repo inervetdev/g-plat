@@ -199,7 +199,7 @@ export function AppleCard({ userId }: { userId: string }) {
 
             {/* 말풍선 스타일 주소 */}
             <div className="relative bg-blue-500 text-white rounded-2xl rounded-tl-sm px-4 py-3 mb-3 inline-block max-w-[85%]">
-              <p className="text-sm leading-relaxed break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+              <p className="text-sm leading-relaxed break-words text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
             </div>
 
             {cardData.latitude && cardData.longitude && (
@@ -211,6 +211,79 @@ export function AppleCard({ userId }: { userId: string }) {
                 level={4}
               />
             )}
+          </div>
+        )}
+
+        {/* SNS Links */}
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+          <div className="mt-2 bg-white">
+            <div className="px-4 py-3 border-b border-gray-200">
+              <h3 className="text-base font-medium">SNS</h3>
+            </div>
+            <div className="px-4 py-3">
+              <div className="flex flex-wrap gap-2">
+                {cardData.linkedin && (
+                  <a
+                    href={cardData.linkedin.startsWith('http') ? cardData.linkedin : `https://linkedin.com/in/${cardData.linkedin}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-[#0A66C2] text-white rounded-lg text-sm"
+                  >
+                    🔗 LinkedIn
+                  </a>
+                )}
+                {cardData.instagram && (
+                  <a
+                    href={cardData.instagram.startsWith('http') ? cardData.instagram : `https://instagram.com/${cardData.instagram}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-lg text-sm"
+                  >
+                    📷 Instagram
+                  </a>
+                )}
+                {cardData.facebook && (
+                  <a
+                    href={cardData.facebook.startsWith('http') ? cardData.facebook : `https://facebook.com/${cardData.facebook}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-[#1877F2] text-white rounded-lg text-sm"
+                  >
+                    📘 Facebook
+                  </a>
+                )}
+                {cardData.twitter && (
+                  <a
+                    href={cardData.twitter.startsWith('http') ? cardData.twitter : `https://twitter.com/${cardData.twitter}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-lg text-sm"
+                  >
+                    🐦 X
+                  </a>
+                )}
+                {cardData.youtube && (
+                  <a
+                    href={cardData.youtube.startsWith('http') ? cardData.youtube : `https://youtube.com/@${cardData.youtube}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-[#FF0000] text-white rounded-lg text-sm"
+                  >
+                    ▶️ YouTube
+                  </a>
+                )}
+                {cardData.github && (
+                  <a
+                    href={cardData.github.startsWith('http') ? cardData.github : `https://github.com/${cardData.github}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-[#181717] text-white rounded-lg text-sm"
+                  >
+                    💻 GitHub
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
         )}
 

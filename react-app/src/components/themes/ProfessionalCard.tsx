@@ -16,6 +16,12 @@ interface CardData {
   address_detail?: string
   latitude?: number
   longitude?: number
+  linkedin?: string
+  instagram?: string
+  facebook?: string
+  twitter?: string
+  youtube?: string
+  github?: string
   introduction?: string
   services?: string[]
   profileImage?: string
@@ -138,6 +144,12 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           address_detail: (businessCard as any).address_detail || '',
           latitude: (businessCard as any).latitude,
           longitude: (businessCard as any).longitude,
+          linkedin: (businessCard as any).linkedin || '',
+          instagram: (businessCard as any).instagram || '',
+          facebook: (businessCard as any).facebook || '',
+          twitter: (businessCard as any).twitter || '',
+          youtube: (businessCard as any).youtube || '',
+          github: (businessCard as any).github || '',
           introduction: (businessCard as any).introduction || '',
           services: (businessCard as any).services || [],
           profileImage: businessCard.profile_image_url || businessCard.profile_image || '',
@@ -333,6 +345,75 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           </div>
         </div>
 
+        {/* SNS Links */}
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+          <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-[#c9a961]">
+            <h2 className="text-[#1e3a5f] font-bold mb-4">SNS</h2>
+            <div className="flex flex-wrap gap-3">
+              {cardData.linkedin && (
+                <a
+                  href={cardData.linkedin.startsWith('http') ? cardData.linkedin : `https://linkedin.com/in/${cardData.linkedin}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#0A66C2] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  🔗 LinkedIn
+                </a>
+              )}
+              {cardData.instagram && (
+                <a
+                  href={cardData.instagram.startsWith('http') ? cardData.instagram : `https://instagram.com/${cardData.instagram}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  📷 Instagram
+                </a>
+              )}
+              {cardData.facebook && (
+                <a
+                  href={cardData.facebook.startsWith('http') ? cardData.facebook : `https://facebook.com/${cardData.facebook}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#1877F2] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  📘 Facebook
+                </a>
+              )}
+              {cardData.twitter && (
+                <a
+                  href={cardData.twitter.startsWith('http') ? cardData.twitter : `https://twitter.com/${cardData.twitter}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  🐦 X
+                </a>
+              )}
+              {cardData.youtube && (
+                <a
+                  href={cardData.youtube.startsWith('http') ? cardData.youtube : `https://youtube.com/@${cardData.youtube}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#FF0000] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  ▶️ YouTube
+                </a>
+              )}
+              {cardData.github && (
+                <a
+                  href={cardData.github.startsWith('http') ? cardData.github : `https://github.com/${cardData.github}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#181717] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  💻 GitHub
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <button
@@ -390,7 +471,7 @@ END:VCARD`
             {/* 말풍선 스타일 주소 */}
             <div className="mb-4">
               <div className="relative bg-[#1e3a5f] text-white rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-md">
-                <p className="text-sm leading-relaxed break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+                <p className="text-sm leading-relaxed break-words text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 

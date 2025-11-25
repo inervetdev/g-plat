@@ -15,6 +15,12 @@ interface CardData {
   address_detail?: string
   latitude?: number
   longitude?: number
+  linkedin?: string
+  instagram?: string
+  facebook?: string
+  twitter?: string
+  youtube?: string
+  github?: string
   introduction?: string
   services?: string[]
   profileImage?: string
@@ -120,6 +126,12 @@ export function TrendyCard({ userId }: { userId: string }) {
           address_detail: (businessCard as any).address_detail || '',
           latitude: (businessCard as any).latitude,
           longitude: (businessCard as any).longitude,
+          linkedin: (businessCard as any).linkedin || '',
+          instagram: (businessCard as any).instagram || '',
+          facebook: (businessCard as any).facebook || '',
+          twitter: (businessCard as any).twitter || '',
+          youtube: (businessCard as any).youtube || '',
+          github: (businessCard as any).github || '',
           introduction: (businessCard as any).introduction || '',
           services: (businessCard as any).services || [],
           profileImage: (businessCard as any).profile_image_url || (businessCard as any).profile_image || '',
@@ -299,6 +311,75 @@ export function TrendyCard({ userId }: { userId: string }) {
           </div>
         </div>
 
+        {/* SNS Links */}
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+          <div className="mb-8 animate-fadeInUp animation-delay-500">
+            <h2 className="text-xl font-bold mb-4 text-gray-400">SNS</h2>
+            <div className="flex flex-wrap gap-3">
+              {cardData.linkedin && (
+                <a
+                  href={cardData.linkedin.startsWith('http') ? cardData.linkedin : `https://linkedin.com/in/${cardData.linkedin}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#0A66C2] text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-[#0A66C2]/25 transition-all duration-300"
+                >
+                  🔗 LinkedIn
+                </a>
+              )}
+              {cardData.instagram && (
+                <a
+                  href={cardData.instagram.startsWith('http') ? cardData.instagram : `https://instagram.com/${cardData.instagram}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
+                >
+                  📷 Instagram
+                </a>
+              )}
+              {cardData.facebook && (
+                <a
+                  href={cardData.facebook.startsWith('http') ? cardData.facebook : `https://facebook.com/${cardData.facebook}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#1877F2] text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-[#1877F2]/25 transition-all duration-300"
+                >
+                  📘 Facebook
+                </a>
+              )}
+              {cardData.twitter && (
+                <a
+                  href={cardData.twitter.startsWith('http') ? cardData.twitter : `https://twitter.com/${cardData.twitter}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
+                >
+                  🐦 X
+                </a>
+              )}
+              {cardData.youtube && (
+                <a
+                  href={cardData.youtube.startsWith('http') ? cardData.youtube : `https://youtube.com/@${cardData.youtube}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-[#FF0000] text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-red-500/25 transition-all duration-300"
+                >
+                  ▶️ YouTube
+                </a>
+              )}
+              {cardData.github && (
+                <a
+                  href={cardData.github.startsWith('http') ? cardData.github : `https://github.com/${cardData.github}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
+                >
+                  💻 GitHub
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="grid grid-cols-2 gap-4 mb-8 animate-fadeInUp animation-delay-600">
           <button
@@ -337,7 +418,7 @@ END:VCARD`
             {/* 말풍선 스타일 주소 */}
             <div className="mb-4">
               <div className="relative bg-white text-gray-900 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-lg">
-                <p className="text-base leading-relaxed font-medium break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+                <p className="text-base leading-relaxed font-medium break-words text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 
@@ -650,6 +731,7 @@ END:VCARD`
 
         .animation-delay-200 { animation-delay: 0.2s; }
         .animation-delay-400 { animation-delay: 0.4s; }
+        .animation-delay-500 { animation-delay: 0.5s; }
         .animation-delay-600 { animation-delay: 0.6s; }
         .animation-delay-800 { animation-delay: 0.8s; }
       `}</style>

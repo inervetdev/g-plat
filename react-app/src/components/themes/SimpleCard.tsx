@@ -182,6 +182,75 @@ export function SimpleCard({ userId }: { userId: string }) {
           </div>
         </div>
 
+        {/* SNS Links */}
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">SNS</h2>
+            <div className="flex flex-wrap gap-2">
+              {cardData.linkedin && (
+                <a
+                  href={cardData.linkedin.startsWith('http') ? cardData.linkedin : `https://linkedin.com/in/${cardData.linkedin}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-[#0A66C2] text-white rounded-full text-sm hover:opacity-90 transition-opacity"
+                >
+                  🔗 LinkedIn
+                </a>
+              )}
+              {cardData.instagram && (
+                <a
+                  href={cardData.instagram.startsWith('http') ? cardData.instagram : `https://instagram.com/${cardData.instagram}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-full text-sm hover:opacity-90 transition-opacity"
+                >
+                  📷 Instagram
+                </a>
+              )}
+              {cardData.facebook && (
+                <a
+                  href={cardData.facebook.startsWith('http') ? cardData.facebook : `https://facebook.com/${cardData.facebook}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-[#1877F2] text-white rounded-full text-sm hover:opacity-90 transition-opacity"
+                >
+                  📘 Facebook
+                </a>
+              )}
+              {cardData.twitter && (
+                <a
+                  href={cardData.twitter.startsWith('http') ? cardData.twitter : `https://twitter.com/${cardData.twitter}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-full text-sm hover:opacity-90 transition-opacity"
+                >
+                  🐦 X
+                </a>
+              )}
+              {cardData.youtube && (
+                <a
+                  href={cardData.youtube.startsWith('http') ? cardData.youtube : `https://youtube.com/@${cardData.youtube}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-[#FF0000] text-white rounded-full text-sm hover:opacity-90 transition-opacity"
+                >
+                  ▶️ YouTube
+                </a>
+              )}
+              {cardData.github && (
+                <a
+                  href={cardData.github.startsWith('http') ? cardData.github : `https://github.com/${cardData.github}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-[#181717] text-white rounded-full text-sm hover:opacity-90 transition-opacity"
+                >
+                  💻 GitHub
+                </a>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Action Buttons */}
         <div className="flex gap-3 mb-6">
           <button
@@ -237,7 +306,7 @@ END:VCARD`
             {/* Speech bubble style address */}
             <div className="mb-4">
               <div className="relative bg-white border-2 border-gray-200 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-sm">
-                <p className="text-sm text-gray-700 leading-relaxed break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+                <p className="text-sm text-gray-700 leading-relaxed break-words text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 
