@@ -44,20 +44,13 @@ export function MapPreview({
       const map = new window.kakao.maps.Map(mapRef.current, mapOption)
       mapInstanceRef.current = map
 
-      // 마커 생성
+      // 마커 생성 (주소는 상단 말풍선에서 표시하므로 InfoWindow 없음)
       const markerPosition = new window.kakao.maps.LatLng(latitude, longitude)
       const marker = new window.kakao.maps.Marker({
         position: markerPosition
       })
       marker.setMap(map)
       markerRef.current = marker
-
-      // 인포윈도우 생성 - 간단한 위치 표시만 (주소는 말풍선에서 표시)
-      const infowindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:5px 10px;font-size:12px;font-weight:500;white-space:nowrap;">📍 위치</div>`,
-        removable: false
-      })
-      infowindow.open(map, marker)
     }
 
     // 카카오 맵 SDK 로드 확인
