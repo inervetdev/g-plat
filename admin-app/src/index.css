@@ -4,6 +4,13 @@
 body {
   font-family: 'Inter', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-feature-settings: 'rlig' 1, 'calt' 1;
+  word-break: keep-all;  /* 한글 단어 단위 줄바꿈 */
+  overflow-wrap: break-word;
+}
+
+/* 긴 영문/URL/이메일 줄바꿈 */
+.break-anywhere {
+  word-break: break-all;
 }
 
 .gradient-text {

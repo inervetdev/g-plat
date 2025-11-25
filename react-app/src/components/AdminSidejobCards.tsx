@@ -204,7 +204,7 @@ function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps
 
           {/* Partner Name */}
           {card.partner_name && (
-            <p className="text-xs text-gray-500 mt-0.5">{card.partner_name}</p>
+            <p className="text-xs text-gray-500 mt-0.5 truncate">{card.partner_name}</p>
           )}
 
           {/* Description */}
@@ -213,11 +213,11 @@ function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps
           )}
 
           {/* Price & CTA */}
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center justify-between mt-2 gap-2">
             {card.price && (
-              <span className="text-sm font-bold text-blue-600">{card.price}</span>
+              <span className="text-sm font-bold text-blue-600 truncate flex-1">{card.price}</span>
             )}
-            <span className="text-sm font-medium text-blue-600 hover:text-blue-700">
+            <span className="text-sm font-medium text-blue-600 hover:text-blue-700 flex-shrink-0">
               {card.cta_text} →
             </span>
           </div>

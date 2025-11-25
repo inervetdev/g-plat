@@ -137,7 +137,7 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
                       {/* Category Badge */}
                       {sideJob.category_primary && (
                         <span
-                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white flex-shrink-0"
+                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white flex-shrink-0 max-w-[80px] truncate"
                           style={{ backgroundColor: CATEGORY_CONFIG[sideJob.category_primary].color }}
                           title={`${CATEGORY_CONFIG[sideJob.category_primary].label}${sideJob.category_secondary ? ` · ${sideJob.category_secondary}` : ''}`}
                         >
@@ -150,9 +150,9 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
                         {sideJob.description}
                       </p>
                     )}
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-2">
                       {sideJob.price && (
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-gray-900 truncate flex-1">
                           {sideJob.price}
                         </span>
                       )}
@@ -161,7 +161,7 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
                           href={sideJob.cta_link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                          className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex-shrink-0"
                         >
                           {sideJob.cta_text}
                         </a>

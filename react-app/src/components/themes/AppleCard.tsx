@@ -139,10 +139,10 @@ export function AppleCard({ userId }: { userId: string }) {
               )}
             </div>
           </div>
-          <h2 className="text-2xl font-normal mb-1">{cardData.name}</h2>
-          <p className="text-gray-500 text-base">{cardData.title}</p>
+          <h2 className="text-2xl font-normal mb-1 truncate">{cardData.name}</h2>
+          <p className="text-gray-500 text-base truncate">{cardData.title}</p>
           {cardData.company && (
-            <p className="text-gray-500 text-sm mt-1">{cardData.company}</p>
+            <p className="text-gray-500 text-sm mt-1 truncate">{cardData.company}</p>
           )}
         </div>
 
@@ -163,30 +163,30 @@ export function AppleCard({ userId }: { userId: string }) {
           <div className="px-4">
             {/* Phone */}
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <div>
+              <div className="min-w-0 flex-1 mr-2">
                 <p className="text-xs text-gray-500 mb-1">휴대폰</p>
-                <p className="text-blue-500">{cardData.phone}</p>
+                <p className="text-blue-500 truncate">{cardData.phone}</p>
               </div>
-              <span className="text-gray-300 text-xl">›</span>
+              <span className="text-gray-300 text-xl flex-shrink-0">›</span>
             </div>
 
             {/* Email */}
             <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <div>
+              <div className="min-w-0 flex-1 mr-2">
                 <p className="text-xs text-gray-500 mb-1">이메일</p>
-                <p className="text-blue-500">{cardData.email}</p>
+                <p className="text-blue-500 truncate">{cardData.email}</p>
               </div>
-              <span className="text-gray-300 text-xl">›</span>
+              <span className="text-gray-300 text-xl flex-shrink-0">›</span>
             </div>
 
             {/* Website */}
             {cardData.website && (
               <div className="flex items-center justify-between py-3">
-                <div>
+                <div className="min-w-0 flex-1 mr-2">
                   <p className="text-xs text-gray-500 mb-1">웹사이트</p>
-                  <p className="text-blue-500">{cardData.website.replace(/^https?:\/\//, '')}</p>
+                  <p className="text-blue-500 truncate">{cardData.website.replace(/^https?:\/\//, '')}</p>
                 </div>
-                <span className="text-gray-300 text-xl">›</span>
+                <span className="text-gray-300 text-xl flex-shrink-0">›</span>
               </div>
             )}
           </div>
@@ -199,7 +199,7 @@ export function AppleCard({ userId }: { userId: string }) {
 
             {/* 말풍선 스타일 주소 */}
             <div className="relative bg-blue-500 text-white rounded-2xl rounded-tl-sm px-4 py-3 mb-3 inline-block max-w-[85%]">
-              <p className="text-sm leading-relaxed">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+              <p className="text-sm leading-relaxed break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
             </div>
 
             {cardData.latitude && cardData.longitude && (
@@ -260,7 +260,7 @@ export function AppleCard({ userId }: { userId: string }) {
                     key={index}
                     className="p-3 rounded-lg bg-gray-50 text-center"
                   >
-                    <span className="text-sm text-gray-700">{service}</span>
+                    <span className="text-sm text-gray-700 line-clamp-2">{service}</span>
                   </div>
                 ))}
               </div>

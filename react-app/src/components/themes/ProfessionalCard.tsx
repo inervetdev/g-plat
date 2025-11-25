@@ -245,9 +245,9 @@ export function ProfessionalCard({ userId }: { userId: string }) {
         <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2c4a6f] text-white px-6 py-8">
           {/* Company Badge */}
           {cardData.company && (
-            <div className="inline-flex items-center gap-2 bg-[#c9a961] text-[#1e3a5f] px-4 py-1 rounded-full text-sm font-medium mb-6">
-              <span>✓</span>
-              <span>{cardData.company}</span>
+            <div className="inline-flex items-center gap-2 bg-[#c9a961] text-[#1e3a5f] px-4 py-1 rounded-full text-sm font-medium mb-6 max-w-full">
+              <span className="flex-shrink-0">✓</span>
+              <span className="truncate">{cardData.company}</span>
             </div>
           )}
 
@@ -266,9 +266,9 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                 </span>
               )}
             </div>
-            <div>
-              <h1 className="text-2xl font-bold mb-1">{cardData.name}</h1>
-              <p className="text-[#c9a961] font-medium">{cardData.title}</p>
+            <div className="min-w-0">
+              <h1 className="text-2xl font-bold mb-1 truncate">{cardData.name}</h1>
+              <p className="text-[#c9a961] font-medium truncate">{cardData.title}</p>
             </div>
           </div>
         </div>
@@ -292,21 +292,21 @@ export function ProfessionalCard({ userId }: { userId: string }) {
               <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white">
                 📞
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">전화번호</p>
-                <a href={`tel:${cardData.phone}`} className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors">
+                <a href={`tel:${cardData.phone}`} className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors truncate block">
                   {cardData.phone}
                 </a>
               </div>
             </div>
 
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white">
+              <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white flex-shrink-0">
                 ✉️
               </div>
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">이메일</p>
-                <a href={`mailto:${cardData.email}`} className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors">
+                <a href={`mailto:${cardData.email}`} className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors truncate block">
                   {cardData.email}
                 </a>
               </div>
@@ -314,16 +314,16 @@ export function ProfessionalCard({ userId }: { userId: string }) {
 
             {cardData.website && (
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white">
+                <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white flex-shrink-0">
                   🌐
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">웹사이트</p>
                   <a
                     href={cardData.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors"
+                    className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors truncate block"
                   >
                     {cardData.website?.replace(/^https?:\/\//, '')}
                   </a>
@@ -375,7 +375,7 @@ END:VCARD`
                   key={index}
                   className="border border-[#e5e7eb] rounded-lg px-4 py-3 text-center hover:border-[#c9a961] hover:bg-[#faf8f4] transition-all"
                 >
-                  <span className="text-sm text-gray-700">{service}</span>
+                  <span className="text-sm text-gray-700 line-clamp-2">{service}</span>
                 </div>
               ))}
             </div>
@@ -390,7 +390,7 @@ END:VCARD`
             {/* 말풍선 스타일 주소 */}
             <div className="mb-4">
               <div className="relative bg-[#1e3a5f] text-white rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-md">
-                <p className="text-sm leading-relaxed">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+                <p className="text-sm leading-relaxed break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 

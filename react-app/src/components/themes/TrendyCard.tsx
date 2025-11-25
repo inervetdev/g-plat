@@ -237,12 +237,12 @@ export function TrendyCard({ userId }: { userId: string }) {
             </div>
           </div>
 
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent truncate">
             {cardData.name}
           </h1>
-          <p className="text-gray-400 text-lg mb-1">{cardData.title}</p>
+          <p className="text-gray-400 text-lg mb-1 truncate">{cardData.title}</p>
           {cardData.company && (
-            <p className="text-gray-500">{cardData.company}</p>
+            <p className="text-gray-500 truncate">{cardData.company}</p>
           )}
         </div>
 
@@ -264,22 +264,22 @@ export function TrendyCard({ userId }: { userId: string }) {
               href={`tel:${cardData.phone}`}
               className="flex items-center justify-between p-4 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-green-400 transition-all duration-300 group"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">📱</span>
-                <span className="text-gray-300">{cardData.phone}</span>
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <span className="text-2xl flex-shrink-0">📱</span>
+                <span className="text-gray-300 truncate">{cardData.phone}</span>
               </div>
-              <span className="text-gray-600 group-hover:text-green-400 transition-colors">→</span>
+              <span className="text-gray-600 group-hover:text-green-400 transition-colors flex-shrink-0 ml-2">→</span>
             </a>
 
             <a
               href={`mailto:${cardData.email}`}
               className="flex items-center justify-between p-4 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-cyan-400 transition-all duration-300 group"
             >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl">✉️</span>
-                <span className="text-gray-300">{cardData.email}</span>
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <span className="text-2xl flex-shrink-0">✉️</span>
+                <span className="text-gray-300 truncate">{cardData.email}</span>
               </div>
-              <span className="text-gray-600 group-hover:text-cyan-400 transition-colors">→</span>
+              <span className="text-gray-600 group-hover:text-cyan-400 transition-colors flex-shrink-0 ml-2">→</span>
             </a>
 
             {cardData.website && (
@@ -289,11 +289,11 @@ export function TrendyCard({ userId }: { userId: string }) {
                 rel="noopener noreferrer"
                 className="flex items-center justify-between p-4 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-purple-400 transition-all duration-300 group"
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">🌐</span>
-                  <span className="text-gray-300">{cardData.website?.replace(/^https?:\/\//, '')}</span>
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <span className="text-2xl flex-shrink-0">🌐</span>
+                  <span className="text-gray-300 truncate">{cardData.website?.replace(/^https?:\/\//, '')}</span>
                 </div>
-                <span className="text-gray-600 group-hover:text-purple-400 transition-colors">→</span>
+                <span className="text-gray-600 group-hover:text-purple-400 transition-colors flex-shrink-0 ml-2">→</span>
               </a>
             )}
           </div>
@@ -337,7 +337,7 @@ END:VCARD`
             {/* 말풍선 스타일 주소 */}
             <div className="mb-4">
               <div className="relative bg-white text-gray-900 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-lg">
-                <p className="text-base leading-relaxed font-medium">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+                <p className="text-base leading-relaxed font-medium break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 

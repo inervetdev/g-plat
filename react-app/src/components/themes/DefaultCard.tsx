@@ -179,10 +179,10 @@ export function DefaultCard({ userId }: { userId: string }) {
               <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white animate-pulse"></div>
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">{cardData.name}</h1>
-            <p className="text-lg text-purple-600 font-medium mb-1">{cardData.title}</p>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2 truncate">{cardData.name}</h1>
+            <p className="text-lg text-purple-600 font-medium mb-1 truncate">{cardData.title}</p>
             {cardData.company && (
-              <p className="text-gray-500">{cardData.company}</p>
+              <p className="text-gray-500 truncate">{cardData.company}</p>
             )}
           </div>
         </div>
@@ -209,8 +209,8 @@ export function DefaultCard({ userId }: { userId: string }) {
               className="block p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl hover:from-purple-100 hover:to-pink-100 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">{cardData.phone}</span>
-                <span className="text-purple-500">전화 →</span>
+                <span className="text-gray-700 truncate mr-2">{cardData.phone}</span>
+                <span className="text-purple-500 flex-shrink-0">전화 →</span>
               </div>
             </a>
 
@@ -219,8 +219,8 @@ export function DefaultCard({ userId }: { userId: string }) {
               className="block p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl hover:from-blue-100 hover:to-purple-100 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="text-gray-700">{cardData.email}</span>
-                <span className="text-blue-500">메일 →</span>
+                <span className="text-gray-700 truncate mr-2">{cardData.email}</span>
+                <span className="text-blue-500 flex-shrink-0">메일 →</span>
               </div>
             </a>
 
@@ -232,8 +232,8 @@ export function DefaultCard({ userId }: { userId: string }) {
                 className="block p-3 bg-gradient-to-r from-pink-50 to-orange-50 rounded-xl hover:from-pink-100 hover:to-orange-100 transition-all"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700">{cardData.website?.replace(/^https?:\/\//, '')}</span>
-                  <span className="text-pink-500">방문 →</span>
+                  <span className="text-gray-700 truncate mr-2">{cardData.website?.replace(/^https?:\/\//, '')}</span>
+                  <span className="text-pink-500 flex-shrink-0">방문 →</span>
                 </div>
               </a>
             )}
@@ -285,7 +285,7 @@ export function DefaultCard({ userId }: { userId: string }) {
                   key={index}
                   className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl text-center"
                 >
-                  <span className="text-sm text-gray-700">{service}</span>
+                  <span className="text-sm text-gray-700 line-clamp-2">{service}</span>
                 </div>
               ))}
             </div>
@@ -302,7 +302,7 @@ export function DefaultCard({ userId }: { userId: string }) {
             {/* Gradient speech bubble style address */}
             <div className="mb-4">
               <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-lg">
-                <p className="text-sm leading-relaxed">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+                <p className="text-sm leading-relaxed break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 

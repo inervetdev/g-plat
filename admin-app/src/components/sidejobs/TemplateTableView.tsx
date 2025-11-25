@@ -84,11 +84,11 @@ export function TemplateTableView({ templates, onEdit, onViewInstances }: Templa
                           <span className="text-xl">📦</span>
                         </div>
                       )}
-                      <div>
+                      <div className="min-w-0 max-w-[180px]">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-900">{template.title}</span>
+                          <span className="font-medium text-gray-900 truncate">{template.title}</span>
                           {template.badge && (
-                            <span className={`px-1.5 py-0.5 text-xs font-semibold rounded ${
+                            <span className={`px-1.5 py-0.5 text-xs font-semibold rounded flex-shrink-0 ${
                               template.badge === 'HOT' ? 'bg-red-100 text-red-600' :
                               template.badge === 'NEW' ? 'bg-blue-100 text-blue-600' :
                               'bg-yellow-100 text-yellow-600'
@@ -98,7 +98,7 @@ export function TemplateTableView({ templates, onEdit, onViewInstances }: Templa
                           )}
                         </div>
                         {template.price && (
-                          <p className="text-sm text-blue-600 font-medium">{template.price}</p>
+                          <p className="text-sm text-blue-600 font-medium truncate">{template.price}</p>
                         )}
                       </div>
                     </div>
@@ -112,8 +112,8 @@ export function TemplateTableView({ templates, onEdit, onViewInstances }: Templa
                   </td>
 
                   {/* Partner */}
-                  <td className="px-4 py-3 text-sm text-gray-600">
-                    {template.partner_name || '-'}
+                  <td className="px-4 py-3 text-sm text-gray-600 max-w-[120px]">
+                    <span className="truncate block">{template.partner_name || '-'}</span>
                   </td>
 
                   {/* Instances */}

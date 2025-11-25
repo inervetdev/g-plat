@@ -73,17 +73,17 @@ export function CardsTableView({
                     className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                   />
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 max-w-[200px]">
                   <div>
-                    <p className="font-medium text-gray-900">{card.name}</p>
-                    {card.company && <p className="text-sm text-gray-500">{card.company}</p>}
+                    <p className="font-medium text-gray-900 truncate">{card.name}</p>
+                    {card.company && <p className="text-sm text-gray-500 truncate">{card.company}</p>}
                   </div>
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-6 py-4 max-w-[200px]">
                   {card.users && (
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{card.users.name}</p>
-                      <p className="text-xs text-gray-500">{card.users.email}</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">{card.users.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{card.users.email}</p>
                     </div>
                   )}
                 </td>

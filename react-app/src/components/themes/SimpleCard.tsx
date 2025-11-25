@@ -129,10 +129,10 @@ export function SimpleCard({ userId }: { userId: string }) {
 
           {/* Name & Title */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-semibold text-gray-800 mb-1">{cardData.name}</h1>
-            <p className="text-gray-500">{cardData.title}</p>
+            <h1 className="text-2xl font-semibold text-gray-800 mb-1 truncate">{cardData.name}</h1>
+            <p className="text-gray-500 truncate">{cardData.title}</p>
             {cardData.company && (
-              <p className="text-sm text-gray-400 mt-1">{cardData.company}</p>
+              <p className="text-sm text-gray-400 mt-1 truncate">{cardData.company}</p>
             )}
           </div>
 
@@ -156,16 +156,16 @@ export function SimpleCard({ userId }: { userId: string }) {
               href={`tel:${cardData.phone}`}
               className="flex items-center gap-3 text-gray-600 hover:text-blue-500 transition-colors"
             >
-              <span className="text-lg">📞</span>
-              <span className="text-sm">{cardData.phone}</span>
+              <span className="text-lg flex-shrink-0">📞</span>
+              <span className="text-sm truncate">{cardData.phone}</span>
             </a>
 
             <a
               href={`mailto:${cardData.email}`}
               className="flex items-center gap-3 text-gray-600 hover:text-blue-500 transition-colors"
             >
-              <span className="text-lg">✉️</span>
-              <span className="text-sm">{cardData.email}</span>
+              <span className="text-lg flex-shrink-0">✉️</span>
+              <span className="text-sm truncate">{cardData.email}</span>
             </a>
 
             {cardData.website && (
@@ -175,8 +175,8 @@ export function SimpleCard({ userId }: { userId: string }) {
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-gray-600 hover:text-blue-500 transition-colors"
               >
-                <span className="text-lg">🌐</span>
-                <span className="text-sm">{cardData.website?.replace(/^https?:\/\//, '')}</span>
+                <span className="text-lg flex-shrink-0">🌐</span>
+                <span className="text-sm truncate">{cardData.website?.replace(/^https?:\/\//, '')}</span>
               </a>
             )}
           </div>
@@ -237,7 +237,7 @@ END:VCARD`
             {/* Speech bubble style address */}
             <div className="mb-4">
               <div className="relative bg-white border-2 border-gray-200 rounded-2xl rounded-tl-sm px-5 py-4 inline-block max-w-[85%] shadow-sm">
-                <p className="text-sm text-gray-700 leading-relaxed">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+                <p className="text-sm text-gray-700 leading-relaxed break-words">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 

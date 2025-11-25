@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 모바일 텍스트 최적화 */
+body {
+  word-break: keep-all;  /* 한글 단어 단위 줄바꿈 */
+  overflow-wrap: break-word;
+}
+
+/* 긴 영문/URL/이메일 줄바꿈 */
+.break-anywhere {
+  word-break: break-all;
+}
