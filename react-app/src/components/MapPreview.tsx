@@ -52,11 +52,9 @@ export function MapPreview({
       marker.setMap(map)
       markerRef.current = marker
 
-      // 인포윈도우 생성
+      // 인포윈도우 생성 - 간단한 위치 표시만 (주소는 말풍선에서 표시)
       const infowindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:10px;min-width:150px;text-align:center;">
-          <strong style="display:block;font-size:14px;">${address}</strong>
-        </div>`,
+        content: `<div style="padding:5px 10px;font-size:12px;font-weight:500;white-space:nowrap;">📍 위치</div>`,
         removable: false
       })
       infowindow.open(map, marker)

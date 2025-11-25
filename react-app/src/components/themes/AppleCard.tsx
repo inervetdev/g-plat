@@ -198,8 +198,8 @@ export function AppleCard({ userId }: { userId: string }) {
             <p className="text-xs text-gray-500 mb-3">주소</p>
 
             {/* 말풍선 스타일 주소 */}
-            <div className="relative bg-blue-500 text-white rounded-2xl rounded-tl-sm px-4 py-3 mb-3 inline-block max-w-[85%]">
-              <p className="text-sm leading-relaxed break-words text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+            <div className="relative bg-blue-500 text-white rounded-2xl rounded-tl-sm px-4 py-3 mb-3">
+              <p className="text-sm leading-relaxed break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
             </div>
 
             {cardData.latitude && cardData.longitude && (
