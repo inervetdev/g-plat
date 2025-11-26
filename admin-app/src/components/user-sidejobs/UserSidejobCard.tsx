@@ -49,14 +49,13 @@ export function UserSidejobCard({
     ? CATEGORY_CONFIG[card.category_primary]
     : null
 
-  const getUserName = () => {
-    if (card.user?.raw_user_meta_data?.name) {
-      return card.user.raw_user_meta_data.name
+  const getOwnerInfo = () => {
+    // business_card가 있으면 명함 이름 사용
+    if (card.business_card?.name) {
+      return card.business_card.name
     }
-    if (card.user?.raw_user_meta_data?.full_name) {
-      return card.user.raw_user_meta_data.full_name
-    }
-    return card.user?.email?.split('@')[0] || '알 수 없음'
+    // 없으면 user_id 일부 표시
+    return card.user_id?.slice(0, 8) || '알 수 없음'
   }
 
   return (
@@ -194,12 +193,9 @@ export function UserSidejobCard({
           <p className="text-sm font-medium text-blue-600 mb-2">{card.price}</p>
         )}
 
-        {/* 사용자 & 명함 */}
+        {/* 소유자 정보 */}
         <div className="text-xs text-gray-500 mb-3">
-          <p>👤 {getUserName()}</p>
-          {card.business_card && (
-            <p>📇 {card.business_card.name}</p>
-          )}
+          <p>📇 {getOwnerInfo()}</p>
         </div>
 
         {/* 통계 */}

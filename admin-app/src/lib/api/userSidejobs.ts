@@ -28,19 +28,16 @@ export async function fetchUserSidejobs(
   const { page, per_page } = pagination
   const offset = (page - 1) * per_page
 
+  // Note: auth.users 테이블은 직접 조인 불가, business_cards만 조인
   let query = supabase
     .from('sidejob_cards')
     .select(`
       *,
-      user:user_id (
-        id,
-        email,
-        raw_user_meta_data
-      ),
-      business_card:business_card_id (
+      business_card:business_cards!business_card_id (
         id,
         name,
-        custom_url
+        custom_url,
+        user_id
       )
     `, { count: 'exact' })
 
@@ -105,15 +102,11 @@ export async function fetchUserSidejob(id: string): Promise<UserSidejobCard | nu
     .from('sidejob_cards')
     .select(`
       *,
-      user:user_id (
-        id,
-        email,
-        raw_user_meta_data
-      ),
-      business_card:business_card_id (
+      business_card:business_cards!business_card_id (
         id,
         name,
-        custom_url
+        custom_url,
+        user_id
       )
     `)
     .eq('id', id)
@@ -147,15 +140,11 @@ export async function updateUserSidejob(
     .eq('id', id)
     .select(`
       *,
-      user:user_id (
-        id,
-        email,
-        raw_user_meta_data
-      ),
-      business_card:business_card_id (
+      business_card:business_cards!business_card_id (
         id,
         name,
-        custom_url
+        custom_url,
+        user_id
       )
     `)
     .single()
@@ -225,15 +214,11 @@ export async function toggleUserSidejobActive(
     .eq('id', id)
     .select(`
       *,
-      user:user_id (
-        id,
-        email,
-        raw_user_meta_data
-      ),
-      business_card:business_card_id (
+      business_card:business_cards!business_card_id (
         id,
         name,
-        custom_url
+        custom_url,
+        user_id
       )
     `)
     .single()

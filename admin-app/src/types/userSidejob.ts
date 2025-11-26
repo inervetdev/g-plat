@@ -54,20 +54,13 @@ export interface UserSidejobCard {
   expiry_date: string | null
   created_at: string
   updated_at: string
-  // JOIN 데이터
-  user?: {
-    id: string
-    email: string
-    raw_user_meta_data?: {
-      name?: string
-      full_name?: string
-    }
-  }
+  // JOIN 데이터 (auth.users는 직접 조인 불가)
   business_card?: {
     id: string
     name: string
     custom_url: string | null
-  }
+    user_id: string
+  } | null
 }
 
 // 수정 입력 타입

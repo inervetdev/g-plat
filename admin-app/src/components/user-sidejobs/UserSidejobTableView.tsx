@@ -42,14 +42,13 @@ export function UserSidejobTableView({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const getUserName = (card: UserSidejobCard) => {
-    if (card.user?.raw_user_meta_data?.name) {
-      return card.user.raw_user_meta_data.name
+  const getOwnerInfo = (card: UserSidejobCard) => {
+    // business_card가 있으면 명함 이름 사용
+    if (card.business_card?.name) {
+      return card.business_card.name
     }
-    if (card.user?.raw_user_meta_data?.full_name) {
-      return card.user.raw_user_meta_data.full_name
-    }
-    return card.user?.email?.split('@')[0] || '알 수 없음'
+    // 없으면 user_id 일부 표시
+    return card.user_id?.slice(0, 8) || '알 수 없음'
   }
 
   const formatDate = (dateString: string) => {
@@ -73,10 +72,7 @@ export function UserSidejobTableView({
                 카테고리
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                사용자
-              </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                명함
+                소유자/명함
               </th>
               <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 조회수
@@ -152,23 +148,12 @@ export function UserSidejobTableView({
                     )}
                   </td>
 
-                  {/* 사용자 */}
+                  {/* 소유자/명함 */}
                   <td className="px-4 py-3">
-                    <p className="text-sm text-gray-900">{getUserName(card)}</p>
+                    <p className="text-sm text-gray-900">{getOwnerInfo(card)}</p>
                     <p className="text-xs text-gray-500 truncate max-w-[150px]">
-                      {card.user?.email}
+                      {card.user_id?.slice(0, 8)}...
                     </p>
-                  </td>
-
-                  {/* 명함 */}
-                  <td className="px-4 py-3">
-                    {card.business_card ? (
-                      <p className="text-sm text-gray-900">
-                        {card.business_card.name}
-                      </p>
-                    ) : (
-                      <span className="text-gray-400 text-sm">-</span>
-                    )}
                   </td>
 
                   {/* 조회수 */}
