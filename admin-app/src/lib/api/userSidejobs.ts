@@ -298,6 +298,67 @@ export async function fetchUserSidejobStats(): Promise<UserSidejobStats> {
 }
 
 // ============================================================================
+// 이미지 업로드 (관리자용)
+// ============================================================================
+
+/**
+ * 부가명함 이미지 업로드 (관리자)
+ * @param sidejobId 부가명함 ID
+ * @param userId 소유자 user_id
+ * @param file 이미지 파일
+ */
+export async function uploadSidejobImage(
+  sidejobId: string,
+  userId: string,
+  file: File
+): Promise<string> {
+  // 파일 확장자 추출
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const fileName = `${userId}/${sidejobId}_${Date.now()}.${ext}`
+
+  // Storage에 업로드
+  const { error: uploadError } = await supabase.storage
+    .from('sidejob-cards')
+    .upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: true,
+    })
+
+  if (uploadError) {
+    console.error('Error uploading image:', uploadError)
+    throw uploadError
+  }
+
+  // Public URL 가져오기
+  const { data } = supabase.storage
+    .from('sidejob-cards')
+    .getPublicUrl(fileName)
+
+  return data.publicUrl
+}
+
+/**
+ * 부가명함 이미지 삭제
+ * @param imageUrl 이미지 URL
+ */
+export async function deleteSidejobImage(imageUrl: string): Promise<void> {
+  // URL에서 파일 경로 추출
+  const urlParts = imageUrl.split('/sidejob-cards/')
+  if (urlParts.length < 2) return
+
+  const filePath = urlParts[1]
+
+  const { error } = await supabase.storage
+    .from('sidejob-cards')
+    .remove([filePath])
+
+  if (error) {
+    console.error('Error deleting image:', error)
+    // Don't throw - image deletion failure shouldn't block other operations
+  }
+}
+
+// ============================================================================
 // 사용자 검색 (부가명함 필터용)
 // ============================================================================
 

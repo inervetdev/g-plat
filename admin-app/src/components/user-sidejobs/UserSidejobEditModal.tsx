@@ -2,11 +2,12 @@
  * 사용자 부가명함 편집 모달
  */
 
-import { useState, useEffect } from 'react'
-import { X, Save, Loader2, Image as ImageIcon } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { X, Save, Loader2, Image as ImageIcon, Upload, Trash2 } from 'lucide-react'
 import type { UserSidejobCard, UserSidejobUpdateInput, CategoryPrimary } from '@/types/userSidejob'
 import { CATEGORY_CONFIG, CATEGORY_SECONDARY_OPTIONS } from '@/types/userSidejob'
 import { useUpdateUserSidejob } from '@/hooks/useUserSidejobs'
+import { uploadSidejobImage, deleteSidejobImage } from '@/lib/api/userSidejobs'
 
 interface UserSidejobEditModalProps {
   card: UserSidejobCard
@@ -20,6 +21,7 @@ export function UserSidejobEditModal({
   onSuccess,
 }: UserSidejobEditModalProps) {
   const updateMutation = useUpdateUserSidejob()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState<UserSidejobUpdateInput>({
     title: card.title,
@@ -32,9 +34,12 @@ export function UserSidejobEditModal({
     badge: card.badge,
     is_active: card.is_active,
     display_order: card.display_order,
+    image_url: card.image_url,
   })
 
   const [error, setError] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(card.image_url)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -53,6 +58,78 @@ export function UserSidejobEditModal({
       category_primary: value || null,
       category_secondary: null, // 카테고리 변경 시 세부 카테고리 초기화
     }))
+  }
+
+  // 이미지 파일 선택 처리
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // 파일 유효성 검사
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+    if (!validTypes.includes(file.type)) {
+      setError('JPG, PNG, WebP, GIF 형식만 지원합니다.')
+      return
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError('이미지 크기는 5MB 이하여야 합니다.')
+      return
+    }
+
+    setError(null)
+    setIsUploading(true)
+
+    try {
+      // 미리보기 설정
+      const objectUrl = URL.createObjectURL(file)
+      setPreviewUrl(objectUrl)
+
+      // 업로드
+      const imageUrl = await uploadSidejobImage(card.id, card.user_id, file)
+
+      // 이전 이미지 삭제 (선택사항 - 스토리지 정리)
+      if (card.image_url) {
+        await deleteSidejobImage(card.image_url)
+      }
+
+      setFormData((prev) => ({ ...prev, image_url: imageUrl }))
+      setPreviewUrl(imageUrl)
+
+      // 로컬 미리보기 URL 정리
+      URL.revokeObjectURL(objectUrl)
+    } catch (err: any) {
+      console.error('Image upload error:', err)
+      setError(`이미지 업로드 실패: ${err.message || '알 수 없는 오류'}`)
+      setPreviewUrl(card.image_url)
+    } finally {
+      setIsUploading(false)
+      // 파일 입력 초기화
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  // 이미지 삭제
+  const handleImageDelete = async () => {
+    if (!formData.image_url) return
+
+    if (!confirm('이미지를 삭제하시겠습니까?')) return
+
+    setIsUploading(true)
+    try {
+      await deleteSidejobImage(formData.image_url)
+      setFormData((prev) => ({ ...prev, image_url: null }))
+      setPreviewUrl(null)
+    } catch (err) {
+      console.error('Image delete error:', err)
+      // 삭제 실패해도 UI는 업데이트 (DB 업데이트로 연결 끊기)
+      setFormData((prev) => ({ ...prev, image_url: null }))
+      setPreviewUrl(null)
+    } finally {
+      setIsUploading(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -123,26 +200,70 @@ export function UserSidejobEditModal({
               </div>
             )}
 
-            {/* 이미지 미리보기 */}
-            <div className="flex items-center gap-4">
-              <div className="w-24 h-24 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-                {card.image_url ? (
-                  <img
-                    src={card.image_url}
-                    alt={card.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-gray-300" />
+            {/* 이미지 관리 섹션 */}
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                이미지 관리
+              </label>
+              <div className="flex items-start gap-4">
+                {/* 이미지 미리보기 */}
+                <div className="w-32 h-32 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0 relative">
+                  {previewUrl ? (
+                    <img
+                      src={previewUrl}
+                      alt={card.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <ImageIcon className="w-10 h-10 text-gray-400" />
+                    </div>
+                  )}
+                  {isUploading && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <Loader2 className="w-6 h-6 text-white animate-spin" />
+                    </div>
+                  )}
+                </div>
+
+                {/* 업로드 버튼들 */}
+                <div className="flex-1 space-y-3">
+                  <p className="text-sm text-gray-600">
+                    관리자가 사용자의 부가명함 이미지를 수정할 수 있습니다.
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 disabled:opacity-50"
+                    >
+                      <Upload className="w-4 h-4" />
+                      {previewUrl ? '이미지 변경' : '이미지 업로드'}
+                    </button>
+                    {previewUrl && (
+                      <button
+                        type="button"
+                        onClick={handleImageDelete}
+                        disabled={isUploading}
+                        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 disabled:opacity-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        삭제
+                      </button>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="text-sm text-gray-500">
-                <p>이미지는 사용자가 직접 수정해야 합니다.</p>
-                <p className="text-xs mt-1">
-                  현재 이미지: {card.image_url ? '있음' : '없음'}
-                </p>
+                  <p className="text-xs text-gray-500">
+                    JPG, PNG, WebP, GIF / 최대 5MB
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -327,7 +448,7 @@ export function UserSidejobEditModal({
             </button>
             <button
               type="submit"
-              disabled={updateMutation.isPending}
+              disabled={updateMutation.isPending || isUploading}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               {updateMutation.isPending ? (
