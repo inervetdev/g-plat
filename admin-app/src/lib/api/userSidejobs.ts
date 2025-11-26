@@ -1,0 +1,360 @@
+/**
+ * 사용자 부가명함 API 함수
+ * 대상: sidejob_cards 테이블 (사용자가 직접 생성한 부가명함)
+ */
+
+import { supabase } from '../supabase'
+import type {
+  UserSidejobCard,
+  UserSidejobUpdateInput,
+  UserSidejobFilters,
+  UserSidejobStats,
+  PaginationParams,
+  PaginatedUserSidejobs,
+  CategoryPrimary,
+} from '@/types/userSidejob'
+
+// ============================================================================
+// 목록 조회
+// ============================================================================
+
+/**
+ * 사용자 부가명함 목록 조회 (필터 & 페이지네이션)
+ */
+export async function fetchUserSidejobs(
+  filters: UserSidejobFilters = {},
+  pagination: PaginationParams = { page: 1, per_page: 20 }
+): Promise<PaginatedUserSidejobs> {
+  const { page, per_page } = pagination
+  const offset = (page - 1) * per_page
+
+  let query = supabase
+    .from('sidejob_cards')
+    .select(`
+      *,
+      user:user_id (
+        id,
+        email,
+        raw_user_meta_data
+      ),
+      business_card:business_card_id (
+        id,
+        name,
+        custom_url
+      )
+    `, { count: 'exact' })
+
+  // 검색 필터
+  if (filters.search) {
+    query = query.or(`title.ilike.%${filters.search}%,description.ilike.%${filters.search}%`)
+  }
+
+  // 카테고리 필터
+  if (filters.category && filters.category !== 'all') {
+    query = query.eq('category_primary', filters.category)
+  }
+
+  // 활성 상태 필터
+  if (filters.is_active !== undefined && filters.is_active !== 'all') {
+    query = query.eq('is_active', filters.is_active)
+  }
+
+  // 사용자 ID 필터
+  if (filters.user_id) {
+    query = query.eq('user_id', filters.user_id)
+  }
+
+  // 명함 ID 필터
+  if (filters.business_card_id) {
+    query = query.eq('business_card_id', filters.business_card_id)
+  }
+
+  // 정렬
+  const sortBy = filters.sort_by || 'created_at'
+  const sortOrder = filters.sort_order || 'desc'
+  query = query.order(sortBy, { ascending: sortOrder === 'asc' })
+
+  // 페이지네이션
+  query = query.range(offset, offset + per_page - 1)
+
+  const { data, error, count } = await query
+
+  if (error) {
+    console.error('Error fetching user sidejobs:', error)
+    throw error
+  }
+
+  return {
+    data: (data || []) as UserSidejobCard[],
+    total: count || 0,
+    page,
+    per_page,
+    total_pages: Math.ceil((count || 0) / per_page),
+  }
+}
+
+// ============================================================================
+// 단일 조회
+// ============================================================================
+
+/**
+ * 단일 부가명함 조회
+ */
+export async function fetchUserSidejob(id: string): Promise<UserSidejobCard | null> {
+  const { data, error } = await supabase
+    .from('sidejob_cards')
+    .select(`
+      *,
+      user:user_id (
+        id,
+        email,
+        raw_user_meta_data
+      ),
+      business_card:business_card_id (
+        id,
+        name,
+        custom_url
+      )
+    `)
+    .eq('id', id)
+    .single()
+
+  if (error) {
+    console.error('Error fetching user sidejob:', error)
+    throw error
+  }
+
+  return data as UserSidejobCard
+}
+
+// ============================================================================
+// 수정
+// ============================================================================
+
+/**
+ * 부가명함 수정
+ */
+export async function updateUserSidejob(
+  id: string,
+  input: UserSidejobUpdateInput
+): Promise<UserSidejobCard> {
+  const { data, error } = await supabase
+    .from('sidejob_cards')
+    .update({
+      ...input,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select(`
+      *,
+      user:user_id (
+        id,
+        email,
+        raw_user_meta_data
+      ),
+      business_card:business_card_id (
+        id,
+        name,
+        custom_url
+      )
+    `)
+    .single()
+
+  if (error) {
+    console.error('Error updating user sidejob:', error)
+    throw error
+  }
+
+  return data as UserSidejobCard
+}
+
+// ============================================================================
+// 삭제 (Soft Delete)
+// ============================================================================
+
+/**
+ * 부가명함 삭제 (soft delete - is_active = false)
+ */
+export async function deleteUserSidejob(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('sidejob_cards')
+    .update({
+      is_active: false,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error deleting user sidejob:', error)
+    throw error
+  }
+}
+
+/**
+ * 부가명함 영구 삭제
+ */
+export async function permanentDeleteUserSidejob(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('sidejob_cards')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    console.error('Error permanently deleting user sidejob:', error)
+    throw error
+  }
+}
+
+// ============================================================================
+// 활성화 토글
+// ============================================================================
+
+/**
+ * 부가명함 활성화/비활성화 토글
+ */
+export async function toggleUserSidejobActive(
+  id: string,
+  isActive: boolean
+): Promise<UserSidejobCard> {
+  const { data, error } = await supabase
+    .from('sidejob_cards')
+    .update({
+      is_active: isActive,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select(`
+      *,
+      user:user_id (
+        id,
+        email,
+        raw_user_meta_data
+      ),
+      business_card:business_card_id (
+        id,
+        name,
+        custom_url
+      )
+    `)
+    .single()
+
+  if (error) {
+    console.error('Error toggling user sidejob active:', error)
+    throw error
+  }
+
+  return data as UserSidejobCard
+}
+
+// ============================================================================
+// 통계
+// ============================================================================
+
+/**
+ * 사용자 부가명함 통계 조회
+ */
+export async function fetchUserSidejobStats(): Promise<UserSidejobStats> {
+  // 전체 통계
+  const { data: allData, error: allError } = await supabase
+    .from('sidejob_cards')
+    .select('id, is_active, view_count, click_count, category_primary')
+
+  if (allError) {
+    console.error('Error fetching user sidejob stats:', allError)
+    throw allError
+  }
+
+  const cards = allData || []
+
+  // 카테고리별 통계 계산
+  const categoryStats: Record<CategoryPrimary, { count: number; views: number; clicks: number }> = {
+    shopping: { count: 0, views: 0, clicks: 0 },
+    education: { count: 0, views: 0, clicks: 0 },
+    service: { count: 0, views: 0, clicks: 0 },
+    subscription: { count: 0, views: 0, clicks: 0 },
+    promotion: { count: 0, views: 0, clicks: 0 },
+  }
+
+  let total = 0
+  let active = 0
+  let inactive = 0
+  let totalViews = 0
+  let totalClicks = 0
+
+  cards.forEach((card) => {
+    total++
+    if (card.is_active) {
+      active++
+    } else {
+      inactive++
+    }
+    totalViews += card.view_count || 0
+    totalClicks += card.click_count || 0
+
+    const category = card.category_primary as CategoryPrimary
+    if (category && categoryStats[category]) {
+      categoryStats[category].count++
+      categoryStats[category].views += card.view_count || 0
+      categoryStats[category].clicks += card.click_count || 0
+    }
+  })
+
+  return {
+    total,
+    active,
+    inactive,
+    total_views: totalViews,
+    total_clicks: totalClicks,
+    by_category: Object.entries(categoryStats).map(([category, stats]) => ({
+      category: category as CategoryPrimary,
+      ...stats,
+    })),
+  }
+}
+
+// ============================================================================
+// 사용자 검색 (부가명함 필터용)
+// ============================================================================
+
+/**
+ * 사용자 검색 (이메일, 이름)
+ */
+export async function searchUsersForFilter(
+  search: string
+): Promise<Array<{ id: string; email: string; name?: string }>> {
+  if (!search || search.length < 2) {
+    return []
+  }
+
+  const { data, error } = await supabase
+    .from('auth.users')
+    .select('id, email, raw_user_meta_data')
+    .or(`email.ilike.%${search}%`)
+    .limit(10)
+
+  if (error) {
+    // auth.users에 직접 접근이 안될 수 있으므로 business_cards에서 조회
+    const { data: cardData, error: cardError } = await supabase
+      .from('business_cards')
+      .select('user_id, name')
+      .or(`name.ilike.%${search}%`)
+      .limit(10)
+
+    if (cardError) {
+      console.error('Error searching users:', cardError)
+      return []
+    }
+
+    return (cardData || []).map((card) => ({
+      id: card.user_id,
+      email: '',
+      name: card.name,
+    }))
+  }
+
+  return (data || []).map((user) => ({
+    id: user.id,
+    email: user.email,
+    name: user.raw_user_meta_data?.name || user.raw_user_meta_data?.full_name,
+  }))
+}

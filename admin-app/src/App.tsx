@@ -7,6 +7,7 @@ import { UsersPage } from '@/pages/users/UsersPage'
 import { UserDetailPage } from '@/pages/users/UserDetailPage'
 import { CardsPage } from '@/pages/cards/CardsPage'
 import { CardDetailPage } from '@/pages/cards/CardDetailPage'
+import UserSidejobsPage from '@/pages/user-sidejobs/UserSidejobsPage'
 import { SidejobsPage } from '@/pages/sidejobs/SidejobsPage'
 import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
@@ -63,7 +64,10 @@ function App() {
           <Route path="cards" element={<CardsPage />} />
           <Route path="cards/:id" element={<CardDetailPage />} />
 
-          {/* Sidejob Management */}
+          {/* User Sidejob Management */}
+          <Route path="user-sidejobs" element={<UserSidejobsPage />} />
+
+          {/* Sidejob Management (Admin Templates) */}
           <Route path="sidejobs" element={<SidejobsPage />} />
 
           {/* QR Code Management */}

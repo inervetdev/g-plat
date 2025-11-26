@@ -2,6 +2,7 @@ import {
   LayoutDashboard,
   Users,
   CreditCard,
+  Package,
   Briefcase,
   QrCode,
   Flag,
@@ -65,6 +66,11 @@ export function Sidebar() {
           to="/cards"
           icon={<CreditCard className="w-5 h-5" />}
           label="명함 관리"
+        />
+        <NavLink
+          to="/user-sidejobs"
+          icon={<Package className="w-5 h-5" />}
+          label="부가명함 관리"
         />
         <NavLink
           to="/sidejobs"
