@@ -12,6 +12,7 @@ import {
   MousePointerClick,
   ChevronLeft,
   ChevronRight,
+  Plus,
 } from 'lucide-react'
 import {
   useUserSidejobs,
@@ -24,6 +25,7 @@ import {
   UserSidejobTableView,
   UserSidejobFiltersPanel,
   UserSidejobEditModal,
+  UserSidejobCreateModal,
 } from '@/components/user-sidejobs'
 import type {
   UserSidejobCard as UserSidejobCardType,
@@ -44,6 +46,7 @@ export default function UserSidejobsPage() {
     per_page: 20,
   })
   const [editingCard, setEditingCard] = useState<UserSidejobCardType | null>(null)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   // 데이터 조회
   const { data: cardsData, isLoading, refetch } = useUserSidejobs(filters, pagination)
@@ -104,6 +107,13 @@ export default function UserSidejobsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+          >
+            <Plus className="w-4 h-4" />
+            새 부가명함 생성
+          </button>
           <button
             onClick={() => setViewMode('grid')}
             className={`p-2 rounded-lg ${
@@ -260,6 +270,16 @@ export default function UserSidejobsPage() {
           onSuccess={handleSuccess}
         />
       )}
+
+      {/* 생성 모달 */}
+      <UserSidejobCreateModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => {
+          setIsCreateModalOpen(false)
+          refetch()
+        }}
+      />
     </div>
   )
 }

@@ -404,3 +404,132 @@ export async function searchUsersForFilter(
     name: user.raw_user_meta_data?.name || user.raw_user_meta_data?.full_name,
   }))
 }
+
+// ============================================================================
+// 생성 (관리자용)
+// ============================================================================
+
+/**
+ * 부가명함 생성 입력 타입
+ */
+export interface CreateUserSidejobInput {
+  user_id: string
+  business_card_id?: string
+  title: string
+  description?: string
+  image_url?: string
+  price?: string
+  cta_text?: string
+  cta_link?: string
+  category_primary?: CategoryPrimary
+  category_secondary?: string
+  badge?: string
+  is_active?: boolean
+  display_order?: number
+}
+
+/**
+ * 새 부가명함 생성 (관리자)
+ */
+export async function createUserSidejob(
+  input: CreateUserSidejobInput
+): Promise<UserSidejobCard> {
+  console.log('Creating user sidejob:', input)
+
+  const { data, error } = await supabase
+    .from('sidejob_cards')
+    .insert({
+      user_id: input.user_id,
+      business_card_id: input.business_card_id || null,
+      title: input.title,
+      description: input.description || null,
+      image_url: input.image_url || null,
+      price: input.price || null,
+      cta_text: input.cta_text || null,
+      cta_link: input.cta_link || null,
+      category_primary: input.category_primary || null,
+      category_secondary: input.category_secondary || null,
+      badge: input.badge || null,
+      is_active: input.is_active ?? true,
+      display_order: input.display_order ?? 0,
+      view_count: 0,
+      click_count: 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .select(`
+      *,
+      business_card:business_cards!business_card_id (
+        id,
+        name,
+        custom_url,
+        user_id
+      )
+    `)
+    .single()
+
+  if (error) {
+    console.error('Error creating user sidejob:', error)
+    throw error
+  }
+
+  console.log('User sidejob created:', data)
+  return data as UserSidejobCard
+}
+
+/**
+ * 사용자별 명함 목록 조회 (부가명함 생성 시 선택용)
+ */
+export async function fetchBusinessCardsForUser(
+  userId: string
+): Promise<Array<{ id: string; name: string; custom_url: string | null }>> {
+  const { data, error } = await supabase
+    .from('business_cards')
+    .select('id, name, custom_url')
+    .eq('user_id', userId)
+    .eq('is_active', true)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching business cards:', error)
+    return []
+  }
+
+  return data || []
+}
+
+/**
+ * 검색으로 사용자 조회 (부가명함 생성 시 사용자 선택용)
+ */
+export async function searchUsersForSidejob(
+  search: string
+): Promise<Array<{ id: string; name: string; email?: string }>> {
+  if (!search || search.length < 2) {
+    return []
+  }
+
+  // business_cards에서 사용자 검색
+  const { data, error } = await supabase
+    .from('business_cards')
+    .select('user_id, name')
+    .or(`name.ilike.%${search}%`)
+    .limit(20)
+
+  if (error) {
+    console.error('Error searching users:', error)
+    return []
+  }
+
+  // 고유 사용자만 반환
+  const uniqueUsers = new Map<string, { id: string; name: string }>()
+  for (const card of data || []) {
+    if (!uniqueUsers.has(card.user_id)) {
+      uniqueUsers.set(card.user_id, {
+        id: card.user_id,
+        name: card.name,
+      })
+    }
+  }
+
+  return Array.from(uniqueUsers.values())
+}

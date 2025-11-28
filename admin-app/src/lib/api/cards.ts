@@ -480,3 +480,152 @@ export async function updateCard(cardId: string, updates: Partial<CardWithUser>)
   console.log('✅ Card updated successfully:', data)
   return data
 }
+
+/**
+ * Create business card input type
+ */
+export interface CreateCardInput {
+  user_id: string
+  name: string
+  title?: string
+  company?: string
+  department?: string
+  phone?: string
+  email?: string
+  website?: string
+  address?: string
+  address_detail?: string
+  latitude?: number
+  longitude?: number
+  linkedin?: string
+  instagram?: string
+  facebook?: string
+  twitter?: string
+  youtube?: string
+  github?: string
+  introduction?: string
+  services?: string[]
+  skills?: string[]
+  theme?: string
+  custom_url?: string
+  profile_image_url?: string
+  company_logo_url?: string
+  is_active?: boolean
+  is_primary?: boolean
+}
+
+/**
+ * Create a new business card (Admin only)
+ * @param input - Card data to create
+ */
+export async function createCard(input: CreateCardInput): Promise<CardWithUser> {
+  console.log('🔧 createCard called:', input)
+
+  const { data, error } = await supabase
+    .from('business_cards')
+    .insert({
+      ...input,
+      is_active: input.is_active ?? true,
+      is_primary: input.is_primary ?? true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .select(`
+      *,
+      users (
+        id,
+        name,
+        email
+      )
+    `)
+    .single()
+
+  if (error) {
+    console.error('❌ Error creating card:', error)
+    console.error('Error details:', JSON.stringify(error, null, 2))
+    throw new Error(`Failed to create card: ${error.message}`)
+  }
+
+  console.log('✅ Card created successfully:', data)
+
+  // Log admin action
+  await logAdminAction({
+    action: 'card_created',
+    target_type: 'card',
+    target_id: data.id,
+    details: { user_id: input.user_id, name: input.name },
+  })
+
+  return data as CardWithUser
+}
+
+/**
+ * Fetch users for admin card creation
+ * Returns users with their basic info for selection
+ */
+export async function fetchUsersForCardCreate(
+  search: string = ''
+): Promise<Array<{ id: string; email: string; name?: string }>> {
+  // Search from business_cards to find existing users with names
+  let query = supabase
+    .from('business_cards')
+    .select('user_id, name')
+    .limit(20)
+
+  if (search && search.length >= 2) {
+    query = query.or(`name.ilike.%${search}%`)
+  }
+
+  const { data, error } = await query
+
+  if (error) {
+    console.error('Error fetching users:', error)
+    return []
+  }
+
+  // Get unique users
+  const uniqueUsers = new Map<string, { id: string; email: string; name?: string }>()
+
+  for (const card of data || []) {
+    if (!uniqueUsers.has(card.user_id)) {
+      uniqueUsers.set(card.user_id, {
+        id: card.user_id,
+        email: '',
+        name: card.name,
+      })
+    }
+  }
+
+  return Array.from(uniqueUsers.values())
+}
+
+/**
+ * Check if custom URL is available
+ */
+export async function checkCustomUrlAvailability(
+  customUrl: string,
+  excludeCardId?: string
+): Promise<boolean> {
+  let query = supabase
+    .from('business_cards')
+    .select('id')
+    .eq('custom_url', customUrl)
+
+  if (excludeCardId) {
+    query = query.neq('id', excludeCardId)
+  }
+
+  const { data, error } = await query.single()
+
+  if (error && error.code === 'PGRST116') {
+    // No rows found - URL is available
+    return true
+  }
+
+  if (data) {
+    // URL already exists
+    return false
+  }
+
+  return true
+}

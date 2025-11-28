@@ -359,8 +359,35 @@ WHERE table_name = 'admin_users';
 
 - `admin-app/fix-business-cards-rls.sql` - Business Cards RLS 정책 SQL
 - `admin-app/fix-storage-rls.sql` - Storage RLS 정책 SQL
+- `admin-app/fix-admin-insert-rls.sql` - Admin INSERT 정책 SQL (명함/부가명함 생성용)
 - `admin-app/CREATE_ADMIN_RLS_POLICIES.sql` - 대안 방식 (is_admin() function 사용)
 - `admin-app/simple-admin-storage-policy.sql` - 간소화된 Storage 정책
+
+---
+
+## ✅ Step 6: Admin INSERT 정책 적용 (명함/부가명함 생성용)
+
+관리자가 명함과 부가명함을 직접 생성하려면 추가 RLS INSERT 정책이 필요합니다.
+
+### 6-1. SQL Editor에서 실행
+
+**파일 경로**: `admin-app/fix-admin-insert-rls.sql`
+
+SQL Editor에서 해당 파일의 내용을 실행합니다.
+
+### 6-2. 정책 확인
+
+```sql
+-- business_cards INSERT 정책 확인
+SELECT policyname, cmd
+FROM pg_policies
+WHERE tablename = 'business_cards' AND cmd = 'INSERT';
+
+-- sidejob_cards INSERT 정책 확인
+SELECT policyname, cmd
+FROM pg_policies
+WHERE tablename = 'sidejob_cards' AND cmd = 'INSERT';
+```
 
 ---
 

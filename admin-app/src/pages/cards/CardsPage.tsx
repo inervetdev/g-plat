@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { CreditCard, Search, Download, Grid3x3, List, CheckSquare } from 'lucide-react'
+import { CreditCard, Search, Download, Grid3x3, List, CheckSquare, Plus } from 'lucide-react'
 import { useCards } from '@/hooks/useCards'
 import { CardsGridView } from '@/components/cards/CardsGridView'
 import { CardsTableView } from '@/components/cards/CardsTableView'
 import { CardFilters } from '@/components/cards/CardFilters'
 import { BulkActionsBar } from '@/components/cards/BulkActionsBar'
 import { CardEditModal } from '@/components/cards/CardEditModal'
+import { CardCreateModal } from '@/components/cards/CardCreateModal'
 import { fetchCard, deleteCard } from '@/lib/api/cards'
 import type { CardFilters as CardFiltersType, PaginationParams } from '@/lib/api/cards'
 import type { CardWithStats } from '@/types/admin'
@@ -17,6 +18,7 @@ export function CardsPage() {
   const [selectedCards, setSelectedCards] = useState<Set<string>>(new Set())
   const [editingCard, setEditingCard] = useState<CardWithStats | null>(null)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [filters, setFilters] = useState<CardFiltersType>({
     search: '',
     theme: 'all',
@@ -121,6 +123,13 @@ export function CardsPage() {
             <button className="px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition flex items-center gap-2">
               <Download className="w-4 h-4" />
               CSV 다운로드
+            </button>
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              새 명함 생성
             </button>
           </div>
         </div>
@@ -311,6 +320,16 @@ export function CardsPage() {
           onSuccess={handleEditSuccess}
         />
       )}
+
+      {/* Create Modal */}
+      <CardCreateModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSuccess={() => {
+          setIsCreateModalOpen(false)
+          refetch()
+        }}
+      />
     </div>
   )
 }
