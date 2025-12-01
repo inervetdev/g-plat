@@ -144,3 +144,72 @@ export interface CardFilters {
   sort_by?: 'created_at' | 'updated_at' | 'view_count'
   sort_order?: 'asc' | 'desc'
 }
+
+// QR Code types
+export interface QRCode {
+  id: string
+  short_code: string
+  target_url: string
+  target_type: string
+  user_id: string
+  business_card_id: string | null
+  campaign: string | null
+  is_active: boolean
+  scan_count: number
+  max_scans: number | null
+  expires_at: string | null
+  target_rules: Record<string, any> | null
+  created_at: string
+  updated_at: string
+}
+
+export interface QRCodeWithDetails extends QRCode {
+  business_card?: {
+    id: string
+    name: string
+    company: string | null
+    custom_url: string | null
+  } | null
+  user?: {
+    id: string
+    name: string
+    email: string
+  } | null
+}
+
+export interface QRScan {
+  id: string
+  qr_code_id: string
+  scanned_at: string
+  device_type: string | null
+  browser: string | null
+  os: string | null
+  ip_address: string | null
+  referrer: string | null
+  visitor_id: string | null
+  city: string | null
+  country: string | null
+  session_duration: number | null
+  user_agent: string | null
+}
+
+export interface QRCodeStats {
+  total_scans: number
+  scans_today: number
+  scans_this_week: number
+  scans_this_month: number
+  scans_by_day: Array<{ date: string; count: number }>
+  scans_by_device: Array<{ device: string; count: number }>
+  scans_by_browser: Array<{ browser: string; count: number }>
+  scans_by_country: Array<{ country: string; count: number }>
+  recent_scans: QRScan[]
+}
+
+export interface QRFilters {
+  search?: string
+  status?: 'active' | 'inactive' | 'expired' | 'all'
+  campaign?: string
+  has_card?: boolean | 'all'
+  sort_by?: 'created_at' | 'scan_count' | 'updated_at'
+  sort_order?: 'asc' | 'desc'
+}
