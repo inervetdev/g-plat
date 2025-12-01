@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import {
   X,
-  QrCode,
   ExternalLink,
   Eye,
   Calendar,
@@ -58,16 +57,18 @@ export function QrDetailModal({ qrCode, isOpen, onClose }: QrDetailModalProps) {
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center">
-              <QrCode className="w-8 h-8 text-blue-600" />
-            </div>
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=112x112&data=${encodeURIComponent(`https://g-plat.com/q/${qrCode.short_code}`)}`}
+              alt={`QR: ${qrCode.short_code}`}
+              className="w-14 h-14 rounded-lg"
+            />
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <code className="px-2 py-1 bg-blue-50 text-blue-700 text-lg rounded font-mono">
-                  {qrCode.short_code}
-                </code>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {qrCode.business_card?.name || '명함 미연결'}
               </h2>
-              <p className="text-gray-500 text-sm mt-1">QR 코드 상세 정보 및 스캔 통계</p>
+              <p className="text-gray-500 text-sm mt-1">
+                g-plat.com/q/{qrCode.short_code}
+              </p>
             </div>
           </div>
           <button
@@ -89,14 +90,14 @@ export function QrDetailModal({ qrCode, isOpen, onClose }: QrDetailModalProps) {
                 <div className="flex items-start gap-3">
                   <Link2 className="w-5 h-5 text-gray-400 mt-0.5" />
                   <div>
-                    <p className="text-sm text-gray-500">대상 URL</p>
+                    <p className="text-sm text-gray-500">QR 링크</p>
                     <a
-                      href={qrCode.target_url}
+                      href={`https://g-plat.com/q/${qrCode.short_code}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline break-all"
+                      className="text-blue-600 hover:underline"
                     >
-                      {qrCode.target_url}
+                      https://g-plat.com/q/{qrCode.short_code}
                     </a>
                   </div>
                 </div>

@@ -13,7 +13,6 @@ import {
   BarChart3,
   Download,
   Calendar,
-  Users,
 } from 'lucide-react'
 import { fetchQRCodes, fetchQROverviewStats, toggleQRCodeActive, deleteQRCode } from '@/lib/api/qr'
 import { QrDetailModal } from '@/components/qr/QrDetailModal'
@@ -301,19 +300,23 @@ export function QrCodesPage() {
             >
               {/* QR Image Area */}
               <div className="p-6 bg-gray-50 flex items-center justify-center">
-                <div className="w-24 h-24 bg-white rounded-lg shadow-inner flex items-center justify-center">
-                  <QrCode className="w-16 h-16 text-gray-700" />
-                </div>
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(`https://g-plat.com/q/${qr.short_code}`)}`}
+                  alt={`QR: ${qr.short_code}`}
+                  className="w-24 h-24 rounded-lg bg-white p-1"
+                />
               </div>
 
               {/* Info */}
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <code className="px-2 py-1 bg-blue-100 text-blue-700 text-sm rounded font-mono">
-                    {qr.short_code}
-                  </code>
+                  {qr.business_card ? (
+                    <p className="font-medium text-gray-900 truncate">{qr.business_card.name}</p>
+                  ) : (
+                    <p className="text-gray-500 text-sm">명함 미연결</p>
+                  )}
                   <span
-                    className={`px-2 py-1 text-xs rounded-full ${
+                    className={`px-2 py-1 text-xs rounded-full flex-shrink-0 ${
                       isExpired(qr.expires_at)
                         ? 'bg-red-100 text-red-700'
                         : qr.is_active
@@ -325,26 +328,16 @@ export function QrCodesPage() {
                   </span>
                 </div>
 
-                {qr.business_card && (
-                  <p className="text-sm text-gray-900 font-medium truncate">
-                    {qr.business_card.name}
-                  </p>
-                )}
+                <p className="text-xs text-gray-400">g-plat.com/q/{qr.short_code}</p>
                 {qr.campaign && (
-                  <p className="text-xs text-gray-500 truncate">캠페인: {qr.campaign}</p>
+                  <p className="text-xs text-purple-600 mt-1 truncate">캠페인: {qr.campaign}</p>
                 )}
 
                 <div className="flex items-center gap-4 mt-3 text-sm text-gray-600">
                   <span className="flex items-center gap-1">
                     <Eye className="w-4 h-4" />
-                    {qr.scan_count}
+                    {qr.scan_count}회 스캔
                   </span>
-                  {qr.user && (
-                    <span className="flex items-center gap-1 truncate">
-                      <Users className="w-4 h-4" />
-                      {qr.user.name}
-                    </span>
-                  )}
                 </div>
 
                 {/* Actions */}
@@ -354,13 +347,14 @@ export function QrCodesPage() {
                     className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm flex items-center justify-center gap-1"
                   >
                     <BarChart3 className="w-4 h-4" />
-                    통계
+                    분석
                   </button>
                   <a
                     href={`https://g-plat.com/q/${qr.short_code}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                    title="QR 링크 열기"
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
@@ -371,6 +365,7 @@ export function QrCodesPage() {
                         ? 'text-green-600 hover:bg-green-50'
                         : 'text-gray-400 hover:bg-gray-100'
                     }`}
+                    title={qr.is_active ? '비활성화' : '활성화'}
                   >
                     {qr.is_active ? (
                       <ToggleRight className="w-4 h-4" />
@@ -391,10 +386,7 @@ export function QrCodesPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    QR 코드
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    연결된 명함
+                    QR 코드 / 명함
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     캠페인
@@ -419,30 +411,22 @@ export function QrCodesPage() {
                     {/* QR Code */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <QrCode className="w-8 h-8 text-gray-600" />
-                        </div>
+                        <img
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=48x48&data=${encodeURIComponent(`https://g-plat.com/q/${qr.short_code}`)}`}
+                          alt={`QR: ${qr.short_code}`}
+                          className="w-12 h-12 rounded-lg"
+                        />
                         <div>
-                          <code className="px-2 py-1 bg-blue-50 text-blue-700 text-sm rounded font-mono">
-                            {qr.short_code}
-                          </code>
-                          <p className="text-xs text-gray-500 mt-1 max-w-[200px] truncate">
-                            {qr.target_url}
+                          {qr.business_card ? (
+                            <p className="font-medium text-gray-900">{qr.business_card.name}</p>
+                          ) : (
+                            <p className="text-gray-500 text-sm">명함 미연결</p>
+                          )}
+                          <p className="text-xs text-gray-400 mt-0.5">
+                            g-plat.com/q/{qr.short_code}
                           </p>
                         </div>
                       </div>
-                    </td>
-
-                    {/* Business Card */}
-                    <td className="px-6 py-4">
-                      {qr.business_card ? (
-                        <div>
-                          <p className="font-medium text-gray-900">{qr.business_card.name}</p>
-                          <p className="text-sm text-gray-500">{qr.business_card.company}</p>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400 text-sm">-</span>
-                      )}
                     </td>
 
                     {/* Campaign */}
