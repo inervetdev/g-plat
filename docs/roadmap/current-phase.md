@@ -23,9 +23,9 @@ tags:
 ## 현재 상태 요약
 
 **Phase**: 3
-**Week**: 15
-**전체 진행률**: 약 85%
-**버전**: v2.7 (2025-12-01)
+**Week**: 16
+**전체 진행률**: 약 87%
+**버전**: v2.8 (2025-12-04)
 
 ## Phase 3 개요
 
@@ -40,6 +40,32 @@ tags:
 5. ⏳ 고급 분석 기능
 
 ## 최근 완료 사항
+
+### Week 16 (2025-12-04): QR 코드 시스템 완성 ✅
+
+#### 1. QR 코드 자동 생성 기능
+- 명함 생성 시 QR 코드 자동 생성
+  - `lib/qr.ts`: QR 코드 생성 유틸리티 함수
+  - `CreateCardPageOptimized.tsx`: 명함 생성 후 자동 QR 생성
+- 기존 명함에 QR 코드 자동 생성
+  - SQL 마이그레이션: `20251204000002_create_qr_for_existing_cards.sql`
+  - 19개 기존 명함에 QR 코드 생성 완료
+
+#### 2. QR 코드 공유 기능 활성화
+- `QRCodeGenerator.tsx`: Web Share API 구현
+- QR 코드 이미지 + URL 공유
+- 통계 버튼 제거 (중복 UI 제거)
+
+#### 3. QR 리다이렉트 시스템 수정
+- `vercel.json`: rewrites 규칙 수정
+  - `/q/` 경로를 rewrites에서 제외
+  - redirects가 정상 작동하도록 개선
+- Edge Function 리다이렉트 정상화
+
+#### 4. Admin QR 관리 개선
+- TypeScript 타입 정의 수정 (QRCodeWithDetails)
+- Admin RLS 정책 추가 (is_admin_user())
+- 활성/비활성 토글 기능 정상화
 
 ### Week 15 (2025-12-01): QR 코드 관리 모듈 ✅
 
