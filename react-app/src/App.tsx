@@ -26,6 +26,9 @@ const QRCodePage = lazy(() => import('./pages/QRCodePage'))
 const QRStatsPage = lazy(() => import('./pages/QRStatsPage'))
 const PerformanceComparisonPage = lazy(() => import('./pages/PerformanceComparisonPage'))
 
+// QR Redirect page
+const QRRedirectPage = lazy(() => import('./pages/QRRedirectPage'))
+
 // Demo/Test pages
 const DemoCardPage = lazy(() => import('./pages/DemoCardPage'))
 const TestPage = lazy(() => import('./pages/TestPage'))
@@ -58,6 +61,9 @@ function App() {
 
               {/* Public card view */}
               <Route path="/card/:userId" element={<CardViewPage />} />
+
+              {/* QR code redirect - Edge Function으로 리다이렉트 */}
+              <Route path="/q/:code" element={<QRRedirectPage />} />
 
               {/* Authenticated routes - React Compiler Optimized by default */}
               <Route path="/dashboard" element={<DashboardPage />} />
