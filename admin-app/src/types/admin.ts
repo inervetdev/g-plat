@@ -169,6 +169,7 @@ export interface QRCodeWithDetails extends QRCode {
     name: string
     company: string | null
     custom_url: string | null
+    user_id: string
   } | null
   user?: {
     id: string
@@ -209,7 +210,6 @@ export interface QRFilters {
   search?: string
   status?: 'active' | 'inactive' | 'expired' | 'all'
   campaign?: string
-  has_card?: boolean | 'all'
   sort_by?: 'created_at' | 'scan_count' | 'updated_at'
   sort_order?: 'asc' | 'desc'
 }

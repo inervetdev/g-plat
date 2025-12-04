@@ -64,7 +64,7 @@ export function QrDetailModal({ qrCode, isOpen, onClose }: QrDetailModalProps) {
             />
             <div>
               <h2 className="text-2xl font-bold text-gray-900">
-                {qrCode.business_card?.name || '명함 미연결'}
+                {qrCode.business_card?.name || '-'}
               </h2>
               <p className="text-gray-500 text-sm mt-1">
                 g-plat.com/q/{qrCode.short_code}

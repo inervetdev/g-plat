@@ -28,7 +28,8 @@ export async function fetchQRCodes(
         id,
         name,
         company,
-        custom_url
+        custom_url,
+        user_id
       )
     `,
       { count: 'exact' }
@@ -54,14 +55,6 @@ export async function fetchQRCodes(
 
   if (filters.campaign) {
     query = query.eq('campaign', filters.campaign)
-  }
-
-  if (filters.has_card !== undefined && filters.has_card !== 'all') {
-    if (filters.has_card) {
-      query = query.not('business_card_id', 'is', null)
-    } else {
-      query = query.is('business_card_id', null)
-    }
   }
 
   // Apply sorting
