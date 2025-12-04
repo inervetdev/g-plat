@@ -281,24 +281,37 @@ export default function QRCodeGenerator({
           </button>
 
           <button
-            onClick={() => navigator.clipboard.writeText(qrDataUrl)}
+            onClick={async () => {
+              if (navigator.share) {
+                try {
+                  // Convert data URL to Blob
+                  const response = await fetch(qrDataUrl)
+                  const blob = await response.blob()
+                  const file = new File([blob], 'qr-code.png', { type: 'image/png' })
+
+                  await navigator.share({
+                    title: title,
+                    text: `${title} - QR 코드`,
+                    files: [file]
+                  })
+                } catch (error) {
+                  console.error('Share failed:', error)
+                  // Fallback: copy URL to clipboard
+                  await navigator.clipboard.writeText(url)
+                  alert('URL이 클립보드에 복사되었습니다!')
+                }
+              } else {
+                // Fallback for browsers that don't support Web Share API
+                await navigator.clipboard.writeText(url)
+                alert('URL이 클립보드에 복사되었습니다!')
+              }
+            }}
             disabled={!qrDataUrl}
             className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Link className="w-4 h-4" />
             공유
           </button>
-
-          {enableTracking && (
-            <button
-              onClick={() => window.open(`/qr-stats/${shortUrl?.split('/').pop()}`, '_blank')}
-              disabled={!shortUrl}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <BarChart3 className="w-4 h-4" />
-              통계
-            </button>
-          )}
         </div>
       </div>
 

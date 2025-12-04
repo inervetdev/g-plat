@@ -6,13 +6,15 @@ import {
   Grid3x3,
   List,
   Eye,
-  ExternalLink,
   ToggleLeft,
   ToggleRight,
   Trash2,
   BarChart3,
   Download,
   Calendar,
+  X,
+  User,
+  ExternalLink,
 } from 'lucide-react'
 import { fetchQRCodes, fetchQROverviewStats, toggleQRCodeActive, deleteQRCode } from '@/lib/api/qr'
 import { QrDetailModal } from '@/components/qr/QrDetailModal'
@@ -24,10 +26,13 @@ export function QrCodesPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('table')
   const [selectedQR, setSelectedQR] = useState<QRCodeWithDetails | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [qrPopup, setQrPopup] = useState<{ isOpen: boolean; qr: QRCodeWithDetails | null }>({
+    isOpen: false,
+    qr: null,
+  })
   const [filters, setFilters] = useState<QRFilters>({
     search: '',
     status: 'all',
-    has_card: 'all',
     sort_by: 'created_at',
     sort_order: 'desc',
   })
@@ -247,19 +252,6 @@ export function QrCodesPage() {
           </select>
 
           <select
-            value={String(filters.has_card)}
-            onChange={(e) => {
-              const val = e.target.value
-              handleFilterChange('has_card', val === 'all' ? 'all' : val === 'true')
-            }}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">모든 타입</option>
-            <option value="true">명함 연결됨</option>
-            <option value="false">명함 없음</option>
-          </select>
-
-          <select
             value={filters.sort_by || 'created_at'}
             onChange={(e) => handleFilterChange('sort_by', e.target.value)}
             className="px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -298,8 +290,11 @@ export function QrCodesPage() {
               key={qr.id}
               className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden hover:shadow-lg transition"
             >
-              {/* QR Image Area */}
-              <div className="p-6 bg-gray-50 flex items-center justify-center">
+              {/* QR Image Area - Clickable */}
+              <div
+                className="p-6 bg-gray-50 flex items-center justify-center cursor-pointer hover:bg-gray-100 transition"
+                onClick={() => setQrPopup({ isOpen: true, qr })}
+              >
                 <img
                   src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(`https://g-plat.com/q/${qr.short_code}`)}`}
                   alt={`QR: ${qr.short_code}`}
@@ -310,11 +305,7 @@ export function QrCodesPage() {
               {/* Info */}
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  {qr.business_card ? (
-                    <p className="font-medium text-gray-900 truncate">{qr.business_card.name}</p>
-                  ) : (
-                    <p className="text-gray-500 text-sm">명함 미연결</p>
-                  )}
+                  <p className="font-medium text-gray-900 truncate">{qr.business_card?.name || '-'}</p>
                   <span
                     className={`px-2 py-1 text-xs rounded-full flex-shrink-0 ${
                       isExpired(qr.expires_at)
@@ -349,15 +340,6 @@ export function QrCodesPage() {
                     <BarChart3 className="w-4 h-4" />
                     분석
                   </button>
-                  <a
-                    href={`https://g-plat.com/q/${qr.short_code}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                    title="QR 링크 열기"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
                   <button
                     onClick={() => handleToggleActive(qr)}
                     className={`p-2 rounded-lg transition ${
@@ -386,7 +368,13 @@ export function QrCodesPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    QR 코드 / 명함
+                    QR 코드
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    연결된 명함
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                    사용자
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     캠페인
@@ -408,24 +396,38 @@ export function QrCodesPage() {
               <tbody className="divide-y divide-gray-200">
                 {qrData?.data.map((qr) => (
                   <tr key={qr.id} className="hover:bg-gray-50 transition">
-                    {/* QR Code */}
+                    {/* QR Code - Clickable */}
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
+                      <div
+                        className="flex items-center gap-3 cursor-pointer"
+                        onClick={() => setQrPopup({ isOpen: true, qr })}
+                      >
                         <img
                           src={`https://api.qrserver.com/v1/create-qr-code/?size=48x48&data=${encodeURIComponent(`https://g-plat.com/q/${qr.short_code}`)}`}
                           alt={`QR: ${qr.short_code}`}
-                          className="w-12 h-12 rounded-lg"
+                          className="w-12 h-12 rounded-lg hover:opacity-80 transition"
                         />
-                        <div>
-                          {qr.business_card ? (
-                            <p className="font-medium text-gray-900">{qr.business_card.name}</p>
-                          ) : (
-                            <p className="text-gray-500 text-sm">명함 미연결</p>
-                          )}
-                          <p className="text-xs text-gray-400 mt-0.5">
-                            g-plat.com/q/{qr.short_code}
-                          </p>
-                        </div>
+                        <p className="text-xs text-gray-400">
+                          g-plat.com/q/{qr.short_code}
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* Business Card */}
+                    <td className="px-6 py-4">
+                      <p className="font-medium text-gray-900">{qr.business_card?.name || '-'}</p>
+                      {qr.business_card?.company && (
+                        <p className="text-xs text-gray-500 mt-0.5">{qr.business_card.company}</p>
+                      )}
+                    </td>
+
+                    {/* User */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm text-gray-700">
+                          {qr.business_card?.user_id ? qr.business_card.user_id.slice(0, 8) + '...' : '-'}
+                        </span>
                       </div>
                     </td>
 
@@ -478,15 +480,6 @@ export function QrCodesPage() {
                         >
                           <BarChart3 className="w-4 h-4" />
                         </button>
-                        <a
-                          href={`https://g-plat.com/q/${qr.short_code}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                          title="QR 링크 열기"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
                         <button
                           onClick={() => handleToggleActive(qr)}
                           className={`p-2 rounded-lg transition ${
@@ -567,6 +560,67 @@ export function QrCodesPage() {
             setSelectedQR(null)
           }}
         />
+      )}
+
+      {/* QR Code Popup Modal */}
+      {qrPopup.isOpen && qrPopup.qr && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+          onClick={() => setQrPopup({ isOpen: false, qr: null })}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-900">QR 코드</h3>
+              <button
+                onClick={() => setQrPopup({ isOpen: false, qr: null })}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 flex flex-col items-center">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`https://g-plat.com/q/${qrPopup.qr.short_code}`)}`}
+                alt={`QR: ${qrPopup.qr.short_code}`}
+                className="w-48 h-48 rounded-lg"
+              />
+              <p className="mt-4 text-sm text-gray-600 text-center">
+                {qrPopup.qr.business_card?.name || '명함'}
+              </p>
+              <p className="mt-2 text-xs text-gray-400 bg-gray-50 px-3 py-2 rounded-lg">
+                https://g-plat.com/q/{qrPopup.qr.short_code}
+              </p>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 border-t border-gray-100 flex gap-3">
+              <a
+                href={`https://g-plat.com/q/${qrPopup.qr.short_code}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-center text-sm flex items-center justify-center gap-2"
+              >
+                <ExternalLink className="w-4 h-4" />
+                링크 열기
+              </a>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(`https://g-plat.com/q/${qrPopup.qr?.short_code}`)
+                  alert('링크가 복사되었습니다!')
+                }}
+                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center text-sm"
+              >
+                링크 복사
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

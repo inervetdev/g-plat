@@ -80,7 +80,7 @@ export function Sidebar() {
         <NavLink
           to="/qr"
           icon={<QrCode className="w-5 h-5" />}
-          label="QR 코드"
+          label="QR 코드 관리"
         />
 
         {/* Operations Section */}
