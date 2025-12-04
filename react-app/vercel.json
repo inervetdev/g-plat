@@ -11,7 +11,7 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/:path((?!q).*)*",
       "destination": "/index.html"
     }
   ],
