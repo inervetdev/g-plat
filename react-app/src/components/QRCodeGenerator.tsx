@@ -61,12 +61,12 @@ export default function QRCodeGenerator({
           .limit(1)
 
         if (existingQRs && existingQRs.length > 0 && !fetchError) {
-          // Use existing QR code with short URL
+          // Use existing QR code with Edge Function URL
           const existingQR: QRCodeType = existingQRs[0]
           const isDevelopment = window.location.hostname === 'localhost'
           const trackingUrl = isDevelopment
             ? url // Development: use direct URL
-            : `https://g-plat.com/q/${existingQR.short_code}`
+            : `https://anwwjowwrxdygqyhhckr.supabase.co/functions/v1/qr-redirect/${existingQR.short_code}`
           setShortUrl(trackingUrl)
           console.log('Using existing QR code:', existingQR.short_code)
           return trackingUrl
@@ -76,11 +76,11 @@ export default function QRCodeGenerator({
       // Generate new QR code if none exists
       const shortCode = generateShortCode()
 
-      // Use short URL for production, direct URL for development
+      // Use Edge Function URL for production, direct URL for development
       const isDevelopment = window.location.hostname === 'localhost'
       const trackingUrl = isDevelopment
         ? url // Development: use direct URL
-        : `https://g-plat.com/q/${shortCode}`
+        : `https://anwwjowwrxdygqyhhckr.supabase.co/functions/v1/qr-redirect/${shortCode}`
 
       const { error } = await supabase
         .from('qr_codes')
@@ -109,7 +109,7 @@ export default function QRCodeGenerator({
             const isDevelopment = window.location.hostname === 'localhost'
             const trackingUrl = isDevelopment
               ? url // Development: use direct URL
-              : `https://g-plat.com/q/${existingQR.short_code}`
+              : `https://anwwjowwrxdygqyhhckr.supabase.co/functions/v1/qr-redirect/${existingQR.short_code}`
             setShortUrl(trackingUrl)
             return trackingUrl
           }
