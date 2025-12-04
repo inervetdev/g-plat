@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { createQRCodeForCard } from '../lib/qr'
 import { useTheme, type ThemeName } from '../contexts/ThemeContext'
 import ThemePreviewModal from '../components/ThemePreviewModal'
 import FilePreviewModal from '../components/FilePreviewModal'
@@ -428,6 +429,16 @@ export default function CreateCardPageOptimized() {
           alert(`명함 생성 중 오류가 발생했습니다: ${cardError.message}`)
         }
         return
+      }
+
+      // Create QR code for the new card
+      if (cardData) {
+        const cardUrl = cardData.custom_url
+          ? `${window.location.origin}/card/${cardData.custom_url}`
+          : `${window.location.origin}/card/${cardData.id}`
+
+        console.log('Creating QR code for card:', cardData.id)
+        await createQRCodeForCard(cardData.id, cardUrl)
       }
 
       if (attachmentFiles.length > 0 && cardData) {
