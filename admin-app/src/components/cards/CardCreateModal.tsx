@@ -357,7 +357,7 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
                     }
                   }}
                   onFocus={() => setShowUserDropdown(true)}
-                  placeholder="사용자 이름으로 검색..."
+                  placeholder="사용자 이름 또는 이메일로 검색..."
                   className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   disabled={isSubmitting}
                 />
@@ -377,15 +377,26 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
                       className="w-full px-4 py-2 text-left hover:bg-gray-50 flex flex-col"
                     >
                       <span className="font-medium text-gray-900">{user.name || '이름 없음'}</span>
-                      <span className="text-sm text-gray-500">{user.id.slice(0, 8)}...</span>
+                      <span className="text-sm text-gray-500">{user.email}</span>
                     </button>
                   ))}
                 </div>
               )}
 
+              {showUserDropdown && userSearch.length >= 2 && users.length === 0 && !searchingUsers && (
+                <div className="absolute z-20 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg px-4 py-3 text-sm text-gray-500">
+                  검색 결과가 없습니다.
+                </div>
+              )}
+
               {selectedUser && (
-                <div className="mt-2 p-2 bg-blue-50 rounded-lg text-sm text-blue-700">
-                  선택된 사용자: {selectedUser.name || selectedUser.id}
+                <div className="mt-2 p-3 bg-blue-50 rounded-lg">
+                  <div className="text-sm font-medium text-blue-900">
+                    {selectedUser.name || '이름 없음'}
+                  </div>
+                  <div className="text-xs text-blue-600">
+                    {selectedUser.email}
+                  </div>
                 </div>
               )}
 

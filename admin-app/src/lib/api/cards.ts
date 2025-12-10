@@ -566,14 +566,16 @@ export async function createCard(input: CreateCardInput): Promise<CardWithUser> 
 export async function fetchUsersForCardCreate(
   search: string = ''
 ): Promise<Array<{ id: string; email: string; name?: string }>> {
-  // Search from business_cards to find existing users with names
+  // Search from users table to find all users (including those without cards)
   let query = supabase
-    .from('business_cards')
-    .select('user_id, name')
+    .from('users')
+    .select('id, email, name')
     .limit(20)
+    .order('created_at', { ascending: false })
 
   if (search && search.length >= 2) {
-    query = query.or(`name.ilike.%${search}%`)
+    // Search by name or email
+    query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`)
   }
 
   const { data, error } = await query
@@ -583,20 +585,11 @@ export async function fetchUsersForCardCreate(
     return []
   }
 
-  // Get unique users
-  const uniqueUsers = new Map<string, { id: string; email: string; name?: string }>()
-
-  for (const card of data || []) {
-    if (!uniqueUsers.has(card.user_id)) {
-      uniqueUsers.set(card.user_id, {
-        id: card.user_id,
-        email: '',
-        name: card.name,
-      })
-    }
-  }
-
-  return Array.from(uniqueUsers.values())
+  return (data || []).map(user => ({
+    id: user.id,
+    email: user.email,
+    name: user.name,
+  }))
 }
 
 /**
