@@ -11,9 +11,10 @@ import {
   Phone,
   Mail,
   Globe,
-  MapPin
+  MapPin,
+  AlertTriangle
 } from 'lucide-react'
-import { fetchCard, fetchCardDetailStats } from '@/lib/api/cards'
+import { fetchCard, fetchCardDetailStats, deleteCard } from '@/lib/api/cards'
 import { ViewsChart } from '@/components/stats/ViewsChart'
 import { DeviceChart } from '@/components/stats/DeviceChart'
 import { BrowserChart } from '@/components/stats/BrowserChart'
@@ -25,6 +26,8 @@ export function CardDetailPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState<'overview' | 'stats' | 'qr' | 'visitors'>('overview')
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Fetch card data
   const { data: card, isLoading: cardLoading, error: cardError, refetch: refetchCard } = useQuery({
@@ -84,6 +87,24 @@ export function CardDetailPage() {
     }
   }
 
+  // Handle card deletion
+  const handleDelete = async () => {
+    if (!id) return
+
+    setIsDeleting(true)
+    try {
+      await deleteCard(id, false) // soft delete
+      alert('명함이 성공적으로 삭제되었습니다')
+      navigate('/cards')
+    } catch (error) {
+      console.error('Error deleting card:', error)
+      alert('명함 삭제에 실패했습니다')
+    } finally {
+      setIsDeleting(false)
+      setIsDeleteModalOpen(false)
+    }
+  }
+
   return (
     <div className="p-8">
       {/* Header */}
@@ -129,6 +150,7 @@ export function CardDetailPage() {
               QR 생성
             </button>
             <button
+              onClick={() => setIsDeleteModalOpen(true)}
               className="flex items-center gap-2 px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition"
             >
               <Trash2 className="w-4 h-4" />
@@ -455,6 +477,67 @@ export function CardDetailPage() {
             alert('명함이 성공적으로 수정되었습니다')
           }}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => !isDeleting && setIsDeleteModalOpen(false)}
+          />
+
+          {/* Modal */}
+          <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-md m-4 p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  명함 삭제
+                </h3>
+                <p className="text-gray-600 mb-1">
+                  정말로 이 명함을 삭제하시겠습니까?
+                </p>
+                <p className="text-sm text-gray-500">
+                  명함: <strong>{card?.name}</strong>
+                </p>
+                <p className="text-sm text-red-600 mt-2">
+                  이 작업은 되돌릴 수 없습니다.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+                className="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50 flex items-center gap-2"
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    삭제 중...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    삭제
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
