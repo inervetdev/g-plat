@@ -96,9 +96,13 @@ export async function fetchCards(
     query = query.eq('theme', filters.theme)
   }
 
+  // Filter by status (default: show only active cards)
   if (filters.status && filters.status !== 'all') {
     const isActive = filters.status === 'active'
     query = query.eq('is_active', isActive)
+  } else if (!filters.status || filters.status === 'all') {
+    // Default: only show active cards
+    query = query.eq('is_active', true)
   }
 
   if (filters.date_from) {
