@@ -12,6 +12,7 @@ interface MapPreviewProps {
 declare global {
   interface Window {
     kakao: any
+    kakaoMapsReady: boolean
   }
 }
 
@@ -32,34 +33,38 @@ export function MapPreview({
 
     // 카카오 맵 SDK가 로드될 때까지 대기
     const initMap = () => {
-      if (!window.kakao || !window.kakao.maps) {
-        console.warn('Kakao Maps SDK not loaded yet')
+      if (!window.kakao || !window.kakao.maps || !window.kakaoMapsReady) {
+        console.warn('Kakao Maps SDK not ready yet')
         return
       }
 
-      // 지도 생성
-      const mapOption = {
-        center: new window.kakao.maps.LatLng(latitude, longitude),
-        level: level
+      try {
+        // 지도 생성
+        const mapOption = {
+          center: new window.kakao.maps.LatLng(latitude, longitude),
+          level: level
+        }
+
+        const map = new window.kakao.maps.Map(mapRef.current, mapOption)
+        mapInstanceRef.current = map
+
+        // 마커 생성
+        const markerPosition = new window.kakao.maps.LatLng(latitude, longitude)
+        const marker = new window.kakao.maps.Marker({
+          position: markerPosition
+        })
+        marker.setMap(map)
+        markerRef.current = marker
+
+        // 지도 로드 완료 상태 업데이트
+        setIsMapReady(true)
+      } catch (error) {
+        console.error('Error initializing Kakao Map:', error)
       }
-
-      const map = new window.kakao.maps.Map(mapRef.current, mapOption)
-      mapInstanceRef.current = map
-
-      // 마커 생성
-      const markerPosition = new window.kakao.maps.LatLng(latitude, longitude)
-      const marker = new window.kakao.maps.Marker({
-        position: markerPosition
-      })
-      marker.setMap(map)
-      markerRef.current = marker
-
-      // 지도 로드 완료 상태 업데이트
-      setIsMapReady(true)
     }
 
-    // 카카오 맵 SDK 로드 확인
-    if (window.kakao && window.kakao.maps) {
+    // 카카오 맵 SDK 로드 확인 (kakaoMapsReady 플래그 체크)
+    if (window.kakaoMapsReady) {
       initMap()
     } else {
       // 커스텀 이벤트 리스너 등록
@@ -70,7 +75,7 @@ export function MapPreview({
 
       // SDK 로드 대기 (fallback)
       const checkInterval = setInterval(() => {
-        if (window.kakao && window.kakao.maps) {
+        if (window.kakaoMapsReady) {
           clearInterval(checkInterval)
           initMap()
         }

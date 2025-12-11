@@ -8,6 +8,7 @@
     <!-- Kakao Maps JavaScript API - Loaded dynamically to avoid document.write warnings -->
     <script>
       // 동적으로 Kakao Maps SDK 로드
+      window.kakaoMapsReady = false;
       (function() {
         const script = document.createElement('script');
         script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=bba0df1f2c213e2a055f8e465550b114&libraries=services&autoload=false';
@@ -17,6 +18,7 @@
           if (window.kakao && window.kakao.maps) {
             window.kakao.maps.load(function() {
               // Kakao Maps API 준비 완료
+              window.kakaoMapsReady = true;
               window.dispatchEvent(new Event('kakao-maps-loaded'));
             });
           }
