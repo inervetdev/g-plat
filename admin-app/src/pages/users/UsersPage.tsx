@@ -1,13 +1,97 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Users as UsersIcon, Search, Download, TrendingUp, UserPlus } from 'lucide-react'
-import { useUsers, useUserStats } from '@/hooks/useUsers'
+import { Users as UsersIcon, Search, Download, TrendingUp, UserPlus, ChevronDown, Star, Crown, Zap } from 'lucide-react'
+import { useUsers, useUserStats, useUpdateUser } from '@/hooks/useUsers'
 import { UserCreateModal } from '@/components/users/UserCreateModal'
-import type { UserFilters, PaginationParams } from '@/types/admin'
+import type { UserFilters, PaginationParams, UserWithStats } from '@/types/admin'
+
+// 빠른 등급 변경 드롭다운 컴포넌트
+function TierDropdown({
+  user,
+  onTierChange,
+  isUpdating
+}: {
+  user: UserWithStats
+  onTierChange: (userId: string, tier: 'FREE' | 'PREMIUM' | 'BUSINESS', grandfathered?: boolean) => void
+  isUpdating: boolean
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const tiers = [
+    { value: 'FREE', label: '무료', icon: null, color: 'bg-gray-100 text-gray-700' },
+    { value: 'PREMIUM', label: '프리미엄', icon: Zap, color: 'bg-blue-100 text-blue-700' },
+    { value: 'BUSINESS', label: '비즈니스', icon: Crown, color: 'bg-purple-100 text-purple-700' },
+  ]
+
+  const currentTier = tiers.find(t => t.value === user.subscription_tier) || tiers[0]
+  const TierIcon = currentTier.icon
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        disabled={isUpdating}
+        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${currentTier.color} hover:opacity-80 transition disabled:opacity-50`}
+      >
+        {TierIcon && <TierIcon className="w-3 h-3" />}
+        {currentTier.label}
+        {user.grandfathered && <Star className="w-3 h-3 text-amber-500" />}
+        <ChevronDown className={`w-3 h-3 transition ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-10"
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+            <div className="px-3 py-1.5 text-xs font-semibold text-gray-500 uppercase">등급 변경</div>
+            {tiers.map((tier) => {
+              const Icon = tier.icon
+              return (
+                <button
+                  key={tier.value}
+                  onClick={() => {
+                    onTierChange(user.id, tier.value as 'FREE' | 'PREMIUM' | 'BUSINESS')
+                    setIsOpen(false)
+                  }}
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50 ${
+                    user.subscription_tier === tier.value ? 'bg-gray-50 font-medium' : ''
+                  }`}
+                >
+                  {Icon && <Icon className="w-4 h-4" />}
+                  {!Icon && <span className="w-4" />}
+                  {tier.label}
+                  {user.subscription_tier === tier.value && (
+                    <span className="ml-auto text-blue-600">✓</span>
+                  )}
+                </button>
+              )
+            })}
+            <div className="border-t border-gray-100 mt-1 pt-1">
+              <button
+                onClick={() => {
+                  onTierChange(user.id, user.subscription_tier, !user.grandfathered)
+                  setIsOpen(false)
+                }}
+                className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50"
+              >
+                <Star className={`w-4 h-4 ${user.grandfathered ? 'text-amber-500' : 'text-gray-300'}`} />
+                얼리어답터 {user.grandfathered ? '해제' : '설정'}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
 
 export function UsersPage() {
   const navigate = useNavigate()
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [updatingUserId, setUpdatingUserId] = useState<string | null>(null)
   const [filters, setFilters] = useState<UserFilters>({
     search: '',
     subscription_tier: 'all',
@@ -23,6 +107,26 @@ export function UsersPage() {
 
   const { data, isLoading, error, refetch } = useUsers(filters, pagination)
   const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useUserStats()
+  const updateUserMutation = useUpdateUser()
+
+  // 등급 변경 핸들러
+  const handleTierChange = async (userId: string, tier: 'FREE' | 'PREMIUM' | 'BUSINESS', grandfathered?: boolean) => {
+    setUpdatingUserId(userId)
+    try {
+      const updateData: Record<string, any> = { subscription_tier: tier }
+      if (grandfathered !== undefined) {
+        updateData.grandfathered = grandfathered
+      }
+      await updateUserMutation.mutateAsync({ userId, data: updateData })
+      refetch()
+      refetchStats()
+    } catch (error) {
+      console.error('Failed to update tier:', error)
+      alert('등급 변경에 실패했습니다')
+    } finally {
+      setUpdatingUserId(null)
+    }
+  }
 
   const handleSearchChange = (search: string) => {
     setFilters(prev => ({ ...prev, search }))
@@ -265,21 +369,11 @@ export function UsersPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          user.subscription_tier === 'BUSINESS'
-                            ? 'bg-purple-100 text-purple-700'
-                            : user.subscription_tier === 'PREMIUM'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-gray-100 text-gray-700'
-                        }`}
-                      >
-                        {user.subscription_tier === 'BUSINESS'
-                          ? '비즈니스'
-                          : user.subscription_tier === 'PREMIUM'
-                          ? '프리미엄'
-                          : '무료'}
-                      </span>
+                      <TierDropdown
+                        user={user}
+                        onTierChange={handleTierChange}
+                        isUpdating={updatingUserId === user.id}
+                      />
                     </td>
                     <td className="px-6 py-4 text-gray-900">{user.card_count || 0}</td>
                     <td className="px-6 py-4">

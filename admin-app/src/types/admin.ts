@@ -36,6 +36,7 @@ export interface User {
   last_login_at: string | null
   deleted_at?: string | null
   deletion_reason?: string | null
+  grandfathered?: boolean  // 기존 사용자 특별 혜택 플래그
 }
 
 export interface UserProfile {

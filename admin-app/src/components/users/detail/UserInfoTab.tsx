@@ -1,7 +1,14 @@
 import { useState } from 'react'
-import { Edit2, Save, X, Calendar, Mail, Phone, Trash2, RotateCcw } from 'lucide-react'
+import { Edit2, Save, X, Calendar, Mail, Phone, Trash2, RotateCcw, Star, Crown, Zap } from 'lucide-react'
 import { useUpdateUser, useDeleteUser } from '@/hooks/useUsers'
 import type { UserWithStats } from '@/types/admin'
+
+// 등급별 제한 상수
+const TIER_LIMITS = {
+  FREE: { maxCards: 3, maxSidejobs: 5, name: '무료' },
+  PREMIUM: { maxCards: 10, maxSidejobs: 30, name: '프리미엄' },
+  BUSINESS: { maxCards: 999999, maxSidejobs: 999999, name: '비즈니스' },
+}
 
 interface UserInfoTabProps {
   user: UserWithStats
@@ -15,12 +22,14 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
     phone: string
     subscription_tier: 'FREE' | 'PREMIUM' | 'BUSINESS'
     status: 'active' | 'inactive' | 'suspended'
+    grandfathered: boolean
   }>({
     name: user.name || '',
     email: user.email || '',
     phone: user.phone || '',
     subscription_tier: user.subscription_tier || 'FREE',
     status: (user.status as 'active' | 'inactive' | 'suspended') || 'active',
+    grandfathered: user.grandfathered || false,
   })
 
   const updateUserMutation = useUpdateUser()
@@ -85,6 +94,7 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
       phone: user.phone || '',
       subscription_tier: user.subscription_tier || 'FREE',
       status: (user.status as 'active' | 'inactive' | 'suspended') || 'active',
+      grandfathered: user.grandfathered || false,
     })
     setIsEditing(false)
   }
@@ -193,22 +203,72 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
                 <option value="BUSINESS">비즈니스</option>
               </select>
             ) : (
-              <span
-                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                  user.subscription_tier === 'BUSINESS'
-                    ? 'bg-purple-100 text-purple-700'
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium ${
+                    user.subscription_tier === 'BUSINESS'
+                      ? 'bg-purple-100 text-purple-700'
+                      : user.subscription_tier === 'PREMIUM'
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'bg-gray-100 text-gray-700'
+                  }`}
+                >
+                  {user.subscription_tier === 'BUSINESS' ? (
+                    <Crown className="w-3.5 h-3.5" />
+                  ) : user.subscription_tier === 'PREMIUM' ? (
+                    <Zap className="w-3.5 h-3.5" />
+                  ) : null}
+                  {user.subscription_tier === 'BUSINESS'
+                    ? '비즈니스'
                     : user.subscription_tier === 'PREMIUM'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-              >
-                {user.subscription_tier === 'BUSINESS'
-                  ? '비즈니스'
-                  : user.subscription_tier === 'PREMIUM'
-                  ? '프리미엄'
-                  : '무료'}
-              </span>
+                    ? '프리미엄'
+                    : '무료'}
+                </span>
+                {user.grandfathered && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
+                    <Star className="w-3 h-3" />
+                    얼리어답터
+                  </span>
+                )}
+              </div>
             )}
+          </div>
+
+          {/* Grandfathered Status */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-2 block">
+              얼리어답터 특별 혜택
+            </label>
+            {isEditing ? (
+              <div className="flex items-center gap-3">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.grandfathered}
+                    onChange={(e) => setFormData({ ...formData, grandfathered: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                </label>
+                <span className="text-sm text-gray-600">
+                  {formData.grandfathered ? '활성화됨 (등급 제한 무시)' : '비활성화'}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                {user.grandfathered ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                    <Star className="w-4 h-4" />
+                    등급 제한 무시 (얼리어답터 특별 혜택)
+                  </span>
+                ) : (
+                  <span className="text-gray-500 text-sm">일반 사용자 (등급별 제한 적용)</span>
+                )}
+              </div>
+            )}
+            <p className="text-xs text-gray-500 mt-2">
+              얼리어답터 사용자는 등급 제한에 관계없이 무제한 명함/부가명함 생성 가능
+            </p>
           </div>
 
           {/* Status */}
@@ -253,17 +313,91 @@ export function UserInfoTab({ user }: UserInfoTabProps) {
 
       {/* Stats Card */}
       <div className="space-y-6">
-        {/* User Stats */}
+        {/* User Stats with Tier Limits */}
         <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">통계</h3>
-          <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">사용량 및 제한</h3>
+          <div className="space-y-5">
+            {/* Business Cards */}
             <div>
-              <p className="text-sm text-gray-600">명함 수</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{user.card_count || 0}</p>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-sm text-gray-600">명함</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {user.card_count || 0}
+                  {!user.grandfathered && user.subscription_tier !== 'BUSINESS' && (
+                    <span className="text-gray-400">
+                      {' '}/ {TIER_LIMITS[user.subscription_tier || 'FREE'].maxCards}
+                    </span>
+                  )}
+                  {(user.grandfathered || user.subscription_tier === 'BUSINESS') && (
+                    <span className="text-gray-400"> / ∞</span>
+                  )}
+                </p>
+              </div>
+              {!user.grandfathered && user.subscription_tier !== 'BUSINESS' && (
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full transition-all ${
+                      ((user.card_count || 0) / TIER_LIMITS[user.subscription_tier || 'FREE'].maxCards) >= 1
+                        ? 'bg-red-500'
+                        : ((user.card_count || 0) / TIER_LIMITS[user.subscription_tier || 'FREE'].maxCards) >= 0.8
+                        ? 'bg-amber-500'
+                        : 'bg-blue-500'
+                    }`}
+                    style={{
+                      width: `${Math.min(100, ((user.card_count || 0) / TIER_LIMITS[user.subscription_tier || 'FREE'].maxCards) * 100)}%`
+                    }}
+                  />
+                </div>
+              )}
             </div>
+
+            {/* Sidejob Cards */}
             <div>
-              <p className="text-sm text-gray-600">부가명함 수</p>
-              <p className="text-2xl font-bold text-gray-900 mt-1">{user.sidejob_count || 0}</p>
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-sm text-gray-600">부가명함</p>
+                <p className="text-sm font-medium text-gray-900">
+                  {user.sidejob_count || 0}
+                  {!user.grandfathered && user.subscription_tier !== 'BUSINESS' && (
+                    <span className="text-gray-400">
+                      {' '}/ {TIER_LIMITS[user.subscription_tier || 'FREE'].maxSidejobs}
+                    </span>
+                  )}
+                  {(user.grandfathered || user.subscription_tier === 'BUSINESS') && (
+                    <span className="text-gray-400"> / ∞</span>
+                  )}
+                </p>
+              </div>
+              {!user.grandfathered && user.subscription_tier !== 'BUSINESS' && (
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div
+                    className={`h-2 rounded-full transition-all ${
+                      ((user.sidejob_count || 0) / TIER_LIMITS[user.subscription_tier || 'FREE'].maxSidejobs) >= 1
+                        ? 'bg-red-500'
+                        : ((user.sidejob_count || 0) / TIER_LIMITS[user.subscription_tier || 'FREE'].maxSidejobs) >= 0.8
+                        ? 'bg-amber-500'
+                        : 'bg-blue-500'
+                    }`}
+                    style={{
+                      width: `${Math.min(100, ((user.sidejob_count || 0) / TIER_LIMITS[user.subscription_tier || 'FREE'].maxSidejobs) * 100)}%`
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Tier Info */}
+            <div className="pt-3 border-t border-gray-100">
+              <p className="text-xs text-gray-500">
+                {user.grandfathered ? (
+                  <>⭐ 얼리어답터 혜택으로 무제한 사용 가능</>
+                ) : user.subscription_tier === 'BUSINESS' ? (
+                  <>👑 비즈니스 등급 무제한</>
+                ) : user.subscription_tier === 'PREMIUM' ? (
+                  <>명함 10개, 부가명함 30개 제한</>
+                ) : (
+                  <>명함 3개, 부가명함 5개 제한</>
+                )}
+              </p>
             </div>
           </div>
         </div>
