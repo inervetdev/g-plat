@@ -3,7 +3,7 @@ title: "현재 개발 단계 - Phase 3"
 category: "roadmap"
 tier: 2
 status: "active"
-last_updated: "2025-12-01"
+last_updated: "2025-12-11"
 related_docs:
   - path: "prd.md"
     description: "제품 요구사항 문서"
@@ -23,9 +23,9 @@ tags:
 ## 현재 상태 요약
 
 **Phase**: 3
-**Week**: 16
-**전체 진행률**: 약 87%
-**버전**: v2.8 (2025-12-04)
+**Week**: 17
+**전체 진행률**: 약 88%
+**버전**: v2.10 (2025-12-11)
 
 ## Phase 3 개요
 
@@ -41,31 +41,73 @@ tags:
 
 ## 최근 완료 사항
 
-### Week 16 (2025-12-04): QR 코드 시스템 완성 ✅
+### Week 17 (2025-12-11): 관리자 명함 관리 기능 완성 ✅
 
-#### 1. QR 코드 자동 생성 기능
+#### 1. 관리자 명함 생성 개선 (2025-12-11)
+- **파일**: `admin-app/src/lib/api/cards.ts`
+  - `fetchUsersForCardCreate()`: users 테이블에서 직접 검색
+  - 명함 없는 신규 회원도 검색 가능
+  - 이름 + 이메일 동시 검색 지원 (`name.ilike` + `email.ilike`)
+- **파일**: `admin-app/src/components/cards/CardCreateModal.tsx`
+  - 검색 placeholder: "사용자 이름 또는 이메일로 검색..."
+  - 검색 결과에 이메일 표시
+  - 선택된 사용자 정보: 이름 + 이메일 표시
+  - "검색 결과가 없습니다" 메시지 추가
+
+#### 2. 명함 삭제 기능 추가 (2025-12-11)
+- **파일**: `admin-app/src/pages/cards/CardDetailPage.tsx`
+  - 삭제 버튼 클릭 시 확인 모달 표시
+  - AlertTriangle 아이콘 + 경고 메시지
+  - Soft delete 방식 (`is_active = false`)
+  - 삭제 중 로딩 상태 표시
+  - 삭제 성공 후 명함 목록으로 자동 이동
+
+#### 3. 명함 목록 필터 개선 (2025-12-11)
+- **파일**: `admin-app/src/lib/api/cards.ts`
+  - `fetchCards()`: 기본적으로 `is_active=true`인 명함만 조회
+  - status 필터가 'all'이어도 활성 명함만 표시
+  - 삭제된 명함 자동 숨김 처리
+
+**커밋**:
+- `dc707e9`: fix: 명함 생성 시 모든 사용자 검색 가능하도록 개선
+- `f0c9666`: feat: 명함 상세 페이지에 삭제 기능 추가
+- `a7f87b8`: fix: 명함 목록에서 삭제된 명함 숨김 처리
+
+### Week 16 (2025-12-05): QR 코드 스캔 추적 시스템 완성 ✅
+
+#### 1. QR 스캔 추적 시스템 수정 (2025-12-05)
+- Edge Function IP 주소 처리 수정
+  - `qr-redirect/index.ts`: INET 타입 호환 처리
+  - IP 주소 null 허용 (x-forwarded-for 없는 경우)
+- qr_scans 테이블 스키마 업데이트
+  - `20251205000001_add_qr_scans_columns.sql`
+  - `browser` 컬럼 추가 (VARCHAR 50)
+  - `os` 컬럼 추가 (VARCHAR 50)
+- Edge Function 배포 (`--no-verify-jwt`)
+- 관리자 대시보드 스캔 통계 연동 확인
+
+#### 2. QR 코드 URL 표시 개선
+- `QRCodeGenerator.tsx`: Supabase URL → g-plat.com/q/ 표시
+- 사용자에게 보이는 URL 개선
+
+#### 3. QR 리다이렉트 시스템 수정 (2025-12-04)
+- `QRRedirectPage.tsx`: 클라이언트 사이드 리다이렉트 구현
+  - Vercel rewrites/redirects 순서 문제 해결
+  - React Router를 통한 Edge Function 리다이렉트
+- `App.tsx`: `/q/:code` 라우트 추가
+
+#### 4. QR 코드 자동 생성 기능 (2025-12-04)
 - 명함 생성 시 QR 코드 자동 생성
   - `lib/qr.ts`: QR 코드 생성 유틸리티 함수
   - `CreateCardPageOptimized.tsx`: 명함 생성 후 자동 QR 생성
-- 기존 명함에 QR 코드 자동 생성
-  - SQL 마이그레이션: `20251204000002_create_qr_for_existing_cards.sql`
-  - 19개 기존 명함에 QR 코드 생성 완료
+- 기존 명함에 QR 코드 자동 생성 (19개)
 
-#### 2. QR 코드 공유 기능 활성화
-- `QRCodeGenerator.tsx`: Web Share API 구현
-- QR 코드 이미지 + URL 공유
-- 통계 버튼 제거 (중복 UI 제거)
-
-#### 3. QR 리다이렉트 시스템 수정
-- `vercel.json`: rewrites 규칙 수정
-  - `/q/` 경로를 rewrites에서 제외
-  - redirects가 정상 작동하도록 개선
-- Edge Function 리다이렉트 정상화
-
-#### 4. Admin QR 관리 개선
-- TypeScript 타입 정의 수정 (QRCodeWithDetails)
-- Admin RLS 정책 추가 (is_admin_user())
-- 활성/비활성 토글 기능 정상화
+#### 5. Admin QR 관리 완성 (2025-12-04)
+- QR 코드 목록/상세 통계 모달
+- 일별 스캔 추이 차트 (최근 30일)
+- 디바이스/브라우저/국가별 분포 차트
+- 최근 스캔 기록 테이블
+- 활성/비활성 토글 기능
 
 ### Week 15 (2025-12-01): QR 코드 관리 모듈 ✅
 
@@ -205,12 +247,12 @@ tags:
 
 ## 진행 중인 작업
 
-### Week 16 (예정): 콜백 자동화 시스템 시작
+### Week 17 (예정): 콜백 자동화 시스템 시작
 - SMS API 연동 (Twilio/Aligo)
 - 자동 발송 로직 설계
 - 메시지 템플릿 관리
 
-### Week 17-18 (예정): 콜백 시스템 완성
+### Week 18-19 (예정): 콜백 시스템 완성
 - 통화 종료 감지
 - SMS 자동 발송
 - 발송 이력 추적
@@ -268,17 +310,17 @@ tags:
 
 ## 다음 마일스톤
 
-### Week 16 (2025-12-02): 콜백 자동화 시스템 시작
+### Week 17 (2025-12-09): 콜백 자동화 시스템 시작
 - SMS API 연동 (Twilio/Aligo)
 - 자동 발송 로직 설계
 - 메시지 템플릿 관리
 
-### Week 17-18 (2025-12-09 ~ 12-16): 콜백 시스템 완성
+### Week 18-19 (2025-12-16 ~ 12-23): 콜백 시스템 완성
 - 통화 종료 감지
 - SMS 자동 발송
 - 발송 이력 추적
 
-### Week 19-20 (2025-12-23 ~ 12-30): 결제 시스템
+### Week 20-21 (2025-12-30 ~ 01-06): 결제 시스템
 - Stripe/Toss Payments 연동
 - 구독 플랜 관리
 - 결제 내역 및 영수증
