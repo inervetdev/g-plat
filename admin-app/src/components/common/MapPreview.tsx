@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { MapPin } from 'lucide-react'
 
 interface MapPreviewProps {
@@ -25,6 +25,7 @@ export function MapPreview({
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
   const markerRef = useRef<any>(null)
+  const [isMapReady, setIsMapReady] = useState(false)
 
   useEffect(() => {
     if (!mapRef.current) return
@@ -52,6 +53,9 @@ export function MapPreview({
       })
       marker.setMap(map)
       markerRef.current = marker
+
+      // 지도 로드 완료 상태 업데이트
+      setIsMapReady(true)
     }
 
     // 카카오 맵 SDK 로드 확인
@@ -106,7 +110,7 @@ export function MapPreview({
       />
 
       {/* Loading state */}
-      {!window.kakao && (
+      {!isMapReady && (
         <div
           className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg"
           style={{ height }}
