@@ -405,15 +405,8 @@ export default function StatsPageOptimized() {
             </div>
           </>
         ) : (
-          <>
-            {/* 무료 플랜 - 고급 통계 제한 */}
-            <SectionTitle>고급 통계</SectionTitle>
-            <RestrictedStatsOverlay
-              currentTier={limits?.tier || 'FREE'}
-              title="유료 플랜 전용 통계"
-              description="디바이스별 접속, 유입 경로, QR 스캔 분석, 다운로드 통계 등 고급 분석 기능은 유료 플랜 이상에서 제공됩니다."
-            />
-          </>
+          /* 무료 플랜 - 업그레이드 프롬프트만 표시 */
+          <RestrictedStatsOverlay currentTier={limits?.tier || 'FREE'} />
         )}
       </div>
     </div>
