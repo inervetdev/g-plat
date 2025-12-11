@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { useSubscriptionStore } from '../stores/subscriptionStore'
+import { RestrictedStatsOverlay } from '../components/RestrictedStatsOverlay'
 
 interface StatsSummary {
   totalViews: number
@@ -144,6 +146,11 @@ function EmptyState() {
 export default function StatsPageOptimized() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(true)
+
+  // Subscription tier checking
+  const { limits } = useSubscriptionStore()
+  const hasAdvancedStats = limits?.hasAdvancedStats ?? false
+
   const [stats, setStats] = useState<StatsSummary>({
     totalViews: 0,
     todayViews: 0,
@@ -370,29 +377,44 @@ export default function StatsPageOptimized() {
           <StatCard title="고유 방문자" value={stats.uniqueVisitors} valueColor="text-orange-600" />
         </div>
 
-        {/* 소개자료 다운로드 통계 */}
-        <SectionTitle>소개자료 다운로드 통계</SectionTitle>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <StatCard title="총 다운로드" value={stats.totalDownloads} />
-          <StatCard title="오늘 다운로드" value={stats.todayDownloads} valueColor="text-blue-600" />
-        </div>
+        {/* 고급 통계 - 유료 플랜만 */}
+        {hasAdvancedStats ? (
+          <>
+            {/* 소개자료 다운로드 통계 */}
+            <SectionTitle>소개자료 다운로드 통계</SectionTitle>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <StatCard title="총 다운로드" value={stats.totalDownloads} />
+              <StatCard title="오늘 다운로드" value={stats.todayDownloads} valueColor="text-blue-600" />
+            </div>
 
-        {/* QR명함 스캔 통계 */}
-        <SectionTitle>QR명함 스캔 통계</SectionTitle>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <StatCard title="총 QR 스캔" value={stats.totalQRScans} />
-          <StatCard title="오늘 QR 스캔" value={stats.todayQRScans} valueColor="text-blue-600" />
-        </div>
+            {/* QR명함 스캔 통계 */}
+            <SectionTitle>QR명함 스캔 통계</SectionTitle>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <StatCard title="총 QR 스캔" value={stats.totalQRScans} />
+              <StatCard title="오늘 QR 스캔" value={stats.todayQRScans} valueColor="text-blue-600" />
+            </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <DailyTrendChart data={stats.dailyStats} />
-          <DevicePieChart data={stats.deviceStats} title="디바이스별 접속" />
-          <TopReferrersChart data={stats.topReferrers} />
-          <TopDownloadsChart data={stats.topDownloads} />
-          <DevicePieChart data={stats.qrDeviceStats} title="QR 스캔 디바이스별 접속" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <DailyTrendChart data={stats.dailyStats} />
+              <DevicePieChart data={stats.deviceStats} title="디바이스별 접속" />
+              <TopReferrersChart data={stats.topReferrers} />
+              <TopDownloadsChart data={stats.topDownloads} />
+              <DevicePieChart data={stats.qrDeviceStats} title="QR 스캔 디바이스별 접속" />
 
-          {stats.totalViews === 0 && <EmptyState />}
-        </div>
+              {stats.totalViews === 0 && <EmptyState />}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* 무료 플랜 - 고급 통계 제한 */}
+            <SectionTitle>고급 통계</SectionTitle>
+            <RestrictedStatsOverlay
+              currentTier={limits?.tier || 'FREE'}
+              title="유료 플랜 전용 통계"
+              description="디바이스별 접속, 유입 경로, QR 스캔 분석, 다운로드 통계 등 고급 분석 기능은 유료 플랜 이상에서 제공됩니다."
+            />
+          </>
+        )}
       </div>
     </div>
   )

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 import { supabase } from '../lib/supabase'
+import { useSubscriptionStore } from '../stores/subscriptionStore'
 
 interface AuthContextType {
   session: Session | null
@@ -30,11 +31,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
+  // Subscription store actions
+  const fetchLimits = useSubscriptionStore((state) => state.fetchLimits)
+  const resetLimits = useSubscriptionStore((state) => state.reset)
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
+
+      // Fetch subscription limits on initial session
+      if (session?.user) {
+        fetchLimits(session.user.id)
+      }
     })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -46,11 +56,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // No client-side logic needed - cleaner and more reliable
       if (event === 'SIGNED_IN' && session?.user) {
         console.log('✅ User signed in:', session.user.email)
+        // Fetch subscription tier limits
+        fetchLimits(session.user.id)
+      }
+
+      // Reset subscription store on sign out
+      if (event === 'SIGNED_OUT') {
+        console.log('👋 User signed out, resetting subscription store')
+        resetLimits()
       }
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [fetchLimits, resetLimits])
 
   const signUp = async (email: string, password: string, name: string) => {
     const { data, error } = await supabase.auth.signUp({
@@ -127,6 +145,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
+    // Subscription store will be reset by onAuthStateChange
   }
 
   const resetPassword = async (email: string) => {

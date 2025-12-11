@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { createQRCodeForCard } from '../lib/qr'
@@ -7,6 +7,10 @@ import ThemePreviewModal from '../components/ThemePreviewModal'
 import FilePreviewModal from '../components/FilePreviewModal'
 import { AddressSearchModal } from '../components/AddressSearchModal'
 import { MapPreview } from '../components/MapPreview'
+import { useSubscriptionStore } from '../stores/subscriptionStore'
+import { canCreateCard } from '../lib/subscription'
+import { UpgradePrompt } from '../components/UpgradePrompt'
+import { TierLimitBadge } from '../components/TierLimitBadge'
 
 interface AttachmentFile {
   id: string
@@ -36,6 +40,10 @@ export default function CreateCardPageOptimized() {
   const [companyLogo, setCompanyLogo] = useState<File | null>(null)
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null)
   const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(null)
+
+  // Subscription tier limits
+  const { limits } = useSubscriptionStore()
+  const canCreate = canCreateCard(limits)
   const [formData, setFormData] = useState({
     name: '',
     title: '',
@@ -541,11 +549,50 @@ export default function CreateCardPageOptimized() {
     </div>
   )
 
+  // 제한 도달 시 업그레이드 프롬프트 표시
+  if (!canCreate && limits) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h1 className="text-2xl font-bold mb-6">새 명함 만들기</h1>
+
+            {/* Tier Limit Badge */}
+            <div className="mb-6">
+              <TierLimitBadge limits={limits} type="cards" className="mb-4" />
+            </div>
+
+            {/* Upgrade Prompt */}
+            <UpgradePrompt
+              currentTier={limits.tier}
+              feature="cards"
+              onClose={() => navigate('/dashboard')}
+            />
+
+            {/* Back Button */}
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+              >
+                대시보드로 돌아가기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h1 className="text-2xl font-bold mb-6">새 명함 만들기</h1>
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl font-bold">새 명함 만들기</h1>
+            {/* Tier Badge */}
+            {limits && <TierLimitBadge limits={limits} type="cards" />}
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* 기본 정보 */}

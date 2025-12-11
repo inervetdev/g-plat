@@ -5,6 +5,9 @@ import { useTheme } from '../contexts/ThemeContext'
 import type { User } from '@supabase/supabase-js'
 import type { Database } from '../lib/supabase'
 import CardWithSideJobs from '../components/CardWithSideJobs'
+import { useSubscriptionStore } from '../stores/subscriptionStore'
+import { TierLimitBadge, TierLimitBadgeWithProgress } from '../components/TierLimitBadge'
+import { TIER_CONFIG } from '../lib/subscription'
 
 // Type definitions
 type BusinessCard = Database['public']['Tables']['business_cards']['Row']
@@ -114,6 +117,9 @@ function DashboardPageOptimized() {
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
   const { setTheme } = useTheme()
+
+  // Subscription tier limits
+  const { limits } = useSubscriptionStore()
 
   useEffect(() => {
     if (authUser) {
@@ -248,12 +254,40 @@ function DashboardPageOptimized() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            안녕하세요, {userData?.name || user?.email?.split('@')[0]}님! 👋
-          </h2>
-          <p className="text-gray-600">
-            {user?.email} | 가입일: {new Date(user?.created_at || '').toLocaleDateString('ko-KR')}
-          </p>
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex-1">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                안녕하세요, {userData?.name || user?.email?.split('@')[0]}님! 👋
+              </h2>
+              <p className="text-gray-600">
+                {user?.email} | 가입일: {new Date(user?.created_at || '').toLocaleDateString('ko-KR')}
+              </p>
+            </div>
+
+            {/* Tier Badge */}
+            {limits && (
+              <div className="flex flex-col items-end gap-2">
+                <div className="px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+                  <span className="text-sm font-medium text-blue-900">
+                    {TIER_CONFIG[limits.tier].displayName} 플랜
+                  </span>
+                </div>
+                {limits.grandfathered && (
+                  <div className="px-3 py-1 bg-orange-50 border border-orange-200 rounded-lg">
+                    <span className="text-xs text-orange-700">⭐ 얼리어답터 특별 혜택</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Tier Limits Progress Bars */}
+          {limits && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-200">
+              <TierLimitBadgeWithProgress limits={limits} type="cards" />
+              <TierLimitBadgeWithProgress limits={limits} type="sidejobs" />
+            </div>
+          )}
         </div>
 
         {/* Stats Grid */}

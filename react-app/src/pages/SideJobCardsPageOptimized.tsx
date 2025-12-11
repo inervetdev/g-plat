@@ -5,6 +5,10 @@ import { Plus, Edit2, Trash2, Eye, EyeOff, MoveUp, MoveDown, Filter } from 'luci
 import SideJobCardForm from '../components/SideJobCardForm'
 import type { CategoryPrimary, SideJobCardWithCategory } from '../types/sidejob'
 import { CATEGORY_CONFIG } from '../types/sidejob'
+import { useSubscriptionStore } from '../stores/subscriptionStore'
+import { canCreateSidejob } from '../lib/subscription'
+import { UpgradePrompt } from '../components/UpgradePrompt'
+import { TierLimitBadge } from '../components/TierLimitBadge'
 
 // Extracted Components
 function CategoryBadge({ card }: { card: SideJobCardWithCategory }) {
@@ -243,6 +247,11 @@ export default function SideJobCardsPageOptimized() {
   const [showForm, setShowForm] = useState(false)
   const [editingCard, setEditingCard] = useState<SideJobCardWithCategory | null>(null)
   const [categoryFilter, setCategoryFilter] = useState<CategoryPrimary | 'all'>('all')
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
+
+  // Subscription tier checking
+  const { limits } = useSubscriptionStore()
+  const canCreate = canCreateSidejob(limits)
 
   useEffect(() => {
     fetchData()
@@ -392,7 +401,10 @@ export default function SideJobCardsPageOptimized() {
         <div className="bg-white rounded-lg shadow-lg p-6">
           {/* Header */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h1 className="text-2xl font-bold">부가명함 관리</h1>
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl font-bold">부가명함 관리</h1>
+              {limits && <TierLimitBadge limits={limits} type="sidejobs" />}
+            </div>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => navigate('/dashboard')}
@@ -402,10 +414,18 @@ export default function SideJobCardsPageOptimized() {
               </button>
               <button
                 onClick={() => {
+                  if (!canCreate) {
+                    setShowUpgradePrompt(true)
+                    return
+                  }
                   setEditingCard(null)
                   setShowForm(true)
                 }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
+                  canCreate
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-gray-400 text-white cursor-not-allowed'
+                }`}
               >
                 <Plus className="w-4 h-4" />
                 새 부가명함 추가
@@ -492,6 +512,25 @@ export default function SideJobCardsPageOptimized() {
                 fetchSideJobCards()
               }}
             />
+          )}
+
+          {/* Upgrade Prompt Modal */}
+          {showUpgradePrompt && limits && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="p-6">
+                  <h2 className="text-2xl font-bold mb-4">부가명함 생성 제한</h2>
+                  <div className="mb-6">
+                    <TierLimitBadge limits={limits} type="sidejobs" className="mb-4" />
+                  </div>
+                  <UpgradePrompt
+                    currentTier={limits.tier}
+                    feature="sidejobs"
+                    onClose={() => setShowUpgradePrompt(false)}
+                  />
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>
