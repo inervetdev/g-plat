@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { X, Upload, Loader2, Search, UserPlus } from 'lucide-react'
+import { X, Upload, Loader2, Search, UserPlus, MapPin } from 'lucide-react'
 import { createCard, fetchUsersForCardCreate, checkCustomUrlAvailability } from '@/lib/api/cards'
 import { supabase } from '@/lib/supabase'
 import type { CreateCardInput } from '@/lib/api/cards'
+import { AddressSearchModal } from '@/components/common/AddressSearchModal'
+import { MapPreview } from '@/components/common/MapPreview'
 
 // Form validation schema
 const cardCreateSchema = z.object({
@@ -68,6 +70,10 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
   // Custom URL check
   const [checkingUrl, setCheckingUrl] = useState(false)
   const [urlAvailable, setUrlAvailable] = useState<boolean | null>(null)
+
+  // Address search and map state
+  const [showAddressSearch, setShowAddressSearch] = useState(false)
+  const [mapCoords, setMapCoords] = useState<{ latitude: number; longitude: number } | null>(null)
 
   const {
     register,
@@ -272,6 +278,8 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
         website: data.website || undefined,
         address: data.address || undefined,
         address_detail: data.address_detail || undefined,
+        latitude: mapCoords?.latitude || undefined,
+        longitude: mapCoords?.longitude || undefined,
         linkedin: data.linkedin || undefined,
         instagram: data.instagram || undefined,
         facebook: data.facebook || undefined,
@@ -299,6 +307,7 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
       setCompanyLogo(null)
       setProfileImagePreview(null)
       setCompanyLogoPreview(null)
+      setMapCoords(null)
       onSuccess()
       onClose()
     } catch (error) {
@@ -655,13 +664,30 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
                 <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
                   주소
                 </label>
-                <input
-                  id="address"
-                  {...register('address')}
-                  placeholder="서울시 강남구 테헤란로 123"
-                  disabled={isSubmitting}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="flex gap-2">
+                  <input
+                    id="address"
+                    {...register('address')}
+                    placeholder="주소 검색을 이용하세요"
+                    disabled={isSubmitting}
+                    readOnly
+                    className="flex-1 px-4 py-2 border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowAddressSearch(true)}
+                    disabled={isSubmitting}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <MapPin className="w-4 h-4" />
+                    주소 검색
+                  </button>
+                </div>
+                {mapCoords && (
+                  <p className="text-xs text-green-600 mt-1">
+                    좌표: {mapCoords.latitude.toFixed(6)}, {mapCoords.longitude.toFixed(6)}
+                  </p>
+                )}
               </div>
 
               <div className="col-span-2">
@@ -671,11 +697,27 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
                 <input
                   id="address_detail"
                   {...register('address_detail')}
-                  placeholder="A동 1층"
+                  placeholder="동/호수, 층 등 상세 주소"
                   disabled={isSubmitting}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+
+              {/* Map Preview */}
+              {mapCoords && watch('address') && (
+                <div className="col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    위치 미리보기
+                  </label>
+                  <MapPreview
+                    latitude={mapCoords.latitude}
+                    longitude={mapCoords.longitude}
+                    address={watch('address') || ''}
+                    height="200px"
+                    level={3}
+                  />
+                </div>
+              )}
             </div>
           </div>
 
@@ -886,6 +928,18 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
           </div>
         </form>
       </div>
+
+      {/* Address Search Modal */}
+      <AddressSearchModal
+        isOpen={showAddressSearch}
+        onClose={() => setShowAddressSearch(false)}
+        onSelect={(address, latitude, longitude) => {
+          setValue('address', address)
+          if (latitude && longitude) {
+            setMapCoords({ latitude, longitude })
+          }
+        }}
+      />
     </div>
   )
 }

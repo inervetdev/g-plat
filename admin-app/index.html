@@ -4,7 +4,26 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>admin-app</title>
+    <title>G-PLAT Admin</title>
+    <!-- Kakao Maps JavaScript API - Loaded dynamically to avoid document.write warnings -->
+    <script>
+      // 동적으로 Kakao Maps SDK 로드
+      (function() {
+        const script = document.createElement('script');
+        script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=bba0df1f2c213e2a055f8e465550b114&libraries=services&autoload=false';
+        script.async = true;
+        script.onload = function() {
+          // SDK 로드 완료 후 초기화
+          if (window.kakao && window.kakao.maps) {
+            window.kakao.maps.load(function() {
+              // Kakao Maps API 준비 완료
+              window.dispatchEvent(new Event('kakao-maps-loaded'));
+            });
+          }
+        };
+        document.head.appendChild(script);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
