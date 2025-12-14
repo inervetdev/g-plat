@@ -312,11 +312,44 @@ export async function updateUserSubscription(
 }
 
 /**
+ * Delete user from auth.users via Edge Function
+ */
+async function deleteAuthUser(userId: string): Promise<void> {
+  const { data: { session } } = await supabase.auth.getSession()
+
+  if (!session) {
+    throw new Error('No authenticated session')
+  }
+
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+  const response = await fetch(`${supabaseUrl}/functions/v1/delete-auth-user`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`,
+    },
+    body: JSON.stringify({ userId }),
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    console.error('Error deleting auth user:', error)
+    // Don't throw - auth user might not exist or already deleted
+    console.warn('Auth user deletion failed, continuing with users table deletion')
+  }
+}
+
+/**
  * Delete user (soft delete by setting deleted_at or permanent delete)
  */
 export async function deleteUser(userId: string, permanent = false, reason?: string): Promise<void> {
   if (permanent) {
-    // Hard delete - use with caution!
+    // Hard delete - delete from both auth.users and users table
+
+    // First, delete from auth.users (prevents login)
+    await deleteAuthUser(userId)
+
+    // Then delete from users table
     const { error } = await supabase
       .from('users')
       .delete()
@@ -331,10 +364,16 @@ export async function deleteUser(userId: string, permanent = false, reason?: str
       action: 'user_deleted_permanent',
       target_type: 'user',
       target_id: userId,
-      details: { permanent: true },
+      details: { permanent: true, auth_deleted: true },
     })
   } else {
     // Soft delete - set deleted_at, deletion_reason, and status to 'inactive'
+    // Also delete from auth.users to prevent login
+
+    // First, delete from auth.users (prevents login)
+    await deleteAuthUser(userId)
+
+    // Then soft delete in users table
     const { error } = await supabase
       .from('users')
       .update({
@@ -354,7 +393,7 @@ export async function deleteUser(userId: string, permanent = false, reason?: str
       action: 'user_deleted_soft',
       target_type: 'user',
       target_id: userId,
-      details: { reason },
+      details: { reason, auth_deleted: true },
     })
   }
 }
