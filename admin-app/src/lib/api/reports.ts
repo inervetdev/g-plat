@@ -21,15 +21,7 @@ export async function fetchReports(
 
   let query = supabase
     .from('user_reports')
-    .select(
-      `
-      *,
-      reporter:reporter_id (id, email, name),
-      target_owner:target_owner_id (id, email, name),
-      reviewed_by_admin:reviewed_by (id, name)
-    `,
-      { count: 'exact' }
-    )
+    .select('*', { count: 'exact' })
 
   // Apply filters
   if (filters.search) {
@@ -109,12 +101,12 @@ export async function fetchReports(
 
       return {
         ...report,
-        reporter: report.reporter,
+        reporter: null, // auth.users는 직접 조인 불가
         target_card,
         target_sidejob,
         target_user,
-        target_owner: report.target_owner,
-        reviewed_by_admin: report.reviewed_by_admin,
+        target_owner: null, // auth.users는 직접 조인 불가
+        reviewed_by_admin: null,
       }
     })
   )
@@ -134,14 +126,7 @@ export async function fetchReports(
 export async function fetchReport(id: string): Promise<ReportWithDetails | null> {
   const { data, error } = await supabase
     .from('user_reports')
-    .select(
-      `
-      *,
-      reporter:reporter_id (id, email, name),
-      target_owner:target_owner_id (id, email, name),
-      reviewed_by_admin:reviewed_by (id, name)
-    `
-    )
+    .select('*')
     .eq('id', id)
     .single()
 
@@ -182,12 +167,12 @@ export async function fetchReport(id: string): Promise<ReportWithDetails | null>
 
   return {
     ...data,
-    reporter: data.reporter,
+    reporter: null,
     target_card,
     target_sidejob,
     target_user,
-    target_owner: data.target_owner,
-    reviewed_by_admin: data.reviewed_by_admin,
+    target_owner: null,
+    reviewed_by_admin: null,
   }
 }
 
@@ -239,13 +224,7 @@ export async function fetchReportStats(): Promise<ReportStats> {
   // Get recent reports
   const { data: recentData } = await supabase
     .from('user_reports')
-    .select(
-      `
-      *,
-      reporter:reporter_id (id, email, name),
-      target_owner:target_owner_id (id, email, name)
-    `
-    )
+    .select('*')
     .order('created_at', { ascending: false })
     .limit(5)
 
@@ -394,12 +373,7 @@ export async function resolveReport(
 export async function fetchReportLogs(reportId: string): Promise<ReportActionLog[]> {
   const { data, error } = await supabase
     .from('report_action_logs')
-    .select(
-      `
-      *,
-      admin:admin_id (id, name)
-    `
-    )
+    .select('*')
     .eq('report_id', reportId)
     .order('created_at', { ascending: false })
 
