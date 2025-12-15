@@ -92,7 +92,16 @@ docs/              # 📚 문서 시스템 (계층적 구조)
   - React App: 신고 버튼 및 모달 (명함 하단)
   - 신고 유형: 스팸, 부적절, 사기, 저작권, 개인정보, 기타
   - 처리 조치: 콘텐츠 삭제/비활성화, 사용자 경고/정지/차단
-  - ⚠️ DB 마이그레이션 수동 적용 필요
+- ✅ **RLS 정책 수정 (INSERT/SELECT)**
+  - INSERT 정책: `TO anon, authenticated` 추가
+  - SELECT 정책: 신고자 조회 허용 (INSERT 후 ID 반환용)
+  - GRANT 문 추가: anon, authenticated 역할에 권한 부여
+- ✅ **Admin Reports API 수정**
+  - auth.users 직접 조인 불가 문제 해결
+  - reporter, target_owner 조인 제거
+- ⚠️ **이메일 알림 미구현**
+  - notify_reporter 필드는 저장만 됨
+  - 실제 이메일 발송 기능은 향후 구현 예정
 
 ### 이전 완료 (2025.12.14)
 - ✅ **Resend SMTP 이메일 설정 완료**
@@ -265,5 +274,5 @@ Claude Code는 MCP를 통해 프로덕션 DB에 직접 접근 가능합니다.
 
 ---
 
-**마지막 업데이트**: 2025-12-14
-**버전**: 2.9
+**마지막 업데이트**: 2025-12-16
+**버전**: 3.0
