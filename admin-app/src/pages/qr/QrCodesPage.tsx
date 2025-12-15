@@ -23,7 +23,7 @@ import type { QRCodeWithDetails, QRFilters, PaginationParams } from '@/types/adm
 type ViewMode = 'grid' | 'table'
 
 export function QrCodesPage() {
-  const [viewMode, setViewMode] = useState<ViewMode>('table')
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [selectedQR, setSelectedQR] = useState<QRCodeWithDetails | null>(null)
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [qrPopup, setQrPopup] = useState<{ isOpen: boolean; qr: QRCodeWithDetails | null }>({
