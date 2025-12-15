@@ -10,6 +10,7 @@ import { CardDetailPage } from '@/pages/cards/CardDetailPage'
 import UserSidejobsPage from '@/pages/user-sidejobs/UserSidejobsPage'
 import { SidejobsPage } from '@/pages/sidejobs/SidejobsPage'
 import { QrCodesPage } from '@/pages/qr/QrCodesPage'
+import { ReportsPage } from '@/pages/reports/ReportsPage'
 import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
@@ -75,15 +76,7 @@ function App() {
           <Route path="qr" element={<QrCodesPage />} />
 
           {/* Reports */}
-          <Route
-            path="reports"
-            element={
-              <div className="text-center py-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">신고 관리</h2>
-                <p className="text-gray-600">개발 예정</p>
-              </div>
-            }
-          />
+          <Route path="reports" element={<ReportsPage />} />
 
           {/* Analytics */}
           <Route

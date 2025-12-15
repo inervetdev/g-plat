@@ -54,9 +54,11 @@ serve(async (req: Request) => {
     // 스캔 정보 수집
     const headers = req.headers
     const userAgent = headers.get('user-agent') || 'Unknown'
-    const ipAddress = headers.get('x-forwarded-for') ||
-                      headers.get('x-real-ip') ||
-                      'Unknown'
+    const rawIpAddress = headers.get('x-forwarded-for') ||
+                         headers.get('x-real-ip') ||
+                         null
+    // IP 주소가 여러 개일 경우 첫 번째만 사용 (프록시 체인)
+    const ipAddress = rawIpAddress ? rawIpAddress.split(',')[0].trim() : null
     const referer = headers.get('referer') || null
 
     // 디바이스 타입 판단

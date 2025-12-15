@@ -212,3 +212,99 @@ export interface QRFilters {
   sort_by?: 'created_at' | 'scan_count' | 'updated_at'
   sort_order?: 'asc' | 'desc'
 }
+
+// Report types (신고관리)
+export interface Report {
+  id: string
+  reporter_id: string | null
+  reporter_email: string | null
+  reporter_ip: string | null
+  target_type: 'business_card' | 'sidejob_card' | 'user'
+  target_id: string
+  target_owner_id: string | null
+  report_type: 'spam' | 'inappropriate' | 'fraud' | 'copyright' | 'privacy' | 'other'
+  severity: 'low' | 'medium' | 'high'
+  description: string | null
+  evidence_urls: string[] | null
+  status: 'pending' | 'investigating' | 'resolved' | 'rejected'
+  resolution_action: 'delete_content' | 'disable_content' | 'warn_user' | 'suspend_user' | 'ban_user' | 'reject_report' | null
+  resolution_note: string | null
+  reviewed_by: string | null
+  reviewed_at: string | null
+  resolved_at: string | null
+  notify_reporter: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface ReportWithDetails extends Report {
+  reporter?: {
+    id: string
+    email: string
+    name?: string
+  } | null
+  target_card?: {
+    id: string
+    name: string
+    company: string | null
+    custom_url: string | null
+  } | null
+  target_sidejob?: {
+    id: string
+    title: string
+    category?: string
+  } | null
+  target_user?: {
+    id: string
+    name: string
+    email: string
+  } | null
+  target_owner?: {
+    id: string
+    name: string
+    email: string
+  } | null
+  reviewed_by_admin?: {
+    id: string
+    name: string
+  } | null
+}
+
+export interface ReportStats {
+  total: number
+  pending: number
+  investigating: number
+  resolved: number
+  rejected: number
+  by_type: Array<{ type: string; count: number }>
+  by_severity: Array<{ severity: string; count: number }>
+  by_target_type: Array<{ target_type: string; count: number }>
+  recent_reports: ReportWithDetails[]
+}
+
+export interface ReportFilters {
+  search?: string
+  status?: 'pending' | 'investigating' | 'resolved' | 'rejected' | 'all'
+  report_type?: 'spam' | 'inappropriate' | 'fraud' | 'copyright' | 'privacy' | 'other' | 'all'
+  severity?: 'low' | 'medium' | 'high' | 'all'
+  target_type?: 'business_card' | 'sidejob_card' | 'user' | 'all'
+  date_from?: string
+  date_to?: string
+  sort_by?: 'created_at' | 'severity' | 'updated_at'
+  sort_order?: 'asc' | 'desc'
+}
+
+export interface ReportActionLog {
+  id: string
+  report_id: string
+  admin_id: string | null
+  action: string
+  old_value: string | null
+  new_value: string | null
+  note: string | null
+  created_at: string
+  admin?: {
+    id: string
+    name: string
+  } | null
+}

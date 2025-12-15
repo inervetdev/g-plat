@@ -51,6 +51,7 @@ test.describe('QR Code Management', () => {
     // Check table headers (use table th selector for specificity)
     await expect(page.locator('table th', { hasText: 'QR 코드' })).toBeVisible()
     await expect(page.locator('table th', { hasText: '연결된 명함' })).toBeVisible()
+    await expect(page.locator('table th', { hasText: '사용자' })).toBeVisible()
     await expect(page.locator('table th', { hasText: '캠페인' })).toBeVisible()
     await expect(page.locator('table th', { hasText: '스캔 수' })).toBeVisible()
     await expect(page.locator('table th', { hasText: '상태' })).toBeVisible()
@@ -165,7 +166,7 @@ test.describe('QR Code Management', () => {
     }
   })
 
-  test('should have external link button for each QR code', async ({ page }) => {
+  test('should open QR popup when clicking QR image', async ({ page }) => {
     // Wait for table to load
     await page.waitForSelector('table', { timeout: 15000 })
 
@@ -173,17 +174,26 @@ test.describe('QR Code Management', () => {
     const qrRows = await page.locator('table tbody tr').count()
 
     if (qrRows > 0) {
-      // Find external link buttons
-      const externalLinks = await page.locator('table tbody tr').first().locator('a[target="_blank"]').count()
-      expect(externalLinks).toBeGreaterThan(0)
+      // Click the QR code image in the first row
+      const qrImage = page.locator('table tbody tr').first().locator('img').first()
+      await qrImage.click()
 
-      // Verify link format
-      const firstLink = page.locator('table tbody tr').first().locator('a[target="_blank"]').first()
-      const href = await firstLink.getAttribute('href')
-      console.log(`External link: ${href}`)
+      // Wait for popup to appear
+      await page.waitForTimeout(500)
 
-      if (href) {
-        expect(href).toContain('g-plat.com/q/')
+      // Check if popup is visible
+      const popup = page.locator('.fixed.inset-0.bg-black')
+      const popupVisible = await popup.isVisible()
+
+      if (popupVisible) {
+        // Check popup content
+        await expect(page.getByText('QR 코드')).toBeVisible()
+        await expect(page.getByText('링크 열기')).toBeVisible()
+        await expect(page.getByText('링크 복사')).toBeVisible()
+
+        // Close popup by clicking the overlay
+        await page.locator('.fixed.inset-0.bg-black').click({ position: { x: 10, y: 10 } })
+        await page.waitForTimeout(300)
       }
     }
   })

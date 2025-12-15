@@ -70,6 +70,9 @@ Claude Code가 항상 읽는 필수 문서:
 ### 콜백 시스템
 - [기획서](features/callback/README.md) ⭐ NEW (통화 후 자동 SMS)
 
+### 신고관리
+- [기획서](features/reports/README.md) ⭐ NEW (콘텐츠 모더레이션)
+
 ### 분석/통계
 - [대시보드](features/analytics/dashboard.md)
 - [방문자 추적](features/analytics/visitor-tracking.md)

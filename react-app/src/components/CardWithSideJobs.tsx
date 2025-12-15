@@ -1,9 +1,12 @@
+import { useState } from 'react'
+import { Flag } from 'lucide-react'
 import { SimpleCard } from './themes/SimpleCard'
 import { ProfessionalCard } from './themes/ProfessionalCard'
 import { TrendyCard } from './themes/TrendyCard'
 import { AppleCard } from './themes/AppleCard'
 import { DefaultCard } from './themes/DefaultCard'
 import AdminSidejobCards from './AdminSidejobCards'
+import { ReportModal } from './report/ReportModal'
 import type { CategoryPrimary } from '../types/sidejob'
 import { CATEGORY_CONFIG, isCardExpired, isCardExpiringSoon } from '../types/sidejob'
 
@@ -47,6 +50,8 @@ interface CardWithSideJobsProps {
 }
 
 export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWithSideJobsProps) {
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false)
+
   const renderBusinessCard = () => {
     const theme = businessCard.theme || 'default'
     const userId = businessCard.id // business card id를 userId로 사용
@@ -183,6 +188,27 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
           className={activeSideJobs.length > 0 ? '' : 'rounded-b-2xl overflow-hidden'}
         />
       </div>
+
+      {/* 신고 버튼 */}
+      <div className="max-w-md mx-auto mt-4 text-center">
+        <button
+          onClick={() => setIsReportModalOpen(true)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <Flag className="w-3 h-3" />
+          부적절한 콘텐츠 신고
+        </button>
+      </div>
+
+      {/* 신고 모달 */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        targetType="business_card"
+        targetId={businessCard.id}
+        targetOwnerId={businessCard.user_id}
+        targetName={businessCard.name || businessCard.company || '명함'}
+      />
     </div>
   )
 }

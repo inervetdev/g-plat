@@ -30,10 +30,10 @@ async function resetAdminPassword() {
       created_at: adminUser.created_at
     });
 
-    // 새 비밀번호 설정: admin1234!
+    // 새 비밀번호 설정: Password123!@#
     const { data: updateData, error: updateError } = await supabase.auth.admin.updateUserById(
       adminUser.id,
-      { password: 'admin1234!' }
+      { password: 'Password123!@#' }
     );
 
     if (updateError) {
@@ -44,7 +44,7 @@ async function resetAdminPassword() {
     console.log('✅ 비밀번호 재설정 성공!');
     console.log('\n📋 로그인 정보:');
     console.log('   이메일: admin@g-plat.com');
-    console.log('   비밀번호: admin1234!');
+    console.log('   비밀번호: Password123!@#');
     console.log('\n🔗 로그인 페이지: http://localhost:5174/login');
 
   } catch (error) {
