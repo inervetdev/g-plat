@@ -206,7 +206,7 @@ export function QrCodesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Short code, 캠페인명, URL 검색..."
+                placeholder="Short code, URL 검색..."
                 value={filters.search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -320,9 +320,6 @@ export function QrCodesPage() {
                 </div>
 
                 <p className="text-xs text-gray-400">g-plat.com/q/{qr.short_code}</p>
-                {qr.campaign && (
-                  <p className="text-xs text-purple-600 mt-1 truncate">캠페인: {qr.campaign}</p>
-                )}
 
                 <div className="flex items-center gap-4 mt-3 text-sm text-gray-600">
                   <span className="flex items-center gap-1">
@@ -377,9 +374,6 @@ export function QrCodesPage() {
                     사용자
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    캠페인
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                     스캔 수
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
@@ -429,17 +423,6 @@ export function QrCodesPage() {
                           {qr.business_card?.user_id ? qr.business_card.user_id.slice(0, 8) + '...' : '-'}
                         </span>
                       </div>
-                    </td>
-
-                    {/* Campaign */}
-                    <td className="px-6 py-4">
-                      {qr.campaign ? (
-                        <span className="px-2 py-1 bg-purple-100 text-purple-700 text-sm rounded">
-                          {qr.campaign}
-                        </span>
-                      ) : (
-                        <span className="text-gray-400 text-sm">-</span>
-                      )}
                     </td>
 
                     {/* Scan Count */}

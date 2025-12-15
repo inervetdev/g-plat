@@ -8,7 +8,6 @@ interface QRCodeGeneratorProps {
   url: string
   title?: string
   businessCardId?: string
-  campaign?: string
   enableTracking?: boolean
 }
 
@@ -16,7 +15,6 @@ export default function QRCodeGenerator({
   url,
   title = '명함 QR 코드',
   businessCardId,
-  campaign,
   enableTracking = true
 }: QRCodeGeneratorProps) {
   const [qrDataUrl, setQrDataUrl] = useState<string>('')
@@ -149,7 +147,7 @@ export default function QRCodeGenerator({
 
   useEffect(() => {
     generateQR()
-  }, [url, qrOptions, businessCardId, campaign])
+  }, [url, qrOptions, businessCardId])
 
   // Download QR code as image
   const downloadQR = () => {

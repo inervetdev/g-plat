@@ -126,18 +126,6 @@ export function QrDetailModal({ qrCode, isOpen, onClose }: QrDetailModalProps) {
                   </div>
                 )}
 
-                {qrCode.campaign && (
-                  <div className="flex items-start gap-3">
-                    <Globe className="w-5 h-5 text-gray-400 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-gray-500">캠페인</p>
-                      <span className="px-2 py-1 bg-purple-100 text-purple-700 text-sm rounded">
-                        {qrCode.campaign}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
                 <div className="flex items-start gap-3">
                   <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
                   <div>

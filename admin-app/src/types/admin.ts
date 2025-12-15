@@ -154,7 +154,6 @@ export interface QRCode {
   target_type: string
   user_id: string
   business_card_id: string | null
-  campaign: string | null
   is_active: boolean
   scan_count: number
   max_scans: number | null
@@ -210,7 +209,6 @@ export interface QRCodeStats {
 export interface QRFilters {
   search?: string
   status?: 'active' | 'inactive' | 'expired' | 'all'
-  campaign?: string
   sort_by?: 'created_at' | 'scan_count' | 'updated_at'
   sort_order?: 'asc' | 'desc'
 }

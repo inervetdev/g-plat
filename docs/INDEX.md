@@ -3,7 +3,7 @@ title: "G-Plat 문서 인덱스"
 category: "documentation"
 tier: 1
 status: "active"
-last_updated: "2025-11-26"
+last_updated: "2025-12-15"
 ---
 
 # G-Plat 문서 인덱스
@@ -52,10 +52,10 @@ Claude Code가 항상 읽는 필수 문서:
 - [Storage 통합](features/sidejob-cards/storage-integration.md)
 
 ### QR 시스템
-- [개요](features/qr-system/README.md)
-- [설정 가이드](features/qr-system/setup-guide.md)
-- [Edge Function](features/qr-system/edge-function.md)
-- [분석 기능](features/qr-system/analytics.md)
+- [개요](features/qr-system/README.md) ⭐ NEW (스캔 추적 완성)
+- [설정 가이드](features/qr-system/setup-guide.md) (예정)
+- [Edge Function](features/qr-system/edge-function.md) (예정)
+- [분석 기능](features/qr-system/analytics.md) (예정)
 
 ### 첨부파일
 - [파일 업로드](features/attachments/file-upload.md)
@@ -66,6 +66,9 @@ Claude Code가 항상 읽는 필수 문서:
 - [Naver Maps 설정](features/maps/naver-maps-setup.md)
 - [주소 검색](features/maps/address-search.md)
 - [구현 가이드](features/maps/implementation.md)
+
+### 콜백 시스템
+- [기획서](features/callback/README.md) ⭐ NEW (통화 후 자동 SMS)
 
 ### 분석/통계
 - [대시보드](features/analytics/dashboard.md)
@@ -115,6 +118,7 @@ Claude Code가 항상 읽는 필수 문서:
 - [장기 비전](roadmap/long-term-vision.md)
 
 ### 변경 이력
+- [2025년 12월](history/changelog/2025-12.md) ⭐ NEW
 - [2025년 11월](history/changelog/2025-11.md)
 - [2025년 10월](history/changelog/2025-10.md)
 - [2025년 9월](history/changelog/2025-09.md)
@@ -130,7 +134,7 @@ Claude Code가 항상 읽는 필수 문서:
 - **Service Docs**: 8개
 - **Feature Docs**: 예상 25개+
 - **Infrastructure Docs**: 예상 11개+
-- **Last Updated**: 2025-11-26
+- **Last Updated**: 2025-12-14
 
 ## 📘 참고 문서
 - [문서 작성 표준안](../DOCUMENTATION_STANDARD.md)

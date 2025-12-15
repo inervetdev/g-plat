@@ -143,7 +143,6 @@ export default function QRCodePage() {
               url={cardUrl}
               title="명함 QR 코드"
               businessCardId={card.id}
-              campaign="business_card"
               enableTracking={true}
             />
           </div>
@@ -193,13 +192,13 @@ export default function QRCodePage() {
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="font-medium text-sm">
-                            {qr.campaign || 'Default Campaign'}
+                            QR 코드 #{qr.short_code}
                           </p>
                           <p className="text-xs text-gray-500">
                             생성: {new Date(qr.created_at).toLocaleDateString()}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            단축 URL: /qr/{qr.short_code}
+                            단축 URL: /q/{qr.short_code}
                           </p>
                         </div>
                         <div className="text-right">

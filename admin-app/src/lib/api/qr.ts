@@ -38,7 +38,7 @@ export async function fetchQRCodes(
   // Apply filters
   if (filters.search) {
     query = query.or(
-      `short_code.ilike.%${filters.search}%,campaign.ilike.%${filters.search}%,target_url.ilike.%${filters.search}%`
+      `short_code.ilike.%${filters.search}%,target_url.ilike.%${filters.search}%`
     )
   }
 
@@ -51,10 +51,6 @@ export async function fetchQRCodes(
     } else if (filters.status === 'expired') {
       query = query.lt('expires_at', now)
     }
-  }
-
-  if (filters.campaign) {
-    query = query.eq('campaign', filters.campaign)
   }
 
   // Apply sorting
@@ -80,7 +76,6 @@ export async function fetchQRCodes(
     target_type: qr.target_type,
     user_id: qr.user_id,
     business_card_id: qr.business_card_id,
-    campaign: qr.campaign,
     is_active: qr.is_active ?? true,
     scan_count: qr.scan_count ?? 0,
     max_scans: qr.max_scans,
@@ -135,7 +130,6 @@ export async function fetchQRCode(id: string): Promise<QRCodeWithDetails | null>
     target_type: data.target_type,
     user_id: data.user_id,
     business_card_id: data.business_card_id,
-    campaign: data.campaign,
     is_active: data.is_active ?? true,
     scan_count: data.scan_count ?? 0,
     max_scans: data.max_scans,
@@ -241,7 +235,6 @@ export async function fetchQROverviewStats(): Promise<{
   totalScans: number
   scansToday: number
   scansThisWeek: number
-  topCampaigns: Array<{ campaign: string; count: number }>
 }> {
   const now = new Date()
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString()
@@ -272,28 +265,12 @@ export async function fetchQROverviewStats(): Promise<{
     .select('*', { count: 'exact', head: true })
     .gte('scanned_at', weekAgo)
 
-  // Get top campaigns
-  const { data: campaignData } = await supabase
-    .from('qr_codes')
-    .select('campaign, scan_count')
-    .not('campaign', 'is', null)
-    .order('scan_count', { ascending: false })
-    .limit(5)
-
-  const topCampaigns = (campaignData || [])
-    .filter((c) => c.campaign)
-    .map((c) => ({
-      campaign: c.campaign!,
-      count: c.scan_count || 0,
-    }))
-
   return {
     totalQRCodes: totalQRCodes || 0,
     activeQRCodes: activeQRCodes || 0,
     totalScans: totalScans || 0,
     scansToday: scansToday || 0,
     scansThisWeek: scansThisWeek || 0,
-    topCampaigns,
   }
 }
 
@@ -338,7 +315,7 @@ export async function deleteQRCode(id: string): Promise<void> {
  */
 export async function updateQRCode(
   id: string,
-  updates: Partial<Pick<QRCode, 'campaign' | 'is_active' | 'max_scans' | 'expires_at'>>
+  updates: Partial<Pick<QRCode, 'is_active' | 'max_scans' | 'expires_at'>>
 ): Promise<void> {
   const { error } = await supabase
     .from('qr_codes')
@@ -354,22 +331,3 @@ export async function updateQRCode(
   }
 }
 
-/**
- * 캠페인 목록 조회
- */
-export async function fetchCampaigns(): Promise<string[]> {
-  const { data, error } = await supabase
-    .from('qr_codes')
-    .select('campaign')
-    .not('campaign', 'is', null)
-    .order('campaign')
-
-  if (error) {
-    console.error('Error fetching campaigns:', error)
-    throw error
-  }
-
-  // Get unique campaigns
-  const campaigns = [...new Set((data || []).map((d) => d.campaign).filter(Boolean))] as string[]
-  return campaigns
-}
