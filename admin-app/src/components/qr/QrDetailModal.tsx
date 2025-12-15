@@ -5,7 +5,6 @@ import {
   Eye,
   Calendar,
   Smartphone,
-  Globe,
   Monitor,
   Clock,
   MapPin,
