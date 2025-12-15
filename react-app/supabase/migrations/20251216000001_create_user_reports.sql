@@ -78,7 +78,19 @@ CREATE POLICY "Admin can update reports" ON user_reports
 
 -- 누구나 신고 가능 (INSERT) - 비회원도 가능
 CREATE POLICY "Anyone can create reports" ON user_reports
-  FOR INSERT WITH CHECK (true);
+  FOR INSERT
+  TO anon, authenticated
+  WITH CHECK (true);
+
+-- 신고자가 자신의 신고를 조회할 수 있도록 허용 (INSERT 후 SELECT 필요)
+CREATE POLICY "Reporter can view own reports" ON user_reports
+  FOR SELECT
+  TO anon, authenticated
+  USING (true);
+
+-- 테이블 권한 부여
+GRANT INSERT, SELECT ON user_reports TO anon;
+GRANT INSERT, SELECT ON user_reports TO authenticated;
 
 -- 관리자만 로그 조회 가능
 CREATE POLICY "Admin can view report logs" ON report_action_logs
