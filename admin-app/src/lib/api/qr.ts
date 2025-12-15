@@ -19,6 +19,17 @@ export async function fetchQRCodes(
   const { page, per_page } = pagination
   const offset = (page - 1) * per_page
 
+  // If searching by name, first find matching business card IDs
+  let matchingCardIds: string[] = []
+  if (filters.search) {
+    const { data: matchingCards } = await supabase
+      .from('business_cards')
+      .select('id')
+      .or(`name.ilike.%${filters.search}%,company.ilike.%${filters.search}%`)
+
+    matchingCardIds = (matchingCards || []).map((c) => c.id)
+  }
+
   let query = supabase
     .from('qr_codes')
     .select(
@@ -35,11 +46,17 @@ export async function fetchQRCodes(
       { count: 'exact' }
     )
 
-  // Apply filters
+  // Apply filters - search by short_code, target_url, or matching business card
   if (filters.search) {
-    query = query.or(
-      `short_code.ilike.%${filters.search}%,target_url.ilike.%${filters.search}%`
-    )
+    if (matchingCardIds.length > 0) {
+      query = query.or(
+        `short_code.ilike.%${filters.search}%,target_url.ilike.%${filters.search}%,business_card_id.in.(${matchingCardIds.join(',')})`
+      )
+    } else {
+      query = query.or(
+        `short_code.ilike.%${filters.search}%,target_url.ilike.%${filters.search}%`
+      )
+    }
   }
 
   if (filters.status && filters.status !== 'all') {
