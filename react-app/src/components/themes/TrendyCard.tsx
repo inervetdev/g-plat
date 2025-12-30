@@ -6,6 +6,7 @@ import type { Attachment } from '@/types/attachment'
 
 interface CardData {
   name: string
+  name_en?: string
   title: string
   company: string
   phone: string
@@ -21,6 +22,8 @@ interface CardData {
   twitter?: string
   youtube?: string
   github?: string
+  tiktok?: string
+  threads?: string
   introduction?: string
   services?: string[]
   profileImage?: string
@@ -249,12 +252,15 @@ export function TrendyCard({ userId }: { userId: string }) {
             </div>
           </div>
 
-          <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent truncate">
+          <h1 className="text-3xl font-bold mb-1 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent truncate">
             {cardData.name}
+            {cardData.title && <span className="text-2xl text-gray-400 ml-2">{cardData.title}</span>}
           </h1>
-          <p className="text-gray-400 text-lg mb-1 truncate">{cardData.title}</p>
+          {cardData.name_en && (
+            <p className="text-gray-500 text-lg mb-1 truncate">{cardData.name_en}</p>
+          )}
           {cardData.company && (
-            <p className="text-gray-500 truncate">{cardData.company}</p>
+            <p className="text-gray-400 truncate">{cardData.company}</p>
           )}
         </div>
 
@@ -312,7 +318,7 @@ export function TrendyCard({ userId }: { userId: string }) {
         </div>
 
         {/* SNS Links */}
-        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
           <div className="mb-8 animate-fadeInUp animation-delay-500">
             <h2 className="text-xl font-bold mb-4 text-gray-400">SNS</h2>
             <div className="flex flex-wrap gap-3">
@@ -374,6 +380,26 @@ export function TrendyCard({ userId }: { userId: string }) {
                   className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
                 >
                   💻 GitHub
+                </a>
+              )}
+              {cardData.tiktok && (
+                <a
+                  href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
+                >
+                  🎵 TikTok
+                </a>
+              )}
+              {cardData.threads && (
+                <a
+                  href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
+                >
+                  🧵 Threads
                 </a>
               )}
             </div>

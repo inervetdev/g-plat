@@ -179,10 +179,15 @@ export function DefaultCard({ userId }: { userId: string }) {
               <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white animate-pulse"></div>
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-800 mb-2 truncate">{cardData.name}</h1>
-            <p className="text-lg text-purple-600 font-medium mb-1 truncate">{cardData.title}</p>
+            <h1 className="text-3xl font-bold text-gray-800 mb-1 truncate">
+              {cardData.name}
+              {cardData.title && <span className="text-2xl font-medium text-gray-600 ml-2">{cardData.title}</span>}
+            </h1>
+            {cardData.name_en && (
+              <p className="text-lg text-gray-500 mb-1 truncate">{cardData.name_en}</p>
+            )}
             {cardData.company && (
-              <p className="text-gray-500 truncate">{cardData.company}</p>
+              <p className="text-purple-600 font-medium truncate">{cardData.company}</p>
             )}
           </div>
         </div>
@@ -241,7 +246,7 @@ export function DefaultCard({ userId }: { userId: string }) {
         </div>
 
         {/* SNS Links */}
-        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
           <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
             <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
               <span>🌐</span> SNS
@@ -311,6 +316,28 @@ export function DefaultCard({ userId }: { userId: string }) {
                 >
                   <span>💻</span>
                   <span className="text-sm font-medium">GitHub</span>
+                </a>
+              )}
+              {cardData.tiktok && (
+                <a
+                  href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl hover:opacity-90 transition-opacity"
+                >
+                  <span>🎵</span>
+                  <span className="text-sm font-medium">TikTok</span>
+                </a>
+              )}
+              {cardData.threads && (
+                <a
+                  href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl hover:opacity-90 transition-opacity"
+                >
+                  <span>🧵</span>
+                  <span className="text-sm font-medium">Threads</span>
                 </a>
               )}
             </div>

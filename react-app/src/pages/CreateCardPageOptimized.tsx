@@ -46,6 +46,7 @@ export default function CreateCardPageOptimized() {
   const canCreate = canCreateCard(limits)
   const [formData, setFormData] = useState({
     name: '',
+    name_en: '',
     title: '',
     company: '',
     department: '',
@@ -60,6 +61,8 @@ export default function CreateCardPageOptimized() {
     twitter: '',
     youtube: '',
     github: '',
+    tiktok: '',
+    threads: '',
     introduction: '',
     services: '',
     skills: '',
@@ -395,6 +398,7 @@ export default function CreateCardPageOptimized() {
         .insert({
           user_id: user.id,
           name: formData.name,
+          name_en: formData.name_en || null,
           title: formData.title,
           company: formData.company,
           department: formData.department,
@@ -411,6 +415,8 @@ export default function CreateCardPageOptimized() {
           twitter: formData.twitter,
           youtube: formData.youtube,
           github: formData.github,
+          tiktok: formData.tiktok || null,
+          threads: formData.threads || null,
           introduction: formData.introduction,
           services: servicesArray,
           skills: skillsArray,
@@ -614,6 +620,19 @@ export default function CreateCardPageOptimized() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    영문 이름
+                  </label>
+                  <input
+                    type="text"
+                    name="name_en"
+                    value={formData.name_en}
+                    onChange={handleChange}
+                    placeholder="Gil-dong Hong"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     직책
                   </label>
                   <input
@@ -621,6 +640,7 @@ export default function CreateCardPageOptimized() {
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
+                    placeholder="대표, 매니저 등"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
@@ -869,20 +889,30 @@ export default function CreateCardPageOptimized() {
               )}
             </div>
 
-            {/* 소셜 미디어 - 간소화 */}
+            {/* 소셜 미디어 */}
             <div className="border-b pb-6">
               <h2 className="text-lg font-semibold mb-4">소셜 미디어</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {['linkedin', 'instagram', 'github', 'twitter'].map(social => (
-                  <div key={social}>
-                    <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                      {social}
+                {[
+                  { key: 'linkedin', label: 'LinkedIn' },
+                  { key: 'instagram', label: 'Instagram' },
+                  { key: 'facebook', label: 'Facebook' },
+                  { key: 'twitter', label: 'X (Twitter)' },
+                  { key: 'youtube', label: 'YouTube' },
+                  { key: 'github', label: 'GitHub' },
+                  { key: 'tiktok', label: 'TikTok' },
+                  { key: 'threads', label: 'Threads' }
+                ].map(social => (
+                  <div key={social.key}>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {social.label}
                     </label>
                     <input
-                      type={social === 'linkedin' ? 'url' : 'text'}
-                      name={social}
-                      value={formData[social as keyof typeof formData]}
+                      type="text"
+                      name={social.key}
+                      value={formData[social.key as keyof typeof formData]}
                       onChange={handleChange}
+                      placeholder={`@username 또는 URL`}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>

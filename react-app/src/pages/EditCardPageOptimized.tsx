@@ -62,6 +62,7 @@ export function EditCardPageOptimized() {
 
   const [formData, setFormData] = useState({
     name: '',
+    name_en: '',
     title: '',
     company: '',
     department: '',
@@ -76,6 +77,8 @@ export function EditCardPageOptimized() {
     twitter: '',
     youtube: '',
     github: '',
+    tiktok: '',
+    threads: '',
     introduction: '',
     services: '',
     skills: '',
@@ -112,29 +115,33 @@ export function EditCardPageOptimized() {
       if (error) throw error
 
       if (card) {
+        const cardAny = card as any
         setFormData({
-          name: card.name || '',
-          title: card.title || '',
-          company: card.company || '',
-          department: card.department || '',
-          phone: card.phone || '',
-          email: card.email || '',
-          website: card.website || '',
-          address: card.address || '',
-          address_detail: card.address_detail || '',
-          linkedin: card.linkedin || '',
-          instagram: card.instagram || '',
-          facebook: card.facebook || '',
-          twitter: card.twitter || '',
-          youtube: card.youtube || '',
-          github: card.github || '',
-          introduction: card.introduction || '',
-          services: card.services?.join(', ') || '',
-          skills: card.skills?.join(', ') || '',
-          theme: (card.theme as ThemeName) || 'trendy',
-          custom_url: card.custom_url || '',
-          is_primary: card.is_primary || false,
-          is_active: card.is_active || true
+          name: cardAny.name || '',
+          name_en: cardAny.name_en || '',
+          title: cardAny.title || '',
+          company: cardAny.company || '',
+          department: cardAny.department || '',
+          phone: cardAny.phone || '',
+          email: cardAny.email || '',
+          website: cardAny.website || '',
+          address: cardAny.address || '',
+          address_detail: cardAny.address_detail || '',
+          linkedin: cardAny.linkedin || '',
+          instagram: cardAny.instagram || '',
+          facebook: cardAny.facebook || '',
+          twitter: cardAny.twitter || '',
+          youtube: cardAny.youtube || '',
+          github: cardAny.github || '',
+          tiktok: cardAny.tiktok || '',
+          threads: cardAny.threads || '',
+          introduction: cardAny.introduction || '',
+          services: cardAny.services?.join(', ') || '',
+          skills: cardAny.skills?.join(', ') || '',
+          theme: (cardAny.theme as ThemeName) || 'trendy',
+          custom_url: cardAny.custom_url || '',
+          is_primary: cardAny.is_primary || false,
+          is_active: cardAny.is_active || true
         })
 
         // Load existing attachments
@@ -355,6 +362,7 @@ export function EditCardPageOptimized() {
         .from('business_cards')
         .update({
           name: formData.name,
+          name_en: formData.name_en || null,
           title: formData.title,
           company: formData.company,
           department: formData.department,
@@ -371,6 +379,8 @@ export function EditCardPageOptimized() {
           twitter: formData.twitter,
           youtube: formData.youtube,
           github: formData.github,
+          tiktok: formData.tiktok || null,
+          threads: formData.threads || null,
           introduction: formData.introduction,
           services: formData.services ? formData.services.split(',').map(s => s.trim()) : [],
           skills: formData.skills ? formData.skills.split(',').map(s => s.trim()) : [],
@@ -706,7 +716,8 @@ export function EditCardPageOptimized() {
               <h2 className="text-lg font-semibold text-gray-900">기본 정보</h2>
               <div className="grid grid-cols-2 gap-4">
                 <FormField label="이름" name="name" required />
-                <FormField label="직책" name="title" />
+                <FormField label="영문 이름" name="name_en" placeholder="Gil-dong Hong" />
+                <FormField label="직책" name="title" placeholder="대표, 매니저 등" />
                 <FormField label="회사" name="company" />
                 <FormField label="부서" name="department" />
               </div>
@@ -756,8 +767,14 @@ export function EditCardPageOptimized() {
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-gray-900">소셜 미디어</h2>
               <div className="grid grid-cols-2 gap-4">
-                <FormField label="LinkedIn" name="linkedin" />
-                <FormField label="Instagram" name="instagram" />
+                <FormField label="LinkedIn" name="linkedin" placeholder="@username 또는 URL" />
+                <FormField label="Instagram" name="instagram" placeholder="@username 또는 URL" />
+                <FormField label="Facebook" name="facebook" placeholder="@username 또는 URL" />
+                <FormField label="X (Twitter)" name="twitter" placeholder="@username 또는 URL" />
+                <FormField label="YouTube" name="youtube" placeholder="@username 또는 URL" />
+                <FormField label="GitHub" name="github" placeholder="@username 또는 URL" />
+                <FormField label="TikTok" name="tiktok" placeholder="@username 또는 URL" />
+                <FormField label="Threads" name="threads" placeholder="@username 또는 URL" />
               </div>
             </div>
 

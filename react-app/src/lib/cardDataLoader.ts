@@ -4,6 +4,7 @@ import { supabase } from './supabase'
 export interface CardData {
   id?: string
   name: string
+  name_en?: string
   title: string
   company: string
   department?: string
@@ -20,6 +21,8 @@ export interface CardData {
   twitter?: string
   youtube?: string
   github?: string
+  tiktok?: string
+  threads?: string
   introduction?: string
   services?: string[]
   skills?: string[]
@@ -46,6 +49,7 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
       return {
         id: cardData.id,
         name: cardData.name,
+        name_en: cardData.name_en || '',
         title: cardData.title || '',
         company: cardData.company || '',
         department: cardData.department || '',
@@ -62,6 +66,8 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
         twitter: cardData.twitter || '',
         youtube: cardData.youtube || '',
         github: cardData.github || '',
+        tiktok: cardData.tiktok || '',
+        threads: cardData.threads || '',
         introduction: cardData.introduction || '',
         services: cardData.services || [],
         skills: cardData.skills || [],
@@ -89,6 +95,7 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
       const profile = profileData as any
       return {
         name: userData.name || '이름',
+        name_en: '',
         title: profile?.title || '직책',
         company: profile?.company || '회사',
         department: '',
@@ -102,6 +109,8 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
         twitter: '',
         youtube: '',
         github: '',
+        tiktok: '',
+        threads: '',
         introduction: profile?.introduction || '',
         services: profile?.services || [],
         skills: [],
@@ -119,6 +128,7 @@ export async function loadBusinessCardData(userId: string): Promise<CardData | n
 // Default demo data
 export const defaultDemoData: CardData = {
   name: '김대리',
+  name_en: 'Dae-ri Kim',
   title: 'Full Stack Developer',
   company: 'G-PLAT Tech',
   department: '개발팀',
@@ -132,6 +142,8 @@ export const defaultDemoData: CardData = {
   twitter: '',
   youtube: '',
   github: '',
+  tiktok: '',
+  threads: '',
   introduction: '안녕하세요! 풀스택 개발자입니다. React, Node.js, TypeScript를 주로 사용하며, 모바일 명함 서비스를 개발하고 있습니다.',
   services: ['웹 개발', '앱 개발', 'UI/UX 디자인', '기술 컨설팅'],
   skills: ['React', 'Node.js', 'TypeScript'],

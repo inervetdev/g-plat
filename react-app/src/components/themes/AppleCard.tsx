@@ -139,8 +139,13 @@ export function AppleCard({ userId }: { userId: string }) {
               )}
             </div>
           </div>
-          <h2 className="text-2xl font-normal mb-1 truncate">{cardData.name}</h2>
-          <p className="text-gray-500 text-base truncate">{cardData.title}</p>
+          <h2 className="text-2xl font-normal mb-1 truncate">
+            {cardData.name}
+            {cardData.title && <span className="text-xl text-gray-500 ml-2">{cardData.title}</span>}
+          </h2>
+          {cardData.name_en && (
+            <p className="text-gray-500 text-base truncate">{cardData.name_en}</p>
+          )}
           {cardData.company && (
             <p className="text-gray-500 text-sm mt-1 truncate">{cardData.company}</p>
           )}
@@ -215,7 +220,7 @@ export function AppleCard({ userId }: { userId: string }) {
         )}
 
         {/* SNS Links */}
-        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
           <div className="mt-2 bg-white">
             <div className="px-4 py-3 border-b border-gray-200">
               <h3 className="text-base font-medium">SNS</h3>
@@ -280,6 +285,26 @@ export function AppleCard({ userId }: { userId: string }) {
                     className="flex items-center gap-2 px-3 py-2 bg-[#181717] text-white rounded-lg text-sm"
                   >
                     💻 GitHub
+                  </a>
+                )}
+                {cardData.tiktok && (
+                  <a
+                    href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-lg text-sm"
+                  >
+                    🎵 TikTok
+                  </a>
+                )}
+                {cardData.threads && (
+                  <a
+                    href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-lg text-sm"
+                  >
+                    🧵 Threads
                   </a>
                 )}
               </div>

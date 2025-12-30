@@ -129,8 +129,13 @@ export function SimpleCard({ userId }: { userId: string }) {
 
           {/* Name & Title */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-semibold text-gray-800 mb-1 truncate">{cardData.name}</h1>
-            <p className="text-gray-500 truncate">{cardData.title}</p>
+            <h1 className="text-2xl font-semibold text-gray-800 mb-1 truncate">
+              {cardData.name}
+              {cardData.title && <span className="text-xl font-medium text-gray-500 ml-2">{cardData.title}</span>}
+            </h1>
+            {cardData.name_en && (
+              <p className="text-gray-500 truncate">{cardData.name_en}</p>
+            )}
             {cardData.company && (
               <p className="text-sm text-gray-400 mt-1 truncate">{cardData.company}</p>
             )}
@@ -183,7 +188,7 @@ export function SimpleCard({ userId }: { userId: string }) {
         </div>
 
         {/* SNS Links */}
-        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
           <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">SNS</h2>
             <div className="flex flex-wrap gap-2">
@@ -245,6 +250,26 @@ export function SimpleCard({ userId }: { userId: string }) {
                   className="flex items-center gap-2 px-3 py-2 bg-[#181717] text-white rounded-full text-sm hover:opacity-90 transition-opacity"
                 >
                   💻 GitHub
+                </a>
+              )}
+              {cardData.tiktok && (
+                <a
+                  href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-full text-sm hover:opacity-90 transition-opacity"
+                >
+                  🎵 TikTok
+                </a>
+              )}
+              {cardData.threads && (
+                <a
+                  href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-full text-sm hover:opacity-90 transition-opacity"
+                >
+                  🧵 Threads
                 </a>
               )}
             </div>

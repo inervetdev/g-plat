@@ -7,6 +7,7 @@ import type { Attachment } from '@/types/attachment'
 interface CardData {
   id?: string
   name: string
+  name_en?: string
   title: string
   company: string
   phone: string
@@ -22,6 +23,8 @@ interface CardData {
   twitter?: string
   youtube?: string
   github?: string
+  tiktok?: string
+  threads?: string
   introduction?: string
   services?: string[]
   profileImage?: string
@@ -135,6 +138,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
         setCardData({
           id: businessCard.id,
           name: businessCard.name,
+          name_en: (businessCard as any).name_en || '',
           title: businessCard.title || '',
           company: businessCard.company || '',
           phone: businessCard.phone || '',
@@ -150,6 +154,8 @@ export function ProfessionalCard({ userId }: { userId: string }) {
           twitter: (businessCard as any).twitter || '',
           youtube: (businessCard as any).youtube || '',
           github: (businessCard as any).github || '',
+          tiktok: (businessCard as any).tiktok || '',
+          threads: (businessCard as any).threads || '',
           introduction: (businessCard as any).introduction || '',
           services: (businessCard as any).services || [],
           profileImage: businessCard.profile_image_url || businessCard.profile_image || '',
@@ -279,8 +285,13 @@ export function ProfessionalCard({ userId }: { userId: string }) {
               )}
             </div>
             <div className="min-w-0">
-              <h1 className="text-2xl font-bold mb-1 truncate">{cardData.name}</h1>
-              <p className="text-[#c9a961] font-medium truncate">{cardData.title}</p>
+              <h1 className="text-2xl font-bold mb-1 truncate">
+                {cardData.name}
+                {cardData.title && <span className="text-xl font-medium ml-2">{cardData.title}</span>}
+              </h1>
+              {cardData.name_en && (
+                <p className="text-white/80 truncate">{cardData.name_en}</p>
+              )}
             </div>
           </div>
         </div>
@@ -346,7 +357,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
         </div>
 
         {/* SNS Links */}
-        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github) && (
+        {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-[#c9a961]">
             <h2 className="text-[#1e3a5f] font-bold mb-4">SNS</h2>
             <div className="flex flex-wrap gap-3">
@@ -408,6 +419,26 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   className="flex items-center gap-2 px-4 py-2 bg-[#181717] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   💻 GitHub
+                </a>
+              )}
+              {cardData.tiktok && (
+                <a
+                  href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  🎵 TikTok
+                </a>
+              )}
+              {cardData.threads && (
+                <a
+                  href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  🧵 Threads
                 </a>
               )}
             </div>
