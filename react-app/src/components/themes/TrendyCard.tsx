@@ -301,32 +301,35 @@ export function TrendyCard({ userId }: { userId: string }) {
         )}
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-2 gap-4 mb-8 animate-fadeInUp animation-delay-600">
+        <div className="grid grid-cols-3 gap-3 mb-8 animate-fadeInUp animation-delay-600">
           <button
             onClick={() => window.location.href = `tel:${cardData.phone}`}
-            className="py-3 px-6 bg-gradient-to-r from-green-500 to-cyan-500 rounded-xl font-medium hover:shadow-lg hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-2 py-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
           >
-            전화하기
+            <span className="text-2xl">📞</span>
+            <span className="text-sm font-medium">전화</span>
+          </button>
+          <button
+            onClick={() => window.location.href = `sms:${cardData.phone}`}
+            className="flex flex-col items-center gap-2 py-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
+          >
+            <span className="text-2xl">💬</span>
+            <span className="text-sm font-medium">문자</span>
           </button>
           <button
             onClick={() => {
-              const vcard = `BEGIN:VCARD
-VERSION:3.0
-FN:${cardData.name}
-ORG:${cardData.company}
-TEL:${cardData.phone}
-EMAIL:${cardData.email}
-END:VCARD`
-              const blob = new Blob([vcard], { type: 'text/vcard' })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              a.href = url
-              a.download = `${cardData.name}.vcf`
-              a.click()
+              if (navigator.share) {
+                navigator.share({
+                  title: `${cardData.name}의 명함`,
+                  text: `${cardData.name} - ${cardData.title}\n${cardData.phone}`,
+                  url: window.location.href
+                })
+              }
             }}
-            className="py-3 px-6 bg-gray-800 rounded-xl font-medium hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
+            className="flex flex-col items-center gap-2 py-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
           >
-            연락처 저장
+            <span className="text-2xl">🔗</span>
+            <span className="text-sm font-medium">공유</span>
           </button>
         </div>
 
@@ -488,8 +491,30 @@ END:VCARD`
           </div>
         )}
 
+        {/* Save Contact Button */}
+        <button
+          onClick={() => {
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${cardData.name}
+ORG:${cardData.company}
+TEL:${cardData.phone}
+EMAIL:${cardData.email}
+END:VCARD`
+            const blob = new Blob([vcard], { type: 'text/vcard' })
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `${cardData.name}.vcf`
+            a.click()
+          }}
+          className="w-full py-4 bg-gradient-to-r from-green-500 to-cyan-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 mb-8"
+        >
+          📱 연락처 추가
+        </button>
+
         {/* Footer */}
-        <div className="text-center mt-12 py-6 border-t border-gray-800">
+        <div className="text-center py-6 border-t border-gray-800">
           <div className="flex items-center justify-center gap-2 text-gray-600">
             <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-6 h-6" />
             <span className="text-sm">Powered by G-PLAT</span>

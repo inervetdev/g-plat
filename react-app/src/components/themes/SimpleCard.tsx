@@ -277,32 +277,35 @@ export function SimpleCard({ userId }: { userId: string }) {
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-3 mb-6">
+        <div className="grid grid-cols-3 gap-3 mb-6">
           <button
             onClick={() => window.location.href = `tel:${cardData.phone}`}
-            className="flex-1 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+            className="flex flex-col items-center gap-2 py-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100"
           >
-            전화하기
+            <span className="text-2xl">📞</span>
+            <span className="text-sm font-medium text-gray-700">전화</span>
+          </button>
+          <button
+            onClick={() => window.location.href = `sms:${cardData.phone}`}
+            className="flex flex-col items-center gap-2 py-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100"
+          >
+            <span className="text-2xl">💬</span>
+            <span className="text-sm font-medium text-gray-700">문자</span>
           </button>
           <button
             onClick={() => {
-              const vcard = `BEGIN:VCARD
-VERSION:3.0
-FN:${cardData.name}
-ORG:${cardData.company}
-TEL:${cardData.phone}
-EMAIL:${cardData.email}
-END:VCARD`
-              const blob = new Blob([vcard], { type: 'text/vcard' })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              a.href = url
-              a.download = `${cardData.name}.vcf`
-              a.click()
+              if (navigator.share) {
+                navigator.share({
+                  title: `${cardData.name}의 명함`,
+                  text: `${cardData.name} - ${cardData.title}\n${cardData.phone}`,
+                  url: window.location.href
+                })
+              }
             }}
-            className="flex-1 py-3 bg-white text-gray-700 rounded-xl font-medium border border-gray-200 hover:bg-gray-50 transition-all"
+            className="flex flex-col items-center gap-2 py-4 bg-white rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100"
           >
-            연락처 저장
+            <span className="text-2xl">🔗</span>
+            <span className="text-sm font-medium text-gray-700">공유</span>
           </button>
         </div>
 
@@ -487,8 +490,30 @@ END:VCARD`
           </div>
         )}
 
+        {/* Save Contact Button */}
+        <button
+          onClick={() => {
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${cardData.name}
+ORG:${cardData.company}
+TEL:${cardData.phone}
+EMAIL:${cardData.email}
+END:VCARD`
+            const blob = new Blob([vcard], { type: 'text/vcard' })
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `${cardData.name}.vcf`
+            a.click()
+          }}
+          className="w-full py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all mb-8"
+        >
+          📱 연락처 추가
+        </button>
+
         {/* Footer */}
-        <div className="text-center mt-12">
+        <div className="text-center">
           <div className="flex items-center justify-center gap-2 text-gray-400">
             <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-4 h-4 opacity-50" />
             <span className="text-xs">Powered by G-PLAT</span>

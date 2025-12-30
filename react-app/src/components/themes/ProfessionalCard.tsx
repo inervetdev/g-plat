@@ -334,34 +334,35 @@ export function ProfessionalCard({ userId }: { userId: string }) {
         )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-3 mb-6">
           <button
             onClick={() => window.location.href = `tel:${cardData.phone}`}
-            className="bg-[#1e3a5f] text-white py-4 px-6 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm"
+            className="bg-[#1e3a5f] text-white py-4 px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
           >
-            <span className="block text-2xl mb-1">📞</span>
-            <span>전화 연결</span>
+            <span className="text-2xl mb-1">📞</span>
+            <span className="text-sm">전화</span>
+          </button>
+          <button
+            onClick={() => window.location.href = `sms:${cardData.phone}`}
+            className="bg-[#1e3a5f] text-white py-4 px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
+          >
+            <span className="text-2xl mb-1">💬</span>
+            <span className="text-sm">문자</span>
           </button>
           <button
             onClick={() => {
-              const vcard = `BEGIN:VCARD
-VERSION:3.0
-FN:${cardData.name}
-ORG:${cardData.company}
-TEL:${cardData.phone}
-EMAIL:${cardData.email}
-END:VCARD`
-              const blob = new Blob([vcard], { type: 'text/vcard' })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              a.href = url
-              a.download = `${cardData.name}.vcf`
-              a.click()
+              if (navigator.share) {
+                navigator.share({
+                  title: `${cardData.name}의 명함`,
+                  text: `${cardData.name} - ${cardData.title}\n${cardData.phone}`,
+                  url: window.location.href
+                })
+              }
             }}
-            className="bg-[#c9a961] text-white py-4 px-6 rounded-lg font-medium hover:bg-[#b89751] transition-colors shadow-sm"
+            className="bg-[#1e3a5f] text-white py-4 px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
           >
-            <span className="block text-2xl mb-1">💼</span>
-            <span>명함 저장</span>
+            <span className="text-2xl mb-1">🔗</span>
+            <span className="text-sm">공유</span>
           </button>
         </div>
 
@@ -545,6 +546,28 @@ END:VCARD`
             </div>
           </div>
         )}
+
+        {/* Save Contact Button */}
+        <button
+          onClick={() => {
+            const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${cardData.name}
+ORG:${cardData.company}
+TEL:${cardData.phone}
+EMAIL:${cardData.email}
+END:VCARD`
+            const blob = new Blob([vcard], { type: 'text/vcard' })
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `${cardData.name}.vcf`
+            a.click()
+          }}
+          className="w-full py-4 bg-[#c9a961] text-white rounded-lg font-bold shadow-md hover:bg-[#b89751] transition-all mb-6"
+        >
+          📱 연락처 추가
+        </button>
 
         {/* Professional Badge */}
         <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2c4a6f] rounded-lg p-4 text-white text-center">

@@ -331,16 +331,24 @@ export function AppleCard({ userId }: { userId: string }) {
               <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-lg">
                 💬
               </div>
-              <span className="text-xs text-gray-600">메시지</span>
+              <span className="text-xs text-gray-600">문자</span>
             </button>
             <button
-              onClick={() => window.location.href = `mailto:${cardData.email}`}
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({
+                    title: `${cardData.name}의 명함`,
+                    text: `${cardData.name} - ${cardData.title}\n${cardData.phone}`,
+                    url: window.location.href
+                  })
+                }
+              }}
               className="flex flex-col items-center gap-1 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg">
-                ✉️
+              <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white text-lg">
+                🔗
               </div>
-              <span className="text-xs text-gray-600">메일</span>
+              <span className="text-xs text-gray-600">공유</span>
             </button>
           </div>
         </div>
