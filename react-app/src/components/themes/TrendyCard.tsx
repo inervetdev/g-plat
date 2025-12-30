@@ -1,39 +1,15 @@
 import { useEffect, useState } from 'react'
+import { loadBusinessCardData, defaultDemoData, type CardData } from '../../lib/cardDataLoader'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
 import { MapPreview } from '../MapPreview'
 import type { Attachment } from '@/types/attachment'
 
-interface CardData {
-  name: string
-  name_en?: string
-  title: string
-  company: string
-  phone: string
-  email: string
-  website?: string
-  address?: string
-  address_detail?: string
-  latitude?: number
-  longitude?: number
-  linkedin?: string
-  instagram?: string
-  facebook?: string
-  twitter?: string
-  youtube?: string
-  github?: string
-  tiktok?: string
-  threads?: string
-  introduction?: string
-  services?: string[]
-  profileImage?: string
-  attachments?: Attachment[]
-}
-
 export function TrendyCard({ userId }: { userId: string }) {
   const [cardData, setCardData] = useState<CardData | null>(null)
   const [businessCardId, setBusinessCardId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [attachments, setAttachments] = useState<Attachment[]>([])
   const [previewAttachment, setPreviewAttachment] = useState<Attachment | null>(null)
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null)
 
@@ -91,114 +67,29 @@ export function TrendyCard({ userId }: { userId: string }) {
 
   const loadCardData = async () => {
     try {
-      // First try to load from business_cards table
-      const { data: businessCard, error: cardError } = await supabase
-        .from('business_cards')
-        .select('*')
-        .or(`id.eq.${userId},user_id.eq.${userId},custom_url.eq.${userId}`)
-        .eq('is_active', true)
-        .single()
+      const data = await loadBusinessCardData(userId)
+      setCardData(data || defaultDemoData)
 
-      if (businessCard && !cardError) {
-        setBusinessCardId(businessCard.id)
-
-        // Load attachments from card_attachments table
-        let attachments: Attachment[] = []
+      // Load attachments from card_attachments table
+      if (data?.id) {
+        setBusinessCardId(data.id)
         try {
           const { data: attachmentsData } = await supabase
             .from('card_attachments' as any)
             .select('*')
-            .eq('business_card_id', businessCard.id)
+            .eq('business_card_id', data.id)
             .order('display_order', { ascending: true })
 
           if (attachmentsData) {
-            attachments = (attachmentsData as any) || []
+            setAttachments((attachmentsData as any) || [])
           }
         } catch (error) {
           console.error('Error loading attachments:', error)
         }
-
-        setCardData({
-          name: businessCard.name,
-          title: businessCard.title || '',
-          company: businessCard.company || '',
-          phone: businessCard.phone || '',
-          email: businessCard.email || '',
-          website: (businessCard as any).website || '',
-          address: (businessCard as any).address || '',
-          address_detail: (businessCard as any).address_detail || '',
-          latitude: (businessCard as any).latitude,
-          longitude: (businessCard as any).longitude,
-          linkedin: (businessCard as any).linkedin || '',
-          instagram: (businessCard as any).instagram || '',
-          facebook: (businessCard as any).facebook || '',
-          twitter: (businessCard as any).twitter || '',
-          youtube: (businessCard as any).youtube || '',
-          github: (businessCard as any).github || '',
-          tiktok: (businessCard as any).tiktok || '',
-          threads: (businessCard as any).threads || '',
-          name_en: (businessCard as any).name_en || '',
-          introduction: (businessCard as any).introduction || '',
-          services: (businessCard as any).services || [],
-          profileImage: (businessCard as any).profile_image_url || (businessCard as any).profile_image || '',
-          attachments: attachments
-        })
-      } else {
-        // Fallback to user data
-        const { data: userData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', userId)
-          .single()
-
-        const { data: profileData } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('user_id', userId)
-          .single()
-
-        if (userData) {
-          const profile = profileData as any
-          setCardData({
-            name: userData.name || '김대리',
-            title: profile?.title || 'Full Stack Developer',
-            company: profile?.company || 'G-PLAT Tech',
-            phone: (userData as any).phone || '010-1234-5678',
-            email: userData.email || 'demo@gplat.com',
-            website: profile?.website || 'https://gplat.com',
-            introduction: profile?.introduction || '안녕하세요! 풀스택 개발자입니다. React, Node.js, TypeScript를 주로 사용하며, 모바일 명함 서비스를 개발하고 있습니다.',
-            services: profile?.services || ['웹 개발', '앱 개발', 'UI/UX 디자인', '기술 컨설팅'],
-            profileImage: profile?.profile_image || ''
-          })
-        } else {
-          // 데이터가 없을 때 데모 데이터 사용
-          setCardData({
-            name: '김대리',
-            title: 'Full Stack Developer',
-            company: 'G-PLAT Tech',
-            phone: '010-1234-5678',
-            email: 'demo@gplat.com',
-            website: 'https://gplat.com',
-            introduction: '안녕하세요! 풀스택 개발자입니다. React, Node.js, TypeScript를 주로 사용하며, 모바일 명함 서비스를 개발하고 있습니다.',
-            services: ['웹 개발', '앱 개발', 'UI/UX 디자인', '기술 컨설팅'],
-            profileImage: ''
-          })
-        }
       }
     } catch (error) {
       console.error('Error loading card data:', error)
-      // 에러 시에도 데모 데이터 표시
-      setCardData({
-        name: '김대리',
-        title: 'Full Stack Developer',
-        company: 'G-PLAT Tech',
-        phone: '010-1234-5678',
-        email: 'demo@gplat.com',
-        website: 'https://gplat.com',
-        introduction: '안녕하세요! 풀스택 개발자입니다. React, Node.js, TypeScript를 주로 사용하며, 모바일 명함 서비스를 개발하고 있습니다.',
-        services: ['웹 개발', '앱 개발', 'UI/UX 디자인', '기술 컨설팅'],
-        profileImage: ''
-      })
+      setCardData(defaultDemoData)
     } finally {
       setLoading(false)
     }
@@ -483,10 +374,10 @@ END:VCARD`
         )}
 
         {/* Attachments (소개자료) */}
-        {cardData.attachments && cardData.attachments.length > 0 && (
+        {attachments.length > 0 && (
           <div className="mb-8 space-y-3 animate-fadeInUp animation-delay-1000">
-            <h2 className="text-xl font-bold mb-4 text-gray-400">소개자료 ({cardData.attachments.length})</h2>
-            {cardData.attachments.map((attachment) => {
+            <h2 className="text-xl font-bold mb-4 text-gray-400">소개자료 ({attachments.length})</h2>
+            {attachments.map((attachment) => {
               const isYouTube = attachment.attachment_type === 'youtube'
               const isInlineYouTube = isYouTube && attachment.youtube_display_mode === 'inline'
               const isImage = attachment.file_type?.startsWith('image/')

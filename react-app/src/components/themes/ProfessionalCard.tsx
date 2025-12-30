@@ -1,37 +1,9 @@
 import { useEffect, useState } from 'react'
+import { loadBusinessCardData, defaultDemoData, type CardData } from '../../lib/cardDataLoader'
 import { supabase } from '../../lib/supabase'
 import { trackDownload } from '../../lib/trackDownload'
 import { MapPreview } from '../MapPreview'
 import type { Attachment } from '@/types/attachment'
-
-interface CardData {
-  id?: string
-  name: string
-  name_en?: string
-  title: string
-  company: string
-  phone: string
-  email: string
-  website?: string
-  address?: string
-  address_detail?: string
-  latitude?: number
-  longitude?: number
-  linkedin?: string
-  instagram?: string
-  facebook?: string
-  twitter?: string
-  youtube?: string
-  github?: string
-  tiktok?: string
-  threads?: string
-  introduction?: string
-  services?: string[]
-  profileImage?: string
-  attachment_title?: string
-  attachment_url?: string
-  attachment_filename?: string
-}
 
 export function ProfessionalCard({ userId }: { userId: string }) {
   const [cardData, setCardData] = useState<CardData | null>(null)
@@ -125,51 +97,17 @@ export function ProfessionalCard({ userId }: { userId: string }) {
 
   const loadCardData = async () => {
     try {
-      // First try to load from business_cards table
-      const { data: businessCard, error: cardError } = await supabase
-        .from('business_cards')
-        .select('*')
-        .or(`id.eq.${userId},user_id.eq.${userId},custom_url.eq.${userId}`)
-        .eq('is_active', true)
-        .single() as any
+      const data = await loadBusinessCardData(userId)
+      setCardData(data || defaultDemoData)
 
-      if (businessCard && !cardError) {
-        setBusinessCardId(businessCard.id)
-        setCardData({
-          id: businessCard.id,
-          name: businessCard.name,
-          name_en: (businessCard as any).name_en || '',
-          title: businessCard.title || '',
-          company: businessCard.company || '',
-          phone: businessCard.phone || '',
-          email: businessCard.email || '',
-          website: (businessCard as any).website || '',
-          address: (businessCard as any).address || '',
-          address_detail: (businessCard as any).address_detail || '',
-          latitude: (businessCard as any).latitude,
-          longitude: (businessCard as any).longitude,
-          linkedin: (businessCard as any).linkedin || '',
-          instagram: (businessCard as any).instagram || '',
-          facebook: (businessCard as any).facebook || '',
-          twitter: (businessCard as any).twitter || '',
-          youtube: (businessCard as any).youtube || '',
-          github: (businessCard as any).github || '',
-          tiktok: (businessCard as any).tiktok || '',
-          threads: (businessCard as any).threads || '',
-          introduction: (businessCard as any).introduction || '',
-          services: (businessCard as any).services || [],
-          profileImage: businessCard.profile_image_url || businessCard.profile_image || '',
-          attachment_title: businessCard.attachment_title || '',
-          attachment_url: businessCard.attachment_url || '',
-          attachment_filename: businessCard.attachment_filename || ''
-        })
-
-        // Load attachments from card_attachments table
+      // Load attachments from card_attachments table
+      if (data?.id) {
+        setBusinessCardId(data.id)
         try {
           const { data: attachmentsData } = await supabase
             .from('card_attachments' as any)
             .select('*')
-            .eq('business_card_id', businessCard.id)
+            .eq('business_card_id', data.id)
             .order('display_order', { ascending: true })
 
           if (attachmentsData) {
@@ -178,60 +116,10 @@ export function ProfessionalCard({ userId }: { userId: string }) {
         } catch (error) {
           console.error('Error loading attachments:', error)
         }
-      } else {
-        // Fallback to user data
-        const { data: userData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', userId)
-          .single()
-
-        const { data: profileData } = await supabase
-          .from('user_profiles')
-          .select('*')
-          .eq('user_id', userId)
-          .single()
-
-        if (userData) {
-          const profile = profileData as any
-          setCardData({
-            name: userData.name || '',
-            title: profile?.title || '프리랜서',
-            company: profile?.company || '',
-            phone: (userData as any).phone || '',
-            email: userData.email || '',
-            website: profile?.website || '',
-            introduction: profile?.introduction || '',
-            services: profile?.services || [],
-            profileImage: profile?.profile_image || ''
-          })
-        } else {
-          // Fallback demo data when no user data is available
-          setCardData({
-            name: '이대섭',
-            title: 'Full Stack Developer',
-            company: 'Inervet',
-            phone: '010-1234-5678',
-            email: 'dslee@inervet.com',
-            website: 'https://inervet.com',
-            introduction: '안녕하세요! 풀스택 개발자입니다.',
-            services: ['웹 개발', '앱 개발', 'UI/UX 디자인']
-          })
-        }
       }
     } catch (error) {
       console.error('Error loading card data:', error)
-      // Fallback demo data on error
-      setCardData({
-        name: '이대섭',
-        title: 'Full Stack Developer',
-        company: 'Inervet',
-        phone: '010-1234-5678',
-        email: 'dslee@inervet.com',
-        website: 'https://inervet.com',
-        introduction: '안녕하세요! 풀스택 개발자입니다.',
-        services: ['웹 개발', '앱 개발', 'UI/UX 디자인']
-      })
+      setCardData(defaultDemoData)
     } finally {
       setLoading(false)
     }
