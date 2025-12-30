@@ -47,6 +47,9 @@ export interface CardWithUser {
   twitter?: string | null
   youtube?: string | null
   github?: string | null
+  tiktok?: string | null
+  threads?: string | null
+  name_en?: string | null
   bio?: string | null
   profile_image_url?: string | null
   company_logo_url?: string | null
@@ -507,6 +510,9 @@ export interface CreateCardInput {
   twitter?: string
   youtube?: string
   github?: string
+  tiktok?: string
+  threads?: string
+  name_en?: string
   introduction?: string
   services?: string[]
   skills?: string[]

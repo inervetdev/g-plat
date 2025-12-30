@@ -13,6 +13,7 @@ import { MapPreview } from '@/components/common/MapPreview'
 const cardCreateSchema = z.object({
   user_id: z.string().min(1, '사용자를 선택하세요'),
   name: z.string().min(1, '이름을 입력하세요'),
+  name_en: z.string().optional(),
   title: z.string().optional(),
   company: z.string().optional(),
   department: z.string().optional(),
@@ -27,6 +28,8 @@ const cardCreateSchema = z.object({
   twitter: z.string().optional(),
   youtube: z.string().optional(),
   github: z.string().optional(),
+  tiktok: z.string().optional(),
+  threads: z.string().optional(),
   introduction: z.string().optional(),
   services: z.string().optional(),
   skills: z.string().optional(),
@@ -87,6 +90,7 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
     defaultValues: {
       user_id: '',
       name: '',
+      name_en: '',
       title: '',
       company: '',
       department: '',
@@ -101,6 +105,8 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
       twitter: '',
       youtube: '',
       github: '',
+      tiktok: '',
+      threads: '',
       introduction: '',
       services: '',
       skills: '',
@@ -270,6 +276,7 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
       const cardInput: CreateCardInput = {
         user_id: data.user_id,
         name: data.name,
+        name_en: data.name_en || undefined,
         title: data.title || undefined,
         company: data.company || undefined,
         department: data.department || undefined,
@@ -286,6 +293,8 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
         twitter: data.twitter || undefined,
         youtube: data.youtube || undefined,
         github: data.github || undefined,
+        tiktok: data.tiktok || undefined,
+        threads: data.threads || undefined,
         introduction: data.introduction || undefined,
         services: servicesArray,
         skills: skillsArray,
@@ -537,6 +546,19 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
                 {errors.name && (
                   <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
                 )}
+              </div>
+
+              <div>
+                <label htmlFor="name_en" className="block text-sm font-medium text-gray-700 mb-2">
+                  영문 이름
+                </label>
+                <input
+                  id="name_en"
+                  {...register('name_en')}
+                  placeholder="Gil-dong Hong"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
 
               <div>
@@ -798,6 +820,32 @@ export function CardCreateModal({ isOpen, onClose, onSuccess }: CardCreateModalP
                   id="github"
                   {...register('github')}
                   placeholder="https://github.com/username"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="tiktok" className="block text-sm font-medium text-gray-700 mb-2">
+                  TikTok
+                </label>
+                <input
+                  id="tiktok"
+                  {...register('tiktok')}
+                  placeholder="@username"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="threads" className="block text-sm font-medium text-gray-700 mb-2">
+                  Threads
+                </label>
+                <input
+                  id="threads"
+                  {...register('threads')}
+                  placeholder="@username"
                   disabled={isSubmitting}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />

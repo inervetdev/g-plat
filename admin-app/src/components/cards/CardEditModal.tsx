@@ -10,6 +10,7 @@ import type { CardWithStats } from '@/types/admin'
 // Form validation schema
 const cardEditSchema = z.object({
   name: z.string().min(1, '이름을 입력하세요'),
+  name_en: z.string().optional(),
   title: z.string().optional(),
   company: z.string().optional(),
   department: z.string().optional(),
@@ -22,6 +23,10 @@ const cardEditSchema = z.object({
   twitter_url: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
   facebook_url: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
   instagram_url: z.string().url('유효한 URL을 입력하세요').optional().or(z.literal('')),
+  youtube_url: z.string().optional(),
+  github_url: z.string().optional(),
+  tiktok_url: z.string().optional(),
+  threads_url: z.string().optional(),
   theme: z.enum(['default', 'trendy', 'apple', 'professional', 'simple']).optional(),
   custom_url: z.string().min(3, '최소 3자 이상 입력하세요').optional(),
 })
@@ -65,6 +70,7 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
     resolver: zodResolver(cardEditSchema),
     defaultValues: {
       name: card.name,
+      name_en: (card as any).name_en || '',
       title: card.title || '',
       company: card.company || '',
       department: card.department || '',
@@ -77,6 +83,10 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
       twitter_url: card.twitter || '',
       facebook_url: card.facebook || '',
       instagram_url: card.instagram || '',
+      youtube_url: (card as any).youtube || '',
+      github_url: (card as any).github || '',
+      tiktok_url: (card as any).tiktok || '',
+      threads_url: (card as any).threads || '',
       theme: (card.theme as any) || 'default',
       custom_url: card.custom_url || '',
     },
@@ -174,6 +184,7 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
       // Transform form data to match database schema
       const updateData: any = {
         name: data.name,
+        name_en: data.name_en || null,
         title: data.title || null,
         company: data.company || null,
         department: data.department || null,
@@ -186,6 +197,10 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
         twitter: data.twitter_url || null,
         facebook: data.facebook_url || null,
         instagram: data.instagram_url || null,
+        youtube: data.youtube_url || null,
+        github: data.github_url || null,
+        tiktok: data.tiktok_url || null,
+        threads: data.threads_url || null,
         theme: data.theme || null,
         custom_url: data.custom_url || null,
         profile_image_url: profileImageUrl,
@@ -321,6 +336,19 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
                 {errors.name && (
                   <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
                 )}
+              </div>
+
+              <div>
+                <label htmlFor="name_en" className="block text-sm font-medium text-gray-700 mb-2">
+                  영문 이름
+                </label>
+                <input
+                  id="name_en"
+                  {...register('name_en')}
+                  placeholder="Gil-dong Hong"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </div>
 
               <div>
@@ -510,6 +538,58 @@ export function CardEditModal({ card, isOpen, onClose, onSuccess }: CardEditModa
                   id="instagram_url"
                   {...register('instagram_url')}
                   placeholder="https://instagram.com/username"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="youtube_url" className="block text-sm font-medium text-gray-700 mb-2">
+                  YouTube
+                </label>
+                <input
+                  id="youtube_url"
+                  {...register('youtube_url')}
+                  placeholder="https://youtube.com/@channel"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="github_url" className="block text-sm font-medium text-gray-700 mb-2">
+                  GitHub
+                </label>
+                <input
+                  id="github_url"
+                  {...register('github_url')}
+                  placeholder="https://github.com/username"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="tiktok_url" className="block text-sm font-medium text-gray-700 mb-2">
+                  TikTok
+                </label>
+                <input
+                  id="tiktok_url"
+                  {...register('tiktok_url')}
+                  placeholder="@username"
+                  disabled={isSubmitting}
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="threads_url" className="block text-sm font-medium text-gray-700 mb-2">
+                  Threads
+                </label>
+                <input
+                  id="threads_url"
+                  {...register('threads_url')}
+                  placeholder="@username"
                   disabled={isSubmitting}
                   className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
