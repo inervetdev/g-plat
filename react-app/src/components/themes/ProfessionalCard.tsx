@@ -148,18 +148,18 @@ export function ProfessionalCard({ userId }: { userId: string }) {
     >
       <div className="max-w-md mx-auto">
         {/* Header with Navy Background */}
-        <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2c4a6f] text-white px-6 py-8">
+        <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2c4a6f] text-white px-4 sm:px-6 py-6 sm:py-8">
           {/* Company Badge */}
           {cardData.company && (
-            <div className="inline-flex items-center gap-2 bg-[#c9a961] text-[#1e3a5f] px-4 py-1 rounded-full text-sm font-medium mb-6 max-w-full">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#c9a961] text-[#1e3a5f] px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6 max-w-full">
               <span className="flex-shrink-0">✓</span>
               <span className="truncate">{cardData.company}</span>
             </div>
           )}
 
           {/* Profile */}
-          <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full bg-white shadow-lg overflow-hidden flex items-center justify-center">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-full bg-white shadow-lg overflow-hidden flex items-center justify-center flex-shrink-0">
               {cardData.profileImage ? (
                 <img
                   src={cardData.profileImage}
@@ -167,94 +167,94 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-3xl font-bold text-[#1e3a5f]">
+                <span className="text-2xl sm:text-3xl font-bold text-[#1e3a5f]">
                   {cardData.name.charAt(0)}
                 </span>
               )}
             </div>
             <div className="min-w-0">
-              <h1 className="text-2xl font-bold mb-1 truncate">
+              <h1 className="text-xl sm:text-2xl font-bold mb-1 truncate">
                 {cardData.name}
-                {cardData.title && <span className="text-xl font-medium ml-2">{cardData.title}</span>}
+                {cardData.title && <span className="text-lg sm:text-xl font-medium ml-1.5 sm:ml-2">{cardData.title}</span>}
               </h1>
               {cardData.name_en && (
-                <p className="text-white/80 truncate">{cardData.name_en}</p>
+                <p className="text-white/80 text-sm sm:text-base truncate">{cardData.name_en}</p>
               )}
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="px-6 py-6">
+        <div className="px-4 sm:px-6 py-4 sm:py-6">
         {/* Introduction Card */}
         {cardData.introduction && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-[#c9a961]">
-            <h2 className="text-[#1e3a5f] font-bold mb-3">소개</h2>
-            <p className="text-gray-600 leading-relaxed">{cardData.introduction}</p>
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6 border-l-4 border-[#c9a961]">
+            <h2 className="text-[#1e3a5f] font-bold text-base sm:text-lg mb-2 sm:mb-3">소개</h2>
+            <p className="text-gray-600 text-sm sm:text-base leading-relaxed">{cardData.introduction}</p>
           </div>
         )}
 
         {/* Contact Information */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <h2 className="text-[#1e3a5f] font-bold mb-4">연락처 정보</h2>
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+          <h2 className="text-[#1e3a5f] font-bold text-base sm:text-lg mb-3 sm:mb-4">연락처 정보</h2>
 
-          <div className="space-y-4">
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white">
+          <div className="space-y-3 sm:space-y-4">
+            <a href={`tel:${cardData.phone}`} className="flex items-center gap-3 sm:gap-4 min-h-[44px] group">
+              <div className="w-9 sm:w-10 h-9 sm:h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white flex-shrink-0 text-sm sm:text-base">
                 📞
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">전화번호</p>
-                <a href={`tel:${cardData.phone}`} className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors truncate block">
+                <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-0.5 sm:mb-1">전화번호</p>
+                <span className="text-[#1e3a5f] font-medium text-sm sm:text-base group-hover:text-[#c9a961] transition-colors truncate block">
                   {cardData.phone}
-                </a>
+                </span>
               </div>
-            </div>
+            </a>
 
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white flex-shrink-0">
+            <a href={`mailto:${cardData.email}`} className="flex items-center gap-3 sm:gap-4 min-h-[44px] group">
+              <div className="w-9 sm:w-10 h-9 sm:h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white flex-shrink-0 text-sm sm:text-base">
                 ✉️
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">이메일</p>
-                <a href={`mailto:${cardData.email}`} className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors truncate block">
+                <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-0.5 sm:mb-1">이메일</p>
+                <span className="text-[#1e3a5f] font-medium text-sm sm:text-base group-hover:text-[#c9a961] transition-colors truncate block">
                   {cardData.email}
-                </a>
+                </span>
               </div>
-            </div>
+            </a>
 
             {cardData.website && (
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white flex-shrink-0">
+              <a
+                href={cardData.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 sm:gap-4 min-h-[44px] group"
+              >
+                <div className="w-9 sm:w-10 h-9 sm:h-10 bg-[#1e3a5f] rounded-lg flex items-center justify-center text-white flex-shrink-0 text-sm sm:text-base">
                   🌐
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">웹사이트</p>
-                  <a
-                    href={cardData.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#1e3a5f] font-medium hover:text-[#c9a961] transition-colors truncate block"
-                  >
+                  <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-0.5 sm:mb-1">웹사이트</p>
+                  <span className="text-[#1e3a5f] font-medium text-sm sm:text-base group-hover:text-[#c9a961] transition-colors truncate block">
                     {cardData.website?.replace(/^https?:\/\//, '')}
-                  </a>
+                  </span>
                 </div>
-              </div>
+              </a>
             )}
           </div>
         </div>
 
         {/* SNS Links */}
         {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-[#c9a961]">
-            <h2 className="text-[#1e3a5f] font-bold mb-4">SNS</h2>
-            <div className="flex flex-wrap gap-3">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6 border-l-4 border-[#c9a961]">
+            <h2 className="text-[#1e3a5f] font-bold text-base sm:text-lg mb-3 sm:mb-4">SNS</h2>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {cardData.linkedin && (
                 <a
                   href={cardData.linkedin.startsWith('http') ? cardData.linkedin : `https://linkedin.com/in/${cardData.linkedin}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#0A66C2] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-[#0A66C2] text-white rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   🔗 LinkedIn
                 </a>
@@ -264,7 +264,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   href={cardData.instagram.startsWith('http') ? cardData.instagram : `https://instagram.com/${cardData.instagram}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   📷 Instagram
                 </a>
@@ -274,7 +274,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   href={cardData.facebook.startsWith('http') ? cardData.facebook : `https://facebook.com/${cardData.facebook}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#1877F2] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-[#1877F2] text-white rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   📘 Facebook
                 </a>
@@ -284,7 +284,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   href={cardData.twitter.startsWith('http') ? cardData.twitter : `https://twitter.com/${cardData.twitter}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-black text-white rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   🐦 X
                 </a>
@@ -294,7 +294,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   href={cardData.youtube.startsWith('http') ? cardData.youtube : `https://youtube.com/@${cardData.youtube}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#FF0000] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-[#FF0000] text-white rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   ▶️ YouTube
                 </a>
@@ -304,7 +304,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   href={cardData.github.startsWith('http') ? cardData.github : `https://github.com/${cardData.github}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#181717] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-[#181717] text-white rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   💻 GitHub
                 </a>
@@ -314,7 +314,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-black text-white rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   🎵 TikTok
                 </a>
@@ -324,7 +324,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-black text-white rounded-lg text-xs sm:text-sm font-medium hover:opacity-90 transition-opacity"
                 >
                   🧵 Threads
                 </a>
@@ -334,20 +334,20 @@ export function ProfessionalCard({ userId }: { userId: string }) {
         )}
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
           <button
             onClick={() => window.location.href = `tel:${cardData.phone}`}
-            className="bg-[#1e3a5f] text-white py-4 px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
+            className="bg-[#1e3a5f] text-white min-h-[60px] py-3 sm:py-4 px-3 sm:px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
           >
-            <span className="text-2xl mb-1">📞</span>
-            <span className="text-sm">전화</span>
+            <span className="text-xl sm:text-2xl mb-0.5 sm:mb-1">📞</span>
+            <span className="text-xs sm:text-sm">전화</span>
           </button>
           <button
             onClick={() => window.location.href = `sms:${cardData.phone}`}
-            className="bg-[#1e3a5f] text-white py-4 px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
+            className="bg-[#1e3a5f] text-white min-h-[60px] py-3 sm:py-4 px-3 sm:px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
           >
-            <span className="text-2xl mb-1">💬</span>
-            <span className="text-sm">문자</span>
+            <span className="text-xl sm:text-2xl mb-0.5 sm:mb-1">💬</span>
+            <span className="text-xs sm:text-sm">문자</span>
           </button>
           <button
             onClick={() => {
@@ -359,24 +359,24 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                 })
               }
             }}
-            className="bg-[#1e3a5f] text-white py-4 px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
+            className="bg-[#1e3a5f] text-white min-h-[60px] py-3 sm:py-4 px-3 sm:px-4 rounded-lg font-medium hover:bg-[#2c4a6f] transition-colors shadow-sm flex flex-col items-center"
           >
-            <span className="text-2xl mb-1">🔗</span>
-            <span className="text-sm">공유</span>
+            <span className="text-xl sm:text-2xl mb-0.5 sm:mb-1">🔗</span>
+            <span className="text-xs sm:text-sm">공유</span>
           </button>
         </div>
 
         {/* Services */}
         {cardData.services && cardData.services.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-[#1e3a5f] font-bold mb-4">제공 서비스</h2>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-[#1e3a5f] font-bold text-base sm:text-lg mb-3 sm:mb-4">제공 서비스</h2>
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {cardData.services.map((service, index) => (
                 <div
                   key={index}
-                  className="border border-[#e5e7eb] rounded-lg px-4 py-3 text-center hover:border-[#c9a961] hover:bg-[#faf8f4] transition-all"
+                  className="border border-[#e5e7eb] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-center hover:border-[#c9a961] hover:bg-[#faf8f4] transition-all"
                 >
-                  <span className="text-sm text-gray-700 line-clamp-2">{service}</span>
+                  <span className="text-xs sm:text-sm text-gray-700 line-clamp-2">{service}</span>
                 </div>
               ))}
             </div>
@@ -385,13 +385,13 @@ export function ProfessionalCard({ userId }: { userId: string }) {
 
         {/* Address & Map */}
         {cardData.address && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-[#1e3a5f] font-bold mb-4">주소</h2>
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-[#1e3a5f] font-bold text-base sm:text-lg mb-3 sm:mb-4">주소</h2>
 
             {/* 말풍선 스타일 주소 */}
-            <div className="mb-4">
-              <div className="relative bg-[#1e3a5f] text-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-md">
-                <p className="text-sm leading-relaxed break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+            <div className="mb-3 sm:mb-4">
+              <div className="relative bg-[#1e3a5f] text-white rounded-2xl rounded-tl-sm px-3 sm:px-4 py-2.5 sm:py-3 shadow-md">
+                <p className="text-xs sm:text-sm leading-relaxed break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 
@@ -411,9 +411,9 @@ export function ProfessionalCard({ userId }: { userId: string }) {
 
         {/* Introduction Materials (Attachments) */}
         {attachments.length > 0 && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6 border-l-4 border-[#c9a961]">
-            <h2 className="text-[#1e3a5f] font-bold mb-4">소개자료 ({attachments.length})</h2>
-            <div className="space-y-3">
+          <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6 border-l-4 border-[#c9a961]">
+            <h2 className="text-[#1e3a5f] font-bold text-base sm:text-lg mb-3 sm:mb-4">소개자료 ({attachments.length})</h2>
+            <div className="space-y-2 sm:space-y-3">
               {attachments.map((attachment) => {
                 const isYouTube = attachment.attachment_type === 'youtube'
                 const isInlineYouTube = isYouTube && attachment.youtube_display_mode === 'inline'
@@ -435,10 +435,10 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                   const isPlaying = playingVideoId === attachment.id
 
                   return (
-                    <div key={attachment.id} className="space-y-2">
-                      <div className="flex items-center gap-2 text-[#1e3a5f]">
-                        <span className="text-lg">{icon}</span>
-                        <p className="text-sm font-medium">{attachment.title}</p>
+                    <div key={attachment.id} className="space-y-1.5 sm:space-y-2">
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-[#1e3a5f]">
+                        <span className="text-base sm:text-lg">{icon}</span>
+                        <p className="text-xs sm:text-sm font-medium">{attachment.title}</p>
                       </div>
 
                       <div
@@ -460,8 +460,8 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                               }}
                             />
                             <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
-                              <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 shadow-2xl">
-                                <svg className="w-10 h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                              <div className="w-16 sm:w-20 h-16 sm:h-20 bg-red-600 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300 shadow-2xl">
+                                <svg className="w-8 sm:w-10 h-8 sm:h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M8 5v14l11-7z" />
                                 </svg>
                               </div>
@@ -487,25 +487,25 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                 return (
                   <div
                     key={attachment.id}
-                    className="flex items-center justify-between p-3 bg-[#faf8f4] rounded-lg border border-[#c9a961]"
+                    className="flex items-center justify-between p-2.5 sm:p-3 bg-[#faf8f4] rounded-lg border border-[#c9a961]"
                   >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <span className="text-xl flex-shrink-0">{icon}</span>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                      <span className="text-lg sm:text-xl flex-shrink-0">{icon}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-[#1e3a5f] font-medium text-sm truncate">{attachment.title}</p>
+                        <p className="text-[#1e3a5f] font-medium text-xs sm:text-sm truncate">{attachment.title}</p>
                         {!isYouTube && attachment.filename && (
-                          <p className="text-gray-500 text-xs mt-0.5 truncate">{attachment.filename}</p>
+                          <p className="text-gray-500 text-[10px] sm:text-xs mt-0.5 truncate">{attachment.filename}</p>
                         )}
                         {isYouTube && (
-                          <p className="text-gray-500 text-xs mt-0.5">YouTube 영상</p>
+                          <p className="text-gray-500 text-[10px] sm:text-xs mt-0.5">YouTube 영상</p>
                         )}
                       </div>
                     </div>
-                    <div className="flex gap-2 ml-3 flex-shrink-0">
+                    <div className="flex gap-1.5 sm:gap-2 ml-2 sm:ml-3 flex-shrink-0">
                       {canPreview && (
                         <button
                           onClick={() => setPreviewAttachment(attachment)}
-                          className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-300 transition-all whitespace-nowrap"
+                          className="px-2 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-gray-200 text-gray-700 rounded-lg font-medium text-xs sm:text-sm hover:bg-gray-300 transition-all whitespace-nowrap"
                         >
                           미리보기
                         </button>
@@ -524,7 +524,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                               })
                             }
                           }}
-                          className="px-4 py-2 bg-[#1e3a5f] text-white rounded-lg font-medium text-sm hover:bg-[#2c4a6f] transition-all whitespace-nowrap"
+                          className="px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-[#1e3a5f] text-white rounded-lg font-medium text-xs sm:text-sm hover:bg-[#2c4a6f] transition-all whitespace-nowrap"
                         >
                           다운로드
                         </a>
@@ -534,7 +534,7 @@ export function ProfessionalCard({ userId }: { userId: string }) {
                           href={attachment.youtube_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-3 py-2 bg-red-500 text-white rounded-lg font-medium text-sm hover:bg-red-600 transition-all whitespace-nowrap"
+                          className="px-2 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-red-500 text-white rounded-lg font-medium text-xs sm:text-sm hover:bg-red-600 transition-all whitespace-nowrap"
                         >
                           YouTube
                         </a>
@@ -564,22 +564,22 @@ END:VCARD`
             a.download = `${cardData.name}.vcf`
             a.click()
           }}
-          className="w-full py-4 bg-[#c9a961] text-white rounded-lg font-bold shadow-md hover:bg-[#b89751] transition-all mb-6"
+          className="w-full min-h-[48px] py-3 sm:py-4 bg-[#c9a961] text-white rounded-lg font-bold text-sm sm:text-base shadow-md hover:bg-[#b89751] transition-all mb-4 sm:mb-6"
         >
           📱 연락처 추가
         </button>
 
         {/* Professional Badge */}
-        <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2c4a6f] rounded-lg p-4 text-white text-center">
-          <p className="text-sm opacity-90">인증된 비즈니스 프로필</p>
-          <p className="text-xs opacity-70 mt-1">Professional Business Card</p>
+        <div className="bg-gradient-to-r from-[#1e3a5f] to-[#2c4a6f] rounded-lg p-3 sm:p-4 text-white text-center">
+          <p className="text-xs sm:text-sm opacity-90">인증된 비즈니스 프로필</p>
+          <p className="text-[10px] sm:text-xs opacity-70 mt-0.5 sm:mt-1">Professional Business Card</p>
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 pb-6">
-          <div className="flex items-center justify-center gap-2 text-gray-400">
-            <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-5 h-5 opacity-50" />
-            <span className="text-xs">Powered by G-PLAT Business</span>
+        <div className="text-center mt-6 sm:mt-8 pb-4 sm:pb-6">
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-gray-400">
+            <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-4 sm:w-5 h-4 sm:h-5 opacity-50" />
+            <span className="text-[10px] sm:text-xs">Powered by G-PLAT Business</span>
           </div>
         </div>
         </div>

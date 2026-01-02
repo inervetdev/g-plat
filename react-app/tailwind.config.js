@@ -6,6 +6,16 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        // 모바일 최적화 브레이크포인트
+        'xs': '360px',   // 작은 안드로이드 (Galaxy S 시리즈 등)
+        'sm': '375px',   // iPhone SE, iPhone 12/13/14 (표준)
+        'md': '390px',   // iPhone 12/13/14 Pro
+        'lg': '414px',   // iPhone Plus 시리즈, 큰 안드로이드
+        'xl': '430px',   // iPhone 14 Pro Max
+        '2xl': '768px',  // 태블릿 (iPad)
+        '3xl': '1024px', // 태블릿 가로, 작은 데스크톱
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

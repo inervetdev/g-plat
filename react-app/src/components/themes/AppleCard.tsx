@@ -115,19 +115,19 @@ export function AppleCard({ userId }: { userId: string }) {
     <div className="min-h-screen bg-gray-50" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' }}>
       {/* iOS-style Navigation Bar */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-          <button className="text-blue-500 text-base">편집</button>
-          <h1 className="text-base font-semibold">연락처</h1>
-          <button className="text-blue-500 text-base">공유</button>
+        <div className="max-w-md mx-auto px-3 sm:px-4 py-2 sm:py-3 flex items-center justify-between">
+          <button className="text-blue-500 text-sm sm:text-base min-h-[44px] flex items-center">편집</button>
+          <h1 className="text-sm sm:text-base font-semibold">연락처</h1>
+          <button className="text-blue-500 text-sm sm:text-base min-h-[44px] flex items-center">공유</button>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="max-w-md mx-auto">
         {/* Profile Header */}
-        <div className="bg-white px-4 py-8 text-center">
-          <div className="inline-block mb-4">
-            <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center text-5xl text-gray-500 overflow-hidden">
+        <div className="bg-white px-4 py-6 sm:py-8 text-center">
+          <div className="inline-block mb-3 sm:mb-4">
+            <div className="w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 rounded-full bg-gray-200 flex items-center justify-center text-4xl sm:text-5xl text-gray-500 overflow-hidden">
               {cardData.profileImage ? (
                 <img
                   src={cardData.profileImage}
@@ -139,72 +139,83 @@ export function AppleCard({ userId }: { userId: string }) {
               )}
             </div>
           </div>
-          <h2 className="text-2xl font-normal mb-1 truncate">
+          <h2 className="text-xl sm:text-2xl font-normal mb-1 truncate">
             {cardData.name}
-            {cardData.title && <span className="text-xl text-gray-500 ml-2">{cardData.title}</span>}
+            {cardData.title && <span className="text-lg sm:text-xl text-gray-500 ml-2">{cardData.title}</span>}
           </h2>
           {cardData.name_en && (
-            <p className="text-gray-500 text-base truncate">{cardData.name_en}</p>
+            <p className="text-gray-500 text-sm sm:text-base truncate">{cardData.name_en}</p>
           )}
           {cardData.company && (
-            <p className="text-gray-500 text-sm mt-1 truncate">{cardData.company}</p>
+            <p className="text-gray-500 text-xs sm:text-sm mt-1 truncate">{cardData.company}</p>
           )}
         </div>
 
         {/* Introduction */}
         {cardData.introduction && (
           <div className="mt-2 bg-white">
-            <div className="px-4 py-3 border-b border-gray-200">
-              <h3 className="text-base font-medium">소개</h3>
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-200">
+              <h3 className="text-sm sm:text-base font-medium">소개</h3>
             </div>
-            <div className="px-4 py-3">
-              <p className="text-sm text-gray-600 leading-relaxed">{cardData.introduction}</p>
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3">
+              <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">{cardData.introduction}</p>
             </div>
           </div>
         )}
 
         {/* Contact List */}
         <div className="mt-2 bg-white">
-          <div className="px-4">
+          <div className="px-3 sm:px-4">
             {/* Phone */}
-            <div className="flex items-center justify-between py-3 border-b border-gray-100">
+            <a
+              href={`tel:${cardData.phone}`}
+              className="flex items-center justify-between py-2.5 sm:py-3 min-h-[44px] border-b border-gray-100"
+            >
               <div className="min-w-0 flex-1 mr-2">
-                <p className="text-xs text-gray-500 mb-1">휴대폰</p>
-                <p className="text-blue-500 truncate">{cardData.phone}</p>
+                <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">휴대폰</p>
+                <p className="text-sm sm:text-base text-blue-500 truncate">{cardData.phone}</p>
               </div>
-              <span className="text-gray-300 text-xl flex-shrink-0">›</span>
-            </div>
+              <span className="text-gray-300 text-lg sm:text-xl flex-shrink-0">›</span>
+            </a>
 
             {/* Email */}
-            <div className="flex items-center justify-between py-3 border-b border-gray-100">
+            <a
+              href={`mailto:${cardData.email}`}
+              className="flex items-center justify-between py-2.5 sm:py-3 min-h-[44px] border-b border-gray-100"
+            >
               <div className="min-w-0 flex-1 mr-2">
-                <p className="text-xs text-gray-500 mb-1">이메일</p>
-                <p className="text-blue-500 truncate">{cardData.email}</p>
+                <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">이메일</p>
+                <p className="text-sm sm:text-base text-blue-500 truncate">{cardData.email}</p>
               </div>
-              <span className="text-gray-300 text-xl flex-shrink-0">›</span>
-            </div>
+              <span className="text-gray-300 text-lg sm:text-xl flex-shrink-0">›</span>
+            </a>
 
             {/* Website */}
             {cardData.website && (
-              <div className="flex items-center justify-between py-3">
+              <a
+                href={cardData.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between py-2.5 sm:py-3 min-h-[44px]"
+              >
                 <div className="min-w-0 flex-1 mr-2">
-                  <p className="text-xs text-gray-500 mb-1">웹사이트</p>
-                  <p className="text-blue-500 truncate">{cardData.website.replace(/^https?:\/\//, '')}</p>
+                  <p className="text-xs text-gray-500 mb-0.5 sm:mb-1">웹사이트</p>
+                  <p className="text-sm sm:text-base text-blue-500 truncate">{cardData.website.replace(/^https?:\/\//, '')}</p>
                 </div>
-                <span className="text-gray-300 text-xl flex-shrink-0">›</span>
-              </div>
+                <span className="text-gray-300 text-lg sm:text-xl flex-shrink-0">›</span>
+              </a>
             )}
           </div>
         </div>
 
         {/* Address & Map */}
         {cardData.address && (
-          <div className="mt-2 bg-white px-4 py-4">
-            <p className="text-xs text-gray-500 mb-3">주소</p>
+          <div className="mt-2 bg-white px-3 sm:px-4 py-3 sm:py-4">
+            <p className="text-xs text-gray-500 mb-2 sm:mb-3">주소</p>
 
             {/* 말풍선 스타일 주소 */}
-            <div className="relative bg-blue-500 text-white rounded-2xl rounded-tl-sm px-4 py-3 mb-3">
-              <p className="text-sm leading-relaxed break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+            <div className="relative bg-blue-500 text-white rounded-2xl rounded-tl-sm px-3 sm:px-4 py-2.5 sm:py-3 mb-2 sm:mb-3">
+              <p className="text-xs sm:text-sm leading-relaxed break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
             </div>
 
             {cardData.latitude && cardData.longitude && (
@@ -222,17 +233,17 @@ export function AppleCard({ userId }: { userId: string }) {
         {/* SNS Links */}
         {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
           <div className="mt-2 bg-white">
-            <div className="px-4 py-3 border-b border-gray-200">
-              <h3 className="text-base font-medium">SNS</h3>
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-200">
+              <h3 className="text-sm sm:text-base font-medium">SNS</h3>
             </div>
-            <div className="px-4 py-3">
-              <div className="flex flex-wrap gap-2">
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 {cardData.linkedin && (
                   <a
                     href={cardData.linkedin.startsWith('http') ? cardData.linkedin : `https://linkedin.com/in/${cardData.linkedin}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-[#0A66C2] text-white rounded-lg text-sm"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-[#0A66C2] text-white rounded-lg text-xs sm:text-sm"
                   >
                     🔗 LinkedIn
                   </a>
@@ -242,7 +253,7 @@ export function AppleCard({ userId }: { userId: string }) {
                     href={cardData.instagram.startsWith('http') ? cardData.instagram : `https://instagram.com/${cardData.instagram}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-lg text-sm"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-lg text-xs sm:text-sm"
                   >
                     📷 Instagram
                   </a>
@@ -252,7 +263,7 @@ export function AppleCard({ userId }: { userId: string }) {
                     href={cardData.facebook.startsWith('http') ? cardData.facebook : `https://facebook.com/${cardData.facebook}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-[#1877F2] text-white rounded-lg text-sm"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-[#1877F2] text-white rounded-lg text-xs sm:text-sm"
                   >
                     📘 Facebook
                   </a>
@@ -262,7 +273,7 @@ export function AppleCard({ userId }: { userId: string }) {
                     href={cardData.twitter.startsWith('http') ? cardData.twitter : `https://twitter.com/${cardData.twitter}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-lg text-sm"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-black text-white rounded-lg text-xs sm:text-sm"
                   >
                     🐦 X
                   </a>
@@ -272,7 +283,7 @@ export function AppleCard({ userId }: { userId: string }) {
                     href={cardData.youtube.startsWith('http') ? cardData.youtube : `https://youtube.com/@${cardData.youtube}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-[#FF0000] text-white rounded-lg text-sm"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-[#FF0000] text-white rounded-lg text-xs sm:text-sm"
                   >
                     ▶️ YouTube
                   </a>
@@ -282,7 +293,7 @@ export function AppleCard({ userId }: { userId: string }) {
                     href={cardData.github.startsWith('http') ? cardData.github : `https://github.com/${cardData.github}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-[#181717] text-white rounded-lg text-sm"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-[#181717] text-white rounded-lg text-xs sm:text-sm"
                   >
                     💻 GitHub
                   </a>
@@ -292,7 +303,7 @@ export function AppleCard({ userId }: { userId: string }) {
                     href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-lg text-sm"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-black text-white rounded-lg text-xs sm:text-sm"
                   >
                     🎵 TikTok
                   </a>
@@ -302,7 +313,7 @@ export function AppleCard({ userId }: { userId: string }) {
                     href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 bg-black text-white rounded-lg text-sm"
+                    className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 sm:py-2.5 min-h-[44px] bg-black text-white rounded-lg text-xs sm:text-sm"
                   >
                     🧵 Threads
                   </a>
@@ -313,22 +324,22 @@ export function AppleCard({ userId }: { userId: string }) {
         )}
 
         {/* Action Buttons */}
-        <div className="bg-white px-4 py-4 mt-2">
-          <div className="grid grid-cols-3 gap-3">
+        <div className="bg-white px-3 sm:px-4 py-3 sm:py-4 mt-2">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <button
               onClick={() => window.location.href = `tel:${cardData.phone}`}
-              className="flex flex-col items-center gap-1 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="flex flex-col items-center gap-1 py-2 sm:py-3 min-h-[44px] rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-lg">
+              <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-blue-500 flex items-center justify-center text-white text-base sm:text-lg">
                 📞
               </div>
               <span className="text-xs text-gray-600">전화</span>
             </button>
             <button
               onClick={() => window.location.href = `sms:${cardData.phone}`}
-              className="flex flex-col items-center gap-1 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="flex flex-col items-center gap-1 py-2 sm:py-3 min-h-[44px] rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-lg">
+              <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-green-500 flex items-center justify-center text-white text-base sm:text-lg">
                 💬
               </div>
               <span className="text-xs text-gray-600">문자</span>
@@ -343,9 +354,9 @@ export function AppleCard({ userId }: { userId: string }) {
                   })
                 }
               }}
-              className="flex flex-col items-center gap-1 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="flex flex-col items-center gap-1 py-2 sm:py-3 min-h-[44px] rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white text-lg">
+              <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-orange-500 flex items-center justify-center text-white text-base sm:text-lg">
                 🔗
               </div>
               <span className="text-xs text-gray-600">공유</span>
@@ -356,17 +367,17 @@ export function AppleCard({ userId }: { userId: string }) {
         {/* Services */}
         {cardData.services && cardData.services.length > 0 && (
           <div className="mt-2 bg-white">
-            <div className="px-4 py-3 border-b border-gray-200">
-              <h3 className="text-base font-medium">제공 서비스</h3>
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-200">
+              <h3 className="text-sm sm:text-base font-medium">제공 서비스</h3>
             </div>
-            <div className="px-4 py-3">
-              <div className="grid grid-cols-2 gap-3">
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 {cardData.services.map((service, index) => (
                   <div
                     key={index}
-                    className="p-3 rounded-lg bg-gray-50 text-center"
+                    className="p-2.5 sm:p-3 min-h-[44px] flex items-center justify-center rounded-lg bg-gray-50 text-center"
                   >
-                    <span className="text-sm text-gray-700 line-clamp-2">{service}</span>
+                    <span className="text-xs sm:text-sm text-gray-700 line-clamp-2">{service}</span>
                   </div>
                 ))}
               </div>
@@ -377,10 +388,10 @@ export function AppleCard({ userId }: { userId: string }) {
         {/* Introduction Materials (Attachments) */}
         {attachments.length > 0 && (
           <div className="mt-2 bg-white">
-            <div className="px-4 py-3 border-b border-gray-200">
-              <h3 className="text-base font-medium">소개자료 ({attachments.length})</h3>
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3 border-b border-gray-200">
+              <h3 className="text-sm sm:text-base font-medium">소개자료 ({attachments.length})</h3>
             </div>
-            <div className="px-4 py-3 space-y-3">
+            <div className="px-3 sm:px-4 py-2.5 sm:py-3 space-y-2 sm:space-y-3">
               {attachments.map((attachment) => {
                 const isYouTube = attachment.attachment_type === 'youtube'
                 const isInlineYouTube = isYouTube && attachment.youtube_display_mode === 'inline'
@@ -461,12 +472,12 @@ export function AppleCard({ userId }: { userId: string }) {
                 return (
                   <div
                     key={attachment.id}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
+                    className="flex items-center justify-between p-2.5 sm:p-3 min-h-[44px] bg-gray-50 rounded-lg border border-gray-200"
                   >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <span className="text-lg flex-shrink-0">{icon}</span>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                      <span className="text-base sm:text-lg flex-shrink-0">{icon}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-gray-700 font-normal text-sm truncate">{attachment.title}</p>
+                        <p className="text-gray-700 font-normal text-xs sm:text-sm truncate">{attachment.title}</p>
                         {!isYouTube && attachment.filename && (
                           <p className="text-gray-500 text-xs mt-0.5 truncate">{attachment.filename}</p>
                         )}
@@ -475,10 +486,10 @@ export function AppleCard({ userId }: { userId: string }) {
                         )}
                       </div>
                     </div>
-                    <div className="flex gap-2 ml-3 flex-shrink-0">
+                    <div className="flex gap-1.5 sm:gap-2 ml-2 sm:ml-3 flex-shrink-0">
                       <button
                         onClick={() => setPreviewAttachment(attachment)}
-                        className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-300 transition-all whitespace-nowrap"
+                        className="px-2.5 sm:px-3 py-2 min-h-[40px] bg-gray-200 text-gray-700 rounded-lg font-medium text-xs sm:text-sm hover:bg-gray-300 transition-all whitespace-nowrap"
                       >
                         미리보기
                       </button>
@@ -491,7 +502,7 @@ export function AppleCard({ userId }: { userId: string }) {
         )}
 
         {/* Add to Contacts Button */}
-        <div className="px-4 py-6">
+        <div className="px-3 sm:px-4 py-4 sm:py-6">
           <button
             onClick={() => {
               const vcard = `BEGIN:VCARD
@@ -508,16 +519,16 @@ END:VCARD`
               a.download = `${cardData.name}.vcf`
               a.click()
             }}
-            className="w-full py-3 bg-blue-500 text-white rounded-xl font-medium hover:bg-blue-600 transition-colors"
+            className="w-full py-3 sm:py-4 min-h-[48px] bg-blue-500 text-white rounded-xl font-medium text-sm sm:text-base hover:bg-blue-600 transition-colors"
           >
             연락처에 추가
           </button>
         </div>
 
         {/* Footer */}
-        <div className="text-center pb-8">
+        <div className="text-center pb-6 sm:pb-8">
           <div className="flex items-center justify-center gap-2 text-gray-400">
-            <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-5 h-5 opacity-50" />
+            <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-4 sm:w-5 h-4 sm:h-5 opacity-50" />
             <span className="text-xs">Powered by G-PLAT</span>
           </div>
         </div>

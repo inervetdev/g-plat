@@ -149,18 +149,18 @@ export function DefaultCard({ userId }: { userId: string }) {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 max-w-md mx-auto px-6 py-8">
+      <div className="relative z-10 max-w-md mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Visitor Stats Banner */}
-        <div className="bg-white bg-opacity-80 backdrop-blur-sm rounded-full px-4 py-2 mb-6 flex items-center justify-between text-sm">
+        <div className="bg-white bg-opacity-80 backdrop-blur-sm rounded-full px-3 sm:px-4 py-2 mb-4 sm:mb-6 flex items-center justify-between text-xs sm:text-sm">
           <span className="text-gray-600">👁 오늘 {visitors.today}명</span>
           <span className="text-gray-600">총 {visitors.total}명 방문</span>
         </div>
 
         {/* Profile Header */}
-        <div className="bg-white rounded-3xl shadow-xl p-8 mb-6">
+        <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-8 mb-4 sm:mb-6">
           <div className="text-center">
-            <div className="relative inline-block mb-6">
-              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 p-0.5">
+            <div className="relative inline-block mb-4 sm:mb-6">
+              <div className="w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 p-0.5">
                 <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
                   {cardData.profile_image_url ? (
                     <img
@@ -169,63 +169,63 @@ export function DefaultCard({ userId }: { userId: string }) {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="text-4xl font-bold bg-gradient-to-br from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                    <span className="text-3xl sm:text-4xl font-bold bg-gradient-to-br from-purple-400 to-pink-400 bg-clip-text text-transparent">
                       {cardData.name.charAt(0)}
                     </span>
                   )}
                 </div>
               </div>
               {/* Status Dot */}
-              <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white animate-pulse"></div>
+              <div className="absolute bottom-1 sm:bottom-2 right-1 sm:right-2 w-5 sm:w-6 h-5 sm:h-6 bg-green-500 rounded-full border-3 sm:border-4 border-white animate-pulse"></div>
             </div>
 
-            <h1 className="text-3xl font-bold text-gray-800 mb-1 truncate">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 truncate">
               {cardData.name}
-              {cardData.title && <span className="text-2xl font-medium text-gray-600 ml-2">{cardData.title}</span>}
+              {cardData.title && <span className="text-xl sm:text-2xl font-medium text-gray-600 ml-2">{cardData.title}</span>}
             </h1>
             {cardData.name_en && (
-              <p className="text-lg text-gray-500 mb-1 truncate">{cardData.name_en}</p>
+              <p className="text-base sm:text-lg text-gray-500 mb-1 truncate">{cardData.name_en}</p>
             )}
             {cardData.company && (
-              <p className="text-purple-600 font-medium truncate">{cardData.company}</p>
+              <p className="text-sm sm:text-base text-purple-600 font-medium truncate">{cardData.company}</p>
             )}
           </div>
         </div>
 
         {/* Introduction */}
         {cardData.introduction && (
-          <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               <span>📝</span> 소개
             </h2>
-            <p className="text-gray-600 leading-relaxed">{cardData.introduction}</p>
+            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{cardData.introduction}</p>
           </div>
         )}
 
         {/* Contact Card */}
-        <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-          <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
+          <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
             <span>📞</span> 연락처
           </h2>
 
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             <a
               href={`tel:${cardData.phone}`}
-              className="block p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl hover:from-purple-100 hover:to-pink-100 transition-all"
+              className="block p-3 min-h-[44px] bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl hover:from-purple-100 hover:to-pink-100 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="text-gray-700 truncate mr-2">{cardData.phone}</span>
-                <span className="text-purple-500 flex-shrink-0">전화 →</span>
+                <span className="text-sm sm:text-base text-gray-700 truncate mr-2">{cardData.phone}</span>
+                <span className="text-sm sm:text-base text-purple-500 flex-shrink-0">전화 →</span>
               </div>
             </a>
 
             <a
               href={`mailto:${cardData.email}`}
-              className="block p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl hover:from-blue-100 hover:to-purple-100 transition-all"
+              className="block p-3 min-h-[44px] bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl hover:from-blue-100 hover:to-purple-100 transition-all"
             >
               <div className="flex items-center justify-between">
-                <span className="text-gray-700 truncate mr-2">{cardData.email}</span>
-                <span className="text-blue-500 flex-shrink-0">메일 →</span>
+                <span className="text-sm sm:text-base text-gray-700 truncate mr-2">{cardData.email}</span>
+                <span className="text-sm sm:text-base text-blue-500 flex-shrink-0">메일 →</span>
               </div>
             </a>
 
@@ -234,11 +234,11 @@ export function DefaultCard({ userId }: { userId: string }) {
                 href={cardData.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block p-3 bg-gradient-to-r from-pink-50 to-orange-50 rounded-xl hover:from-pink-100 hover:to-orange-100 transition-all"
+                className="block p-3 min-h-[44px] bg-gradient-to-r from-pink-50 to-orange-50 rounded-xl hover:from-pink-100 hover:to-orange-100 transition-all"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-700 truncate mr-2">{cardData.website?.replace(/^https?:\/\//, '')}</span>
-                  <span className="text-pink-500 flex-shrink-0">방문 →</span>
+                  <span className="text-sm sm:text-base text-gray-700 truncate mr-2">{cardData.website?.replace(/^https?:\/\//, '')}</span>
+                  <span className="text-sm sm:text-base text-pink-500 flex-shrink-0">방문 →</span>
                 </div>
               </a>
             )}
@@ -247,20 +247,20 @@ export function DefaultCard({ userId }: { userId: string }) {
 
         {/* SNS Links */}
         {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
-          <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               <span>🌐</span> SNS
             </h2>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {cardData.linkedin && (
                 <a
                   href={cardData.linkedin.startsWith('http') ? cardData.linkedin : `https://linkedin.com/in/${cardData.linkedin}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#0A66C2] text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 min-h-[44px] bg-[#0A66C2] text-white rounded-xl hover:opacity-90 transition-opacity"
                 >
                   <span>🔗</span>
-                  <span className="text-sm font-medium">LinkedIn</span>
+                  <span className="text-xs sm:text-sm font-medium">LinkedIn</span>
                 </a>
               )}
               {cardData.instagram && (
@@ -268,10 +268,10 @@ export function DefaultCard({ userId }: { userId: string }) {
                   href={cardData.instagram.startsWith('http') ? cardData.instagram : `https://instagram.com/${cardData.instagram}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 min-h-[44px] bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-xl hover:opacity-90 transition-opacity"
                 >
                   <span>📷</span>
-                  <span className="text-sm font-medium">Instagram</span>
+                  <span className="text-xs sm:text-sm font-medium">Instagram</span>
                 </a>
               )}
               {cardData.facebook && (
@@ -279,10 +279,10 @@ export function DefaultCard({ userId }: { userId: string }) {
                   href={cardData.facebook.startsWith('http') ? cardData.facebook : `https://facebook.com/${cardData.facebook}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#1877F2] text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 min-h-[44px] bg-[#1877F2] text-white rounded-xl hover:opacity-90 transition-opacity"
                 >
                   <span>📘</span>
-                  <span className="text-sm font-medium">Facebook</span>
+                  <span className="text-xs sm:text-sm font-medium">Facebook</span>
                 </a>
               )}
               {cardData.twitter && (
@@ -290,10 +290,10 @@ export function DefaultCard({ userId }: { userId: string }) {
                   href={cardData.twitter.startsWith('http') ? cardData.twitter : `https://twitter.com/${cardData.twitter}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 min-h-[44px] bg-black text-white rounded-xl hover:opacity-90 transition-opacity"
                 >
                   <span>🐦</span>
-                  <span className="text-sm font-medium">X</span>
+                  <span className="text-xs sm:text-sm font-medium">X</span>
                 </a>
               )}
               {cardData.youtube && (
@@ -301,10 +301,10 @@ export function DefaultCard({ userId }: { userId: string }) {
                   href={cardData.youtube.startsWith('http') ? cardData.youtube : `https://youtube.com/@${cardData.youtube}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#FF0000] text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 min-h-[44px] bg-[#FF0000] text-white rounded-xl hover:opacity-90 transition-opacity"
                 >
                   <span>▶️</span>
-                  <span className="text-sm font-medium">YouTube</span>
+                  <span className="text-xs sm:text-sm font-medium">YouTube</span>
                 </a>
               )}
               {cardData.github && (
@@ -312,10 +312,10 @@ export function DefaultCard({ userId }: { userId: string }) {
                   href={cardData.github.startsWith('http') ? cardData.github : `https://github.com/${cardData.github}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#181717] text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 min-h-[44px] bg-[#181717] text-white rounded-xl hover:opacity-90 transition-opacity"
                 >
                   <span>💻</span>
-                  <span className="text-sm font-medium">GitHub</span>
+                  <span className="text-xs sm:text-sm font-medium">GitHub</span>
                 </a>
               )}
               {cardData.tiktok && (
@@ -323,10 +323,10 @@ export function DefaultCard({ userId }: { userId: string }) {
                   href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 min-h-[44px] bg-black text-white rounded-xl hover:opacity-90 transition-opacity"
                 >
                   <span>🎵</span>
-                  <span className="text-sm font-medium">TikTok</span>
+                  <span className="text-xs sm:text-sm font-medium">TikTok</span>
                 </a>
               )}
               {cardData.threads && (
@@ -334,10 +334,10 @@ export function DefaultCard({ userId }: { userId: string }) {
                   href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2.5 sm:py-3 min-h-[44px] bg-black text-white rounded-xl hover:opacity-90 transition-opacity"
                 >
                   <span>🧵</span>
-                  <span className="text-sm font-medium">Threads</span>
+                  <span className="text-xs sm:text-sm font-medium">Threads</span>
                 </a>
               )}
             </div>
@@ -345,19 +345,19 @@ export function DefaultCard({ userId }: { userId: string }) {
         )}
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-4 sm:mb-6">
           <button
             onClick={() => window.location.href = `tel:${cardData.phone}`}
-            className="bg-white rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all hover:scale-105"
+            className="bg-white rounded-2xl shadow-lg p-3 sm:p-4 min-h-[44px] hover:shadow-xl transition-all hover:scale-105"
           >
-            <span className="block text-2xl mb-1">📞</span>
+            <span className="block text-xl sm:text-2xl mb-1">📞</span>
             <span className="text-xs text-gray-600">전화</span>
           </button>
           <button
             onClick={() => window.location.href = `sms:${cardData.phone}`}
-            className="bg-white rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all hover:scale-105"
+            className="bg-white rounded-2xl shadow-lg p-3 sm:p-4 min-h-[44px] hover:shadow-xl transition-all hover:scale-105"
           >
-            <span className="block text-2xl mb-1">💬</span>
+            <span className="block text-xl sm:text-2xl mb-1">💬</span>
             <span className="text-xs text-gray-600">문자</span>
           </button>
           <button
@@ -370,26 +370,26 @@ export function DefaultCard({ userId }: { userId: string }) {
                 })
               }
             }}
-            className="bg-white rounded-2xl shadow-lg p-4 hover:shadow-xl transition-all hover:scale-105"
+            className="bg-white rounded-2xl shadow-lg p-3 sm:p-4 min-h-[44px] hover:shadow-xl transition-all hover:scale-105"
           >
-            <span className="block text-2xl mb-1">🔗</span>
+            <span className="block text-xl sm:text-2xl mb-1">🔗</span>
             <span className="text-xs text-gray-600">공유</span>
           </button>
         </div>
 
         {/* Services */}
         {cardData.services && cardData.services.length > 0 && (
-          <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               <span>💼</span> 제공 서비스
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
               {cardData.services.map((service, index) => (
                 <div
                   key={index}
-                  className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl text-center"
+                  className="p-2.5 sm:p-3 min-h-[44px] flex items-center justify-center bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl text-center"
                 >
-                  <span className="text-sm text-gray-700 line-clamp-2">{service}</span>
+                  <span className="text-xs sm:text-sm text-gray-700 line-clamp-2">{service}</span>
                 </div>
               ))}
             </div>
@@ -398,15 +398,15 @@ export function DefaultCard({ userId }: { userId: string }) {
 
         {/* Address & Map */}
         {cardData.address && (
-          <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               <span>📍</span> 주소
             </h2>
 
             {/* Gradient speech bubble style address */}
-            <div className="mb-4">
-              <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
-                <p className="text-sm leading-relaxed break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+            <div className="mb-3 sm:mb-4">
+              <div className="relative bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl rounded-tl-sm px-3 sm:px-4 py-2.5 sm:py-3 shadow-lg">
+                <p className="text-xs sm:text-sm leading-relaxed break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 
@@ -426,11 +426,11 @@ export function DefaultCard({ userId }: { userId: string }) {
 
         {/* Introduction Materials (Attachments) */}
         {attachments.length > 0 && (
-          <div className="bg-white rounded-3xl shadow-xl p-6 mb-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="bg-white rounded-3xl shadow-xl p-4 sm:p-6 mb-4 sm:mb-6">
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2">
               <span>📎</span> 소개자료 ({attachments.length})
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {attachments.map((attachment) => {
                 const isYouTube = attachment.attachment_type === 'youtube'
                 const isInlineYouTube = isYouTube && attachment.youtube_display_mode === 'inline'
@@ -504,12 +504,12 @@ export function DefaultCard({ userId }: { userId: string }) {
                 return (
                   <div
                     key={attachment.id}
-                    className="flex items-center justify-between p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100"
+                    className="flex items-center justify-between p-2.5 sm:p-3 min-h-[44px] bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100"
                   >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <span className="text-xl flex-shrink-0">{icon}</span>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                      <span className="text-lg sm:text-xl flex-shrink-0">{icon}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-gray-700 font-medium text-sm truncate">{attachment.title}</p>
+                        <p className="text-gray-700 font-medium text-xs sm:text-sm truncate">{attachment.title}</p>
                         {!isYouTube && attachment.filename && (
                           <p className="text-gray-500 text-xs mt-0.5 truncate">{attachment.filename}</p>
                         )}
@@ -518,11 +518,11 @@ export function DefaultCard({ userId }: { userId: string }) {
                         )}
                       </div>
                     </div>
-                    <div className="flex gap-2 ml-3 flex-shrink-0">
+                    <div className="flex gap-1.5 sm:gap-2 ml-2 sm:ml-3 flex-shrink-0">
                       {canPreview && (
                         <button
                           onClick={() => setPreviewAttachment(attachment)}
-                          className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-300 transition-all whitespace-nowrap"
+                          className="px-2 sm:px-3 py-2 min-h-[40px] bg-gray-200 text-gray-700 rounded-lg font-medium text-xs sm:text-sm hover:bg-gray-300 transition-all whitespace-nowrap"
                         >
                           미리보기
                         </button>
@@ -541,7 +541,7 @@ export function DefaultCard({ userId }: { userId: string }) {
                               })
                             }
                           }}
-                          className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium text-sm hover:shadow-lg transition-all transform hover:scale-105 whitespace-nowrap"
+                          className="px-3 sm:px-4 py-2 min-h-[40px] bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg font-medium text-xs sm:text-sm hover:shadow-lg transition-all transform hover:scale-105 whitespace-nowrap"
                         >
                           다운로드
                         </a>
@@ -551,7 +551,7 @@ export function DefaultCard({ userId }: { userId: string }) {
                           href={attachment.youtube_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-3 py-2 bg-red-500 text-white rounded-lg font-medium text-sm hover:bg-red-600 transition-all whitespace-nowrap"
+                          className="px-2 sm:px-3 py-2 min-h-[40px] bg-red-500 text-white rounded-lg font-medium text-xs sm:text-sm hover:bg-red-600 transition-all whitespace-nowrap"
                         >
                           YouTube
                         </a>
@@ -581,16 +581,16 @@ END:VCARD`
             a.download = `${cardData.name}.vcf`
             a.click()
           }}
-          className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105"
+          className="w-full py-3 sm:py-4 min-h-[48px] bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-bold text-sm sm:text-base shadow-lg hover:shadow-xl transition-all hover:scale-105"
         >
           📱 연락처 저장하기
         </button>
 
         {/* Footer */}
-        <div className="text-center mt-8">
+        <div className="text-center mt-6 sm:mt-8">
           <div className="flex items-center justify-center gap-2 text-gray-500">
-            <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-5 h-5" />
-            <span className="text-sm">G-PLAT 모바일 명함</span>
+            <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-4 sm:w-5 h-4 sm:h-5" />
+            <span className="text-xs sm:text-sm">G-PLAT 모바일 명함</span>
           </div>
         </div>
       </div>

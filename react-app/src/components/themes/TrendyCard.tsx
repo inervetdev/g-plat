@@ -127,12 +127,12 @@ export function TrendyCard({ userId }: { userId: string }) {
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 max-w-md mx-auto px-6 py-12">
+      <div className="relative z-10 max-w-md mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Profile Section */}
-        <div className="text-center mb-12 animate-fadeInUp">
-          <div className="relative inline-block mb-6">
-            <div className="w-32 h-32 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 p-1 animate-glow">
-              <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-4xl font-bold">
+        <div className="text-center mb-8 sm:mb-12 animate-fadeInUp">
+          <div className="relative inline-block mb-4 sm:mb-6">
+            <div className="w-24 sm:w-28 md:w-32 h-24 sm:h-28 md:h-32 rounded-full bg-gradient-to-r from-green-400 to-cyan-400 p-1 animate-glow">
+              <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-3xl sm:text-4xl font-bold">
                 {cardData.profileImage ? (
                   <img
                     src={cardData.profileImage}
@@ -146,50 +146,50 @@ export function TrendyCard({ userId }: { userId: string }) {
             </div>
           </div>
 
-          <h1 className="text-3xl font-bold mb-1 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent truncate">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1 bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent truncate">
             {cardData.name}
-            {cardData.title && <span className="text-2xl text-gray-400 ml-2">{cardData.title}</span>}
+            {cardData.title && <span className="text-xl sm:text-2xl text-gray-400 ml-2">{cardData.title}</span>}
           </h1>
           {cardData.name_en && (
-            <p className="text-gray-500 text-lg mb-1 truncate">{cardData.name_en}</p>
+            <p className="text-gray-500 text-base sm:text-lg mb-1 truncate">{cardData.name_en}</p>
           )}
           {cardData.company && (
-            <p className="text-gray-400 truncate">{cardData.company}</p>
+            <p className="text-sm sm:text-base text-gray-400 truncate">{cardData.company}</p>
           )}
         </div>
 
         {/* Introduction */}
         {cardData.introduction && (
-          <div className="mb-8 animate-fadeInUp animation-delay-200">
-            <h2 className="text-xl font-bold mb-4 text-gray-400">소개</h2>
-            <div className="p-6 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-2xl border border-gray-800">
-              <p className="text-gray-300 leading-relaxed">{cardData.introduction}</p>
+          <div className="mb-6 sm:mb-8 animate-fadeInUp animation-delay-200">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-400">소개</h2>
+            <div className="p-4 sm:p-6 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-2xl border border-gray-800">
+              <p className="text-sm sm:text-base text-gray-300 leading-relaxed">{cardData.introduction}</p>
             </div>
           </div>
         )}
 
         {/* Contact Grid */}
-        <div className="mb-8 animate-fadeInUp animation-delay-400">
-          <h2 className="text-xl font-bold mb-4 text-gray-400">연락처</h2>
-          <div className="grid grid-cols-1 gap-4">
+        <div className="mb-6 sm:mb-8 animate-fadeInUp animation-delay-400">
+          <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-400">연락처</h2>
+          <div className="grid grid-cols-1 gap-3 sm:gap-4">
             <a
               href={`tel:${cardData.phone}`}
-              className="flex items-center justify-between p-4 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-green-400 transition-all duration-300 group"
+              className="flex items-center justify-between p-3 sm:p-4 min-h-[44px] bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-green-400 transition-all duration-300 group"
             >
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <span className="text-2xl flex-shrink-0">📱</span>
-                <span className="text-gray-300 truncate">{cardData.phone}</span>
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <span className="text-xl sm:text-2xl flex-shrink-0">📱</span>
+                <span className="text-sm sm:text-base text-gray-300 truncate">{cardData.phone}</span>
               </div>
               <span className="text-gray-600 group-hover:text-green-400 transition-colors flex-shrink-0 ml-2">→</span>
             </a>
 
             <a
               href={`mailto:${cardData.email}`}
-              className="flex items-center justify-between p-4 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-cyan-400 transition-all duration-300 group"
+              className="flex items-center justify-between p-3 sm:p-4 min-h-[44px] bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-cyan-400 transition-all duration-300 group"
             >
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <span className="text-2xl flex-shrink-0">✉️</span>
-                <span className="text-gray-300 truncate">{cardData.email}</span>
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                <span className="text-xl sm:text-2xl flex-shrink-0">✉️</span>
+                <span className="text-sm sm:text-base text-gray-300 truncate">{cardData.email}</span>
               </div>
               <span className="text-gray-600 group-hover:text-cyan-400 transition-colors flex-shrink-0 ml-2">→</span>
             </a>
@@ -199,11 +199,11 @@ export function TrendyCard({ userId }: { userId: string }) {
                 href={cardData.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between p-4 bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-purple-400 transition-all duration-300 group"
+                className="flex items-center justify-between p-3 sm:p-4 min-h-[44px] bg-gray-900 bg-opacity-50 backdrop-blur-lg rounded-xl border border-gray-800 hover:border-purple-400 transition-all duration-300 group"
               >
-                <div className="flex items-center gap-3 min-w-0 flex-1">
-                  <span className="text-2xl flex-shrink-0">🌐</span>
-                  <span className="text-gray-300 truncate">{cardData.website?.replace(/^https?:\/\//, '')}</span>
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                  <span className="text-xl sm:text-2xl flex-shrink-0">🌐</span>
+                  <span className="text-sm sm:text-base text-gray-300 truncate">{cardData.website?.replace(/^https?:\/\//, '')}</span>
                 </div>
                 <span className="text-gray-600 group-hover:text-purple-400 transition-colors flex-shrink-0 ml-2">→</span>
               </a>
@@ -213,15 +213,15 @@ export function TrendyCard({ userId }: { userId: string }) {
 
         {/* SNS Links */}
         {(cardData.linkedin || cardData.instagram || cardData.facebook || cardData.twitter || cardData.youtube || cardData.github || cardData.tiktok || cardData.threads) && (
-          <div className="mb-8 animate-fadeInUp animation-delay-500">
-            <h2 className="text-xl font-bold mb-4 text-gray-400">SNS</h2>
-            <div className="flex flex-wrap gap-3">
+          <div className="mb-6 sm:mb-8 animate-fadeInUp animation-delay-500">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-400">SNS</h2>
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               {cardData.linkedin && (
                 <a
                   href={cardData.linkedin.startsWith('http') ? cardData.linkedin : `https://linkedin.com/in/${cardData.linkedin}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#0A66C2] text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-[#0A66C2]/25 transition-all duration-300"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-[#0A66C2] text-white rounded-xl text-xs sm:text-sm font-medium hover:shadow-lg hover:shadow-[#0A66C2]/25 transition-all duration-300"
                 >
                   🔗 LinkedIn
                 </a>
@@ -231,7 +231,7 @@ export function TrendyCard({ userId }: { userId: string }) {
                   href={cardData.instagram.startsWith('http') ? cardData.instagram : `https://instagram.com/${cardData.instagram}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] text-white rounded-xl text-xs sm:text-sm font-medium hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300"
                 >
                   📷 Instagram
                 </a>
@@ -241,7 +241,7 @@ export function TrendyCard({ userId }: { userId: string }) {
                   href={cardData.facebook.startsWith('http') ? cardData.facebook : `https://facebook.com/${cardData.facebook}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#1877F2] text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-[#1877F2]/25 transition-all duration-300"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-[#1877F2] text-white rounded-xl text-xs sm:text-sm font-medium hover:shadow-lg hover:shadow-[#1877F2]/25 transition-all duration-300"
                 >
                   📘 Facebook
                 </a>
@@ -251,7 +251,7 @@ export function TrendyCard({ userId }: { userId: string }) {
                   href={cardData.twitter.startsWith('http') ? cardData.twitter : `https://twitter.com/${cardData.twitter}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-gray-800 text-white rounded-xl text-xs sm:text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
                 >
                   🐦 X
                 </a>
@@ -261,7 +261,7 @@ export function TrendyCard({ userId }: { userId: string }) {
                   href={cardData.youtube.startsWith('http') ? cardData.youtube : `https://youtube.com/@${cardData.youtube}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-[#FF0000] text-white rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-red-500/25 transition-all duration-300"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-[#FF0000] text-white rounded-xl text-xs sm:text-sm font-medium hover:shadow-lg hover:shadow-red-500/25 transition-all duration-300"
                 >
                   ▶️ YouTube
                 </a>
@@ -271,7 +271,7 @@ export function TrendyCard({ userId }: { userId: string }) {
                   href={cardData.github.startsWith('http') ? cardData.github : `https://github.com/${cardData.github}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-gray-800 text-white rounded-xl text-xs sm:text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
                 >
                   💻 GitHub
                 </a>
@@ -281,7 +281,7 @@ export function TrendyCard({ userId }: { userId: string }) {
                   href={cardData.tiktok.startsWith('http') ? cardData.tiktok : `https://tiktok.com/@${cardData.tiktok}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-gray-800 text-white rounded-xl text-xs sm:text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
                 >
                   🎵 TikTok
                 </a>
@@ -291,7 +291,7 @@ export function TrendyCard({ userId }: { userId: string }) {
                   href={cardData.threads.startsWith('http') ? cardData.threads : `https://threads.net/@${cardData.threads}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 min-h-[44px] bg-gray-800 text-white rounded-xl text-xs sm:text-sm font-medium border border-gray-700 hover:shadow-lg transition-all duration-300"
                 >
                   🧵 Threads
                 </a>
@@ -301,20 +301,20 @@ export function TrendyCard({ userId }: { userId: string }) {
         )}
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-3 gap-3 mb-8 animate-fadeInUp animation-delay-600">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-6 sm:mb-8 animate-fadeInUp animation-delay-600">
           <button
             onClick={() => window.location.href = `tel:${cardData.phone}`}
-            className="flex flex-col items-center gap-2 py-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
+            className="flex flex-col items-center gap-1.5 sm:gap-2 py-3 sm:py-4 min-h-[44px] bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
           >
-            <span className="text-2xl">📞</span>
-            <span className="text-sm font-medium">전화</span>
+            <span className="text-xl sm:text-2xl">📞</span>
+            <span className="text-xs sm:text-sm font-medium">전화</span>
           </button>
           <button
             onClick={() => window.location.href = `sms:${cardData.phone}`}
-            className="flex flex-col items-center gap-2 py-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
+            className="flex flex-col items-center gap-1.5 sm:gap-2 py-3 sm:py-4 min-h-[44px] bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
           >
-            <span className="text-2xl">💬</span>
-            <span className="text-sm font-medium">문자</span>
+            <span className="text-xl sm:text-2xl">💬</span>
+            <span className="text-xs sm:text-sm font-medium">문자</span>
           </button>
           <button
             onClick={() => {
@@ -326,22 +326,22 @@ export function TrendyCard({ userId }: { userId: string }) {
                 })
               }
             }}
-            className="flex flex-col items-center gap-2 py-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
+            className="flex flex-col items-center gap-1.5 sm:gap-2 py-3 sm:py-4 min-h-[44px] bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 border border-gray-700"
           >
-            <span className="text-2xl">🔗</span>
-            <span className="text-sm font-medium">공유</span>
+            <span className="text-xl sm:text-2xl">🔗</span>
+            <span className="text-xs sm:text-sm font-medium">공유</span>
           </button>
         </div>
 
         {/* Address & Map */}
         {cardData.address && (
-          <div className="mb-8 animate-fadeInUp animation-delay-600">
-            <h2 className="text-xl font-bold mb-4 text-gray-400">주소</h2>
+          <div className="mb-6 sm:mb-8 animate-fadeInUp animation-delay-600">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-400">주소</h2>
 
             {/* 말풍선 스타일 주소 */}
-            <div className="mb-4">
-              <div className="relative bg-white text-gray-900 rounded-2xl rounded-tl-sm px-4 py-3 shadow-lg">
-                <p className="text-sm leading-relaxed font-medium break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
+            <div className="mb-3 sm:mb-4">
+              <div className="relative bg-white text-gray-900 rounded-2xl rounded-tl-sm px-3 sm:px-4 py-2.5 sm:py-3 shadow-lg">
+                <p className="text-xs sm:text-sm leading-relaxed font-medium break-keep text-left">📍 {cardData.address}{cardData.address_detail ? ` ${cardData.address_detail}` : ''}</p>
               </div>
             </div>
 
@@ -351,7 +351,7 @@ export function TrendyCard({ userId }: { userId: string }) {
                   latitude={cardData.latitude}
                   longitude={cardData.longitude}
                   address={cardData.address}
-                  height="250px"
+                  height="220px"
                   level={4}
                 />
               </div>
@@ -361,13 +361,13 @@ export function TrendyCard({ userId }: { userId: string }) {
 
         {/* Services */}
         {cardData.services && cardData.services.length > 0 && (
-          <div className="mb-8 animate-fadeInUp animation-delay-800">
-            <h2 className="text-xl font-bold mb-4 text-gray-400">제공 서비스</h2>
-            <div className="flex flex-wrap gap-2">
+          <div className="mb-6 sm:mb-8 animate-fadeInUp animation-delay-800">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-400">제공 서비스</h2>
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {cardData.services.map((service, index) => (
                 <span
                   key={index}
-                  className="px-4 py-2 bg-gradient-to-r from-green-900 to-cyan-900 bg-opacity-50 rounded-full text-sm text-gray-300 border border-gray-700"
+                  className="px-3 sm:px-4 py-2 min-h-[36px] flex items-center bg-gradient-to-r from-green-900 to-cyan-900 bg-opacity-50 rounded-full text-xs sm:text-sm text-gray-300 border border-gray-700"
                 >
                   {service}
                 </span>
@@ -378,8 +378,8 @@ export function TrendyCard({ userId }: { userId: string }) {
 
         {/* Attachments (소개자료) */}
         {attachments.length > 0 && (
-          <div className="mb-8 space-y-3 animate-fadeInUp animation-delay-1000">
-            <h2 className="text-xl font-bold mb-4 text-gray-400">소개자료 ({attachments.length})</h2>
+          <div className="mb-6 sm:mb-8 space-y-2 sm:space-y-3 animate-fadeInUp animation-delay-1000">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-400">소개자료 ({attachments.length})</h2>
             {attachments.map((attachment) => {
               const isYouTube = attachment.attachment_type === 'youtube'
               const isInlineYouTube = isYouTube && attachment.youtube_display_mode === 'inline'
@@ -461,12 +461,12 @@ export function TrendyCard({ userId }: { userId: string }) {
               return (
                 <div
                   key={attachment.id}
-                  className="flex items-center justify-between p-4 bg-gray-800 bg-opacity-70 rounded-xl border border-gray-700 hover:border-green-500/50 transition-all duration-300"
+                  className="flex items-center justify-between p-3 sm:p-4 min-h-[44px] bg-gray-800 bg-opacity-70 rounded-xl border border-gray-700 hover:border-green-500/50 transition-all duration-300"
                 >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <span className="text-xl flex-shrink-0">{icon}</span>
+                  <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                    <span className="text-lg sm:text-xl flex-shrink-0">{icon}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-gray-300 font-medium text-sm truncate">{attachment.title}</p>
+                      <p className="text-gray-300 font-medium text-xs sm:text-sm truncate">{attachment.title}</p>
                       {!isYouTube && attachment.filename && attachment.file_size && (
                         <p className="text-gray-500 text-xs mt-0.5 truncate">
                           {attachment.filename} • {(attachment.file_size / 1024).toFixed(1)}KB
@@ -477,10 +477,10 @@ export function TrendyCard({ userId }: { userId: string }) {
                       )}
                     </div>
                   </div>
-                  <div className="flex gap-2 ml-3">
+                  <div className="flex gap-1.5 sm:gap-2 ml-2 sm:ml-3">
                     <button
                       onClick={() => setPreviewAttachment(attachment)}
-                      className="px-4 py-2 bg-gray-700 rounded-lg font-medium text-sm hover:bg-gray-600 transition-all duration-300 whitespace-nowrap flex-shrink-0"
+                      className="px-3 sm:px-4 py-2 min-h-[40px] bg-gray-700 rounded-lg font-medium text-xs sm:text-sm hover:bg-gray-600 transition-all duration-300 whitespace-nowrap flex-shrink-0"
                     >
                       미리보기
                     </button>
@@ -508,16 +508,16 @@ END:VCARD`
             a.download = `${cardData.name}.vcf`
             a.click()
           }}
-          className="w-full py-4 bg-gradient-to-r from-green-500 to-cyan-500 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 mb-8"
+          className="w-full py-3 sm:py-4 min-h-[48px] bg-gradient-to-r from-green-500 to-cyan-500 text-white rounded-xl font-bold text-sm sm:text-base shadow-lg hover:shadow-xl hover:shadow-green-500/25 transition-all duration-300 transform hover:scale-105 mb-6 sm:mb-8"
         >
           📱 연락처 추가
         </button>
 
         {/* Footer */}
-        <div className="text-center py-6 border-t border-gray-800">
+        <div className="text-center py-4 sm:py-6 border-t border-gray-800">
           <div className="flex items-center justify-center gap-2 text-gray-600">
-            <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-6 h-6" />
-            <span className="text-sm">Powered by G-PLAT</span>
+            <img src="/assets/GP 로고.png" alt="G-PLAT" className="w-5 sm:w-6 h-5 sm:h-6" />
+            <span className="text-xs sm:text-sm">Powered by G-PLAT</span>
           </div>
         </div>
       </div>
