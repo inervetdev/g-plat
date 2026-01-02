@@ -89,27 +89,27 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
                 index === activeSideJobs.length - 1 ? 'rounded-b-2xl' : ''
               }`}
             >
-              <div className="p-6 hover:bg-gray-50 transition-colors">
+              <div className="p-4 sm:p-6 hover:bg-gray-50 transition-colors">
                 {/* Badge and Expiry Notice */}
                 {(sideJob.badge || (sideJob.expiry_date && !isCardExpired(sideJob.expiry_date))) && (
-                  <div className="flex gap-2 mb-3">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-2 sm:mb-3">
                     {sideJob.badge && (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-red-500 text-white">
+                      <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded text-[10px] sm:text-xs font-semibold bg-red-500 text-white">
                         {sideJob.badge}
                       </span>
                     )}
                     {sideJob.expiry_date && !isCardExpired(sideJob.expiry_date) && isCardExpiringSoon(sideJob.expiry_date) && (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold bg-orange-500 text-white">
+                      <span className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded text-[10px] sm:text-xs font-semibold bg-orange-500 text-white">
                         ⏰ {new Date(sideJob.expiry_date).toLocaleDateString()}까지
                       </span>
                     )}
                   </div>
                 )}
 
-                <div className="flex gap-4">
+                <div className="flex gap-3 sm:gap-4">
                   {/* 이미지 */}
                   {sideJob.image_url && (
-                    <div className="w-24 h-24 flex-shrink-0">
+                    <div className="w-20 sm:w-24 h-20 sm:h-24 flex-shrink-0">
                       {sideJob.cta_link ? (
                         <a
                           href={sideJob.cta_link}
@@ -135,14 +135,14 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
 
                   {/* 내용 */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-2 mb-1">
-                      <h3 className="text-lg font-semibold text-gray-900 truncate flex-1">
+                    <div className="flex items-start gap-1.5 sm:gap-2 mb-1">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate flex-1">
                         {sideJob.title}
                       </h3>
                       {/* Category Badge */}
                       {sideJob.category_primary && (
                         <span
-                          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-white flex-shrink-0 max-w-[80px] truncate"
+                          className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-medium text-white flex-shrink-0 max-w-[70px] sm:max-w-[80px] truncate"
                           style={{ backgroundColor: CATEGORY_CONFIG[sideJob.category_primary].color }}
                           title={`${CATEGORY_CONFIG[sideJob.category_primary].label}${sideJob.category_secondary ? ` · ${sideJob.category_secondary}` : ''}`}
                         >
@@ -151,13 +151,13 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
                       )}
                     </div>
                     {sideJob.description && (
-                      <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+                      <p className="text-xs sm:text-sm text-gray-600 mb-1.5 sm:mb-2 line-clamp-2">
                         {sideJob.description}
                       </p>
                     )}
-                    <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                       {sideJob.price && (
-                        <span className="text-sm font-medium text-gray-900 truncate flex-1">
+                        <span className="text-xs sm:text-sm font-medium text-gray-900 truncate flex-1">
                           {sideJob.price}
                         </span>
                       )}
@@ -166,7 +166,7 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
                           href={sideJob.cta_link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex-shrink-0"
+                          className="inline-flex items-center min-h-[36px] sm:min-h-[44px] px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex-shrink-0"
                         >
                           {sideJob.cta_text}
                         </a>

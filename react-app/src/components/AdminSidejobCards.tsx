@@ -74,13 +74,13 @@ export default function AdminSidejobCards({
   return (
     <div className={`bg-gray-50 ${className}`}>
       {/* Section Title */}
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">추천 서비스</h3>
-        <p className="text-sm text-gray-500 mt-0.5">비즈니스에 도움이 되는 제휴 서비스</p>
+      <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900">추천 서비스</h3>
+        <p className="text-xs sm:text-sm text-gray-500 mt-0.5">비즈니스에 도움이 되는 제휴 서비스</p>
       </div>
 
       {/* Category Boxes */}
-      <div className="p-4 space-y-4">
+      <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
         {sidejobsByCategory.map(({ category, cards }) => (
           <CategoryBox
             key={category}
@@ -122,17 +122,17 @@ function CategoryBox({ category, cards, onCardClick, onImageClick }: CategoryBox
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       {/* Category Header */}
       <div
-        className="px-4 py-3 flex items-center gap-2"
+        className="px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-1.5 sm:gap-2"
         style={{ backgroundColor: `${config.color}10` }}
       >
-        <span className="text-xl">{config.icon}</span>
+        <span className="text-lg sm:text-xl">{config.icon}</span>
         <span
-          className="font-semibold"
+          className="text-sm sm:text-base font-semibold"
           style={{ color: config.color }}
         >
           {config.label}
         </span>
-        <span className="text-xs text-gray-500 ml-auto">
+        <span className="text-[10px] sm:text-xs text-gray-500 ml-auto">
           {cards.length}개
         </span>
       </div>
@@ -166,13 +166,13 @@ function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps
   return (
     <div
       onClick={onClick}
-      className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+      className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer transition-colors"
     >
-      <div className="flex gap-4">
+      <div className="flex gap-3 sm:gap-4">
         {/* Image - clickable for popup */}
         {card.image_url && (
           <div
-            className="w-20 h-20 flex-shrink-0 relative group"
+            className="w-16 sm:w-20 h-16 sm:h-20 flex-shrink-0 relative group"
             onClick={onImageClick}
           >
             <img
@@ -183,7 +183,7 @@ function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps
             />
             {/* Hover overlay with zoom icon */}
             <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 sm:w-6 h-5 sm:h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
               </svg>
             </div>
@@ -194,30 +194,30 @@ function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps
         <div className="flex-1 min-w-0">
           {/* Badge */}
           {card.badge && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-red-500 text-white mb-2">
+            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-[10px] sm:text-xs font-semibold bg-red-500 text-white mb-1.5 sm:mb-2">
               {card.badge}
             </span>
           )}
 
           {/* Title */}
-          <h4 className="font-semibold text-gray-900 truncate">{card.title}</h4>
+          <h4 className="text-sm sm:text-base font-semibold text-gray-900 truncate">{card.title}</h4>
 
           {/* Partner Name */}
           {card.partner_name && (
-            <p className="text-xs text-gray-500 mt-0.5 truncate">{card.partner_name}</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 mt-0.5 truncate">{card.partner_name}</p>
           )}
 
           {/* Description */}
           {card.description && (
-            <p className="text-sm text-gray-600 mt-1 line-clamp-2">{card.description}</p>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1 line-clamp-2">{card.description}</p>
           )}
 
           {/* Price & CTA */}
-          <div className="flex items-center justify-between mt-2 gap-2">
+          <div className="flex items-center justify-between mt-1.5 sm:mt-2 gap-1.5 sm:gap-2">
             {card.price && (
-              <span className="text-sm font-bold text-blue-600 truncate flex-1">{card.price}</span>
+              <span className="text-xs sm:text-sm font-bold text-blue-600 truncate flex-1">{card.price}</span>
             )}
-            <span className="text-sm font-medium text-blue-600 hover:text-blue-700 flex-shrink-0">
+            <span className="text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 flex-shrink-0">
               {card.cta_text} →
             </span>
           </div>
