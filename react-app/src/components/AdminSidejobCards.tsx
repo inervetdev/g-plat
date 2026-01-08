@@ -54,17 +54,21 @@ export default function AdminSidejobCards({
     // Record click before navigating
     await recordAdminSidejobClick(card.instance_id, businessCardId, userId)
 
-    // If application is enabled, navigate to application form
-    if (card.application_enabled) {
-      const applicationUrl = cardUrl
-        ? `/apply/${card.template_id}/${cardUrl}`
-        : `/apply/${card.template_id}`
-      window.location.href = applicationUrl
-      return
-    }
-
-    // Otherwise open CTA link in new tab
+    // Always open CTA link in new tab
     window.open(card.cta_url, '_blank', 'noopener,noreferrer')
+  }, [businessCardId, userId])
+
+  const handleApplyClick = useCallback(async (card: AdminSidejobDisplayCard, e: React.MouseEvent) => {
+    e.stopPropagation() // Prevent card click
+
+    // Record click before navigating
+    await recordAdminSidejobClick(card.instance_id, businessCardId, userId)
+
+    // Navigate to application form
+    const applicationUrl = cardUrl
+      ? `/apply/${card.template_id}/${cardUrl}`
+      : `/apply/${card.template_id}`
+    window.location.href = applicationUrl
   }, [businessCardId, userId, cardUrl])
 
   const handleImageClick = useCallback((card: AdminSidejobDisplayCard, e: React.MouseEvent) => {
@@ -99,6 +103,7 @@ export default function AdminSidejobCards({
             cards={cards}
             onCardClick={handleCardClick}
             onImageClick={handleImageClick}
+            onApplyClick={handleApplyClick}
           />
         ))}
       </div>
@@ -124,9 +129,10 @@ interface CategoryBoxProps {
   cards: AdminSidejobDisplayCard[]
   onCardClick: (card: AdminSidejobDisplayCard) => void
   onImageClick: (card: AdminSidejobDisplayCard, e: React.MouseEvent) => void
+  onApplyClick: (card: AdminSidejobDisplayCard, e: React.MouseEvent) => void
 }
 
-function CategoryBox({ category, cards, onCardClick, onImageClick }: CategoryBoxProps) {
+function CategoryBox({ category, cards, onCardClick, onImageClick, onApplyClick }: CategoryBoxProps) {
   const config = ADMIN_CATEGORY_CONFIG[category]
 
   return (
@@ -156,6 +162,7 @@ function CategoryBox({ category, cards, onCardClick, onImageClick }: CategoryBox
             card={card}
             onClick={() => onCardClick(card)}
             onImageClick={(e) => onImageClick(card, e)}
+            onApplyClick={(e) => onApplyClick(card, e)}
           />
         ))}
       </div>
@@ -171,9 +178,10 @@ interface AdminSidejobCardProps {
   card: AdminSidejobDisplayCard
   onClick: () => void
   onImageClick: (e: React.MouseEvent) => void
+  onApplyClick: (e: React.MouseEvent) => void
 }
 
-function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps) {
+function AdminSidejobCard({ card, onClick, onImageClick, onApplyClick }: AdminSidejobCardProps) {
   return (
     <div
       onClick={onClick}
@@ -228,13 +236,21 @@ function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps
             {card.price && (
               <span className="text-xs sm:text-sm font-bold text-blue-600 truncate flex-1">{card.price}</span>
             )}
-            <span className={`text-xs sm:text-sm font-medium flex-shrink-0 ${
-              card.application_enabled
-                ? 'text-green-600 hover:text-green-700'
-                : 'text-blue-600 hover:text-blue-700'
-            }`}>
-              {card.application_enabled ? '신청하기' : card.cta_text} →
-            </span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* CTA Link */}
+              <span className="text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700">
+                {card.cta_text} →
+              </span>
+              {/* Apply Button (only when application is enabled) */}
+              {card.application_enabled && (
+                <button
+                  onClick={onApplyClick}
+                  className="px-2 py-1 text-xs sm:text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
+                >
+                  신청하기
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
