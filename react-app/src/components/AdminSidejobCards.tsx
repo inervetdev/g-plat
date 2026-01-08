@@ -19,12 +19,14 @@ import {
 interface AdminSidejobCardsProps {
   userId: string
   businessCardId?: string
+  cardUrl?: string  // custom_url for referrer tracking
   className?: string
 }
 
 export default function AdminSidejobCards({
   userId,
   businessCardId,
+  cardUrl,
   className = '',
 }: AdminSidejobCardsProps) {
   const [loading, setLoading] = useState(true)
@@ -52,9 +54,18 @@ export default function AdminSidejobCards({
     // Record click before navigating
     await recordAdminSidejobClick(card.instance_id, businessCardId, userId)
 
-    // Open link in new tab
+    // If application is enabled, navigate to application form
+    if (card.application_enabled) {
+      const applicationUrl = cardUrl
+        ? `/apply/${card.template_id}/${cardUrl}`
+        : `/apply/${card.template_id}`
+      window.location.href = applicationUrl
+      return
+    }
+
+    // Otherwise open CTA link in new tab
     window.open(card.cta_url, '_blank', 'noopener,noreferrer')
-  }, [businessCardId, userId])
+  }, [businessCardId, userId, cardUrl])
 
   const handleImageClick = useCallback((card: AdminSidejobDisplayCard, e: React.MouseEvent) => {
     e.stopPropagation() // Prevent card click
@@ -217,8 +228,12 @@ function AdminSidejobCard({ card, onClick, onImageClick }: AdminSidejobCardProps
             {card.price && (
               <span className="text-xs sm:text-sm font-bold text-blue-600 truncate flex-1">{card.price}</span>
             )}
-            <span className="text-xs sm:text-sm font-medium text-blue-600 hover:text-blue-700 flex-shrink-0">
-              {card.cta_text} →
+            <span className={`text-xs sm:text-sm font-medium flex-shrink-0 ${
+              card.application_enabled
+                ? 'text-green-600 hover:text-green-700'
+                : 'text-blue-600 hover:text-blue-700'
+            }`}>
+              {card.application_enabled ? '신청하기' : card.cta_text} →
             </span>
           </div>
         </div>

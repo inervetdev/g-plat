@@ -40,6 +40,7 @@ export async function fetchAdminSidejobsForUser(userId: string): Promise<AdminSi
       badge: row.badge,
       partner_name: row.partner_name,
       display_order: row.display_order || 0,
+      application_enabled: row.application_enabled || false,
     }))
   } catch (error) {
     console.error('Error fetching admin sidejobs:', error)
@@ -103,6 +104,7 @@ export async function fetchAdminSidejobsFromView(userId: string): Promise<AdminS
       badge: row.badge,
       partner_name: row.partner_name,
       display_order: row.display_order || 0,
+      application_enabled: row.application_enabled || false,
     }))
   } catch (error) {
     console.error('Error fetching admin sidejobs from view:', error)

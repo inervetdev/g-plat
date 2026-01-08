@@ -27,6 +27,7 @@ interface BusinessCard {
   theme: string
   profile_image: string | null
   company_logo: string | null
+  custom_url: string | null
 }
 
 interface SideJobCard {
@@ -185,6 +186,7 @@ export default function CardWithSideJobs({ businessCard, sideJobCards }: CardWit
         <AdminSidejobCards
           userId={businessCard.user_id}
           businessCardId={businessCard.id}
+          cardUrl={businessCard.custom_url || businessCard.id}
           className={activeSideJobs.length > 0 ? '' : 'rounded-b-2xl overflow-hidden'}
         />
       </div>

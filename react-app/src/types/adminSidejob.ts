@@ -56,6 +56,7 @@ export interface AdminSidejobDisplayCard {
   badge: string | null
   partner_name: string | null
   display_order: number
+  application_enabled: boolean
 }
 
 /**
