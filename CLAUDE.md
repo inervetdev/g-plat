@@ -81,77 +81,41 @@ docs/              # 📚 문서 시스템 (계층적 구조)
 
 ### Phase & Week
 - **Phase**: 3 (고급 기능 및 확장)
-- **Week**: 18 (2025.12.16)
-- **Status**: 신고관리 시스템 구현 완료
-- **Last Updated**: 2025-12-16
+- **Week**: 21 (2026.01.09)
+- **Status**: 상품 신청 시스템 구현 완료
+- **Last Updated**: 2026-01-09
 
-### 최근 완료 (2025.12.16)
+### 최근 완료 (2026.01.09)
+- ✅ **상품 신청 시스템 구현**
+  - 제휴 서비스 상품 신청 페이지 (`/apply/:templateId/:referrerUrl`)
+  - 추천인(명함 소유자) 트래킹 + 동적 폼 필드
+  - Admin App: 신청 폼 설정 UI (TemplateEditModal)
+  - FormSchemaEditor: 프리셋 필드 8종, 타입 기반 ID 자동생성
+  - 사용자 화면: "신청하기" 버튼 (application_enabled 시 표시)
+
+### 이전 완료 (2026.01.02)
+- ✅ **모바일 반응형 최적화**
+  - 테마 카드: 360px~430px 브레이크포인트 지원
+  - LandingPage, DashboardPage 모바일 레이아웃 최적화
+  - tailwind.config.js 커스텀 브레이크포인트 추가
+- ✅ **테마별 버튼 구성 통일**
+  - 상단: 전화, 문자, 공유 버튼
+  - 하단: 연락처 추가 버튼
+  - 4개 테마 (Professional, Simple, Trendy, Apple)에 적용
+
+### 이전 완료 (2025.12.30)
+- ✅ **영문이름, TikTok, Threads 필드 추가**
+  - DB 마이그레이션: name_en, tiktok, threads 컬럼
+  - React App: 5개 테마 카드 + CreateCard + EditCard
+  - Admin App: 명함 생성/수정 모달에 필드 추가
+  - cardDataLoader.ts 신규 필드 로딩 지원
+
+### 이전 완료 (2025.12.16)
 - ✅ **신고관리 시스템 구현**
-  - DB 마이그레이션: user_reports, report_action_logs 테이블
-  - Admin App: 신고 목록/상세/처리 기능
-  - React App: 신고 버튼 및 모달 (명함 하단)
-  - 신고 유형: 스팸, 부적절, 사기, 저작권, 개인정보, 기타
-  - 처리 조치: 콘텐츠 삭제/비활성화, 사용자 경고/정지/차단
-- ✅ **RLS 정책 수정 (INSERT/SELECT)**
-  - INSERT 정책: `TO anon, authenticated` 추가
-  - SELECT 정책: 신고자 조회 허용 (INSERT 후 ID 반환용)
-  - GRANT 문 추가: anon, authenticated 역할에 권한 부여
-- ✅ **Admin Reports API 수정**
-  - auth.users 직접 조인 불가 문제 해결
-  - reporter, target_owner 조인 제거
-- ⚠️ **이메일 알림 미구현**
-  - notify_reporter 필드는 저장만 됨
-  - 실제 이메일 발송 기능은 향후 구현 예정
+  - React App: 신고 버튼/모달, Admin App: 신고 관리
+  - 신고 유형 6종, 처리 조치 6종 지원
 
-### 이전 완료 (2025.12.14)
-- ✅ **Resend SMTP 이메일 설정 완료**
-  - 도메인: sign.g-plat.com (Verified)
-  - Supabase SMTP 설정 (smtp.resend.com:465)
-  - 회원가입 이메일 인증 정상 작동
-  - 발신자: noreply@sign.g-plat.com
-- ✅ **사용자 삭제 시 auth.users 동시 삭제**
-  - Edge Function 생성 (delete-auth-user)
-  - 삭제된 사용자 재로그인 방지
-  - Soft delete + Auth 삭제 동시 처리
-- ✅ **Admin 지도 미리보기 로딩 수정**
-  - Kakao Maps SDK 로딩 상태 관리 개선
-  - window.kakaoMapsReady 플래그 추가
-  - 로딩 화면 무한 표시 문제 해결
-
-### 이전 완료 (2025.12.11)
-- ✅ **관리자 명함 생성 기능 개선**
-  - users 테이블에서 직접 검색 (명함 없는 신규 회원도 검색 가능)
-  - 이름 + 이메일 동시 검색 지원
-- ✅ **명함 삭제 기능 추가**
-  - Soft delete 방식 구현 (is_active = false)
-- ✅ **구독 등급 시스템 구현**
-  - 3단계 등급: FREE, PREMIUM, BUSINESS
-
-### 이전 완료 (2025.12.05)
-- ✅ **QR 스캔 추적 시스템 완성**
-  - Edge Function IP 주소 처리 수정 (INET 타입 호환)
-  - qr_scans 테이블 컬럼 추가 (browser, os)
-  - 스캔 기록 정상 저장 확인
-  - 관리자 대시보드 통계 연동 완료
-- ✅ **QR 코드 URL 표시 개선**
-  - Supabase URL 대신 g-plat.com/q/ 경로 표시
-  - QRCodeGenerator.tsx 수정
-
-### 이전 완료 (2025.12.04)
-- ✅ **QR 코드 자동 생성 기능**
-  - 명함 생성 시 QR 코드 자동 생성
-  - 기존 명함에 QR 코드 자동 생성 (19개 생성)
-  - lib/qr.ts: QR 코드 유틸리티 함수
-- ✅ **QR 코드 공유 기능 활성화**
-  - Web Share API 구현
-  - QR 이미지 + URL 공유
-- ✅ **QR 리다이렉트 시스템 수정**
-  - QRRedirectPage.tsx: 클라이언트 사이드 리다이렉트 구현
-  - /q/ 경로 리다이렉트 정상화
-- ✅ **Admin QR 관리 개선**
-  - TypeScript 타입 정의 수정
-  - RLS 정책 추가
-  - 활성/비활성 토글 기능 구현
+상세 이력: [2026년 1월 Changelog](docs/history/changelog/2026-01.md)
 
 ### 다음 단계
 - ⏳ 콜백 자동화 시스템 (SMS 통합)

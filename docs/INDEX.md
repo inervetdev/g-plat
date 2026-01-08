@@ -3,7 +3,7 @@ title: "G-Plat 문서 인덱스"
 category: "documentation"
 tier: 1
 status: "active"
-last_updated: "2025-12-15"
+last_updated: "2026-01-09"
 ---
 
 # G-Plat 문서 인덱스
@@ -73,6 +73,12 @@ Claude Code가 항상 읽는 필수 문서:
 ### 신고관리
 - [기획서](features/reports/README.md) ⭐ NEW (콘텐츠 모더레이션)
 
+### 상품 신청
+- [개요](features/product-applications/README.md) ⭐ NEW (제휴 상품 신청 + 추천인 트래킹)
+
+### 품질 지표
+- [기획서](features/quality-metrics/README.md) ⭐ NEW (개발 품질 관리)
+
 ### 분석/통계
 - [대시보드](features/analytics/dashboard.md)
 - [방문자 추적](features/analytics/visitor-tracking.md)
@@ -102,9 +108,14 @@ Claude Code가 항상 읽는 필수 문서:
 - [CI/CD](infrastructure/vercel/ci-cd.md)
 
 #### 보안
-- [체크리스트](infrastructure/security/checklist.md)
+- [체크리스트](infrastructure/security/checklist.md) ⭐ NEW
 - [인증 보안](infrastructure/security/authentication.md)
 - [데이터 보호](infrastructure/security/data-protection.md)
+
+#### 품질
+- [개요](infrastructure/quality/README.md) ⭐ NEW
+- [체크리스트](infrastructure/quality/checklist.md) ⭐ NEW
+- [대시보드](infrastructure/quality/dashboard.md) ⭐ NEW
 
 ### 비즈니스
 - [제품 비전](business/product-vision.md)
@@ -121,7 +132,8 @@ Claude Code가 항상 읽는 필수 문서:
 - [장기 비전](roadmap/long-term-vision.md)
 
 ### 변경 이력
-- [2025년 12월](history/changelog/2025-12.md) ⭐ NEW
+- [2026년 1월](history/changelog/2026-01.md) ⭐ NEW
+- [2025년 12월](history/changelog/2025-12.md)
 - [2025년 11월](history/changelog/2025-11.md)
 - [2025년 10월](history/changelog/2025-10.md)
 - [2025년 9월](history/changelog/2025-09.md)
@@ -135,9 +147,9 @@ Claude Code가 항상 읽는 필수 문서:
 ## 📊 문서 통계
 - **Hot Docs**: 2개 (목표: 350줄)
 - **Service Docs**: 8개
-- **Feature Docs**: 예상 25개+
-- **Infrastructure Docs**: 예상 11개+
-- **Last Updated**: 2025-12-14
+- **Feature Docs**: 예상 26개+
+- **Infrastructure Docs**: 예상 14개+ (품질 3개 추가)
+- **Last Updated**: 2026-01-08
 
 ## 📘 참고 문서
 - [문서 작성 표준안](../DOCUMENTATION_STANDARD.md)
