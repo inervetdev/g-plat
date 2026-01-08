@@ -7,6 +7,8 @@ import { useUpdateTemplate, useDeleteTemplate } from '@/hooks/useSidejobs'
 import { CATEGORY_LABELS } from '@/types/sidejob'
 import { supabase } from '@/lib/supabase'
 import type { AdminSidejobTemplate, AdminSidejobTemplateInput, AdminB2BCategory } from '@/types/sidejob'
+import type { FormFieldSchema, RewardType } from '@/types/application'
+import { FormSchemaEditor } from './FormSchemaEditor'
 
 interface TemplateEditModalProps {
   template: AdminSidejobTemplate
@@ -37,6 +39,15 @@ export function TemplateEditModal({ template, isOpen, onClose, onSuccess }: Temp
     badge: template.badge,
     display_priority: template.display_priority,
     is_active: template.is_active,
+    // Application fields
+    application_enabled: template.application_enabled ?? false,
+    form_schema: template.form_schema ?? [],
+    application_settings: template.application_settings ?? {
+      reward_type: 'none',
+      reward_amount: 0,
+      duplicate_check: true,
+      duplicate_period_days: 30,
+    },
   })
 
   const [errors, setErrors] = useState<Record<string, string>>({})
@@ -58,6 +69,15 @@ export function TemplateEditModal({ template, isOpen, onClose, onSuccess }: Temp
       badge: template.badge,
       display_priority: template.display_priority,
       is_active: template.is_active,
+      // Application fields
+      application_enabled: template.application_enabled ?? false,
+      form_schema: template.form_schema ?? [],
+      application_settings: template.application_settings ?? {
+        reward_type: 'none',
+        reward_amount: 0,
+        duplicate_check: true,
+        duplicate_period_days: 30,
+      },
     })
   }, [template])
 
@@ -438,6 +458,110 @@ export function TemplateEditModal({ template, isOpen, onClose, onSuccess }: Temp
                 </label>
               </div>
             </div>
+          </div>
+
+          {/* Application Settings Section */}
+          <div className="space-y-4 pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">신청 폼 설정</h3>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.application_enabled}
+                  onChange={(e) => handleChange('application_enabled', e.target.checked)}
+                  className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <span className="text-sm text-gray-700">신청 기능 활성화</span>
+              </label>
+            </div>
+
+            {formData.application_enabled && (
+              <>
+                {/* Reward Settings */}
+                <div className="bg-yellow-50 rounded-lg p-4 space-y-3">
+                  <h4 className="text-sm font-semibold text-yellow-900">추천인 보상 설정</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-yellow-700 mb-1">
+                        보상 유형
+                      </label>
+                      <select
+                        value={formData.application_settings?.reward_type || 'none'}
+                        onChange={(e) =>
+                          handleChange('application_settings', {
+                            ...formData.application_settings,
+                            reward_type: e.target.value as RewardType,
+                          })
+                        }
+                        className="w-full px-3 py-2 text-sm border border-yellow-300 rounded-lg"
+                      >
+                        <option value="none">없음</option>
+                        <option value="commission">수수료</option>
+                        <option value="points">포인트</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-yellow-700 mb-1">
+                        보상 금액
+                      </label>
+                      <input
+                        type="number"
+                        value={formData.application_settings?.reward_amount || 0}
+                        onChange={(e) =>
+                          handleChange('application_settings', {
+                            ...formData.application_settings,
+                            reward_amount: Number(e.target.value),
+                          })
+                        }
+                        min="0"
+                        className="w-full px-3 py-2 text-sm border border-yellow-300 rounded-lg"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Duplicate Check */}
+                <div className="flex items-center gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.application_settings?.duplicate_check ?? true}
+                      onChange={(e) =>
+                        handleChange('application_settings', {
+                          ...formData.application_settings,
+                          duplicate_check: e.target.checked,
+                        })
+                      }
+                      className="w-4 h-4 rounded border-gray-300"
+                    />
+                    <span className="text-sm text-gray-700">중복 신청 체크</span>
+                  </label>
+                  {formData.application_settings?.duplicate_check && (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        value={formData.application_settings?.duplicate_period_days || 30}
+                        onChange={(e) =>
+                          handleChange('application_settings', {
+                            ...formData.application_settings,
+                            duplicate_period_days: Number(e.target.value),
+                          })
+                        }
+                        min="1"
+                        className="w-20 px-2 py-1 text-sm border border-gray-300 rounded-lg"
+                      />
+                      <span className="text-sm text-gray-500">일 이내</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Form Schema Editor */}
+                <FormSchemaEditor
+                  schema={formData.form_schema || []}
+                  onChange={(schema: FormFieldSchema[]) => handleChange('form_schema', schema)}
+                />
+              </>
+            )}
           </div>
 
           {/* Actions */}
