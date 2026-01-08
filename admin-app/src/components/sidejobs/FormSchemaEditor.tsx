@@ -9,6 +9,7 @@ import {
   ChevronDown,
   ChevronUp,
   Settings,
+  Zap,
 } from 'lucide-react'
 import type { FormFieldSchema, FormFieldType, FormFieldOption } from '@/types/application'
 
@@ -29,6 +30,89 @@ const FIELD_TYPE_LABELS: Record<FormFieldType, string> = {
   date: '날짜',
 }
 
+// 자주 사용하는 필드 프리셋
+const COMMON_FIELD_PRESETS: FormFieldSchema[] = [
+  {
+    name: 'business_type',
+    label: '사업자 유형',
+    type: 'select',
+    required: true,
+    placeholder: '선택해주세요',
+    options: [
+      { value: 'individual', label: '개인사업자' },
+      { value: 'corporate', label: '법인사업자' },
+      { value: 'freelancer', label: '프리랜서' },
+    ],
+  },
+  {
+    name: 'company_name',
+    label: '회사명/상호',
+    type: 'text',
+    required: true,
+    placeholder: '회사명을 입력하세요',
+  },
+  {
+    name: 'business_number',
+    label: '사업자등록번호',
+    type: 'text',
+    required: false,
+    placeholder: '000-00-00000',
+  },
+  {
+    name: 'monthly_sales',
+    label: '월 매출',
+    type: 'select',
+    required: false,
+    placeholder: '선택해주세요',
+    options: [
+      { value: 'under_10m', label: '1천만원 미만' },
+      { value: '10m_50m', label: '1천만원~5천만원' },
+      { value: '50m_100m', label: '5천만원~1억원' },
+      { value: 'over_100m', label: '1억원 이상' },
+    ],
+  },
+  {
+    name: 'employee_count',
+    label: '직원 수',
+    type: 'select',
+    required: false,
+    placeholder: '선택해주세요',
+    options: [
+      { value: '1', label: '1명 (본인만)' },
+      { value: '2_5', label: '2~5명' },
+      { value: '6_10', label: '6~10명' },
+      { value: 'over_10', label: '10명 이상' },
+    ],
+  },
+  {
+    name: 'address',
+    label: '사업장 주소',
+    type: 'text',
+    required: false,
+    placeholder: '주소를 입력하세요',
+  },
+  {
+    name: 'inquiry_content',
+    label: '문의 내용',
+    type: 'textarea',
+    required: false,
+    placeholder: '추가 문의사항을 입력하세요',
+  },
+  {
+    name: 'preferred_contact_time',
+    label: '희망 연락 시간',
+    type: 'select',
+    required: false,
+    placeholder: '선택해주세요',
+    options: [
+      { value: 'morning', label: '오전 (9시~12시)' },
+      { value: 'afternoon', label: '오후 (12시~18시)' },
+      { value: 'evening', label: '저녁 (18시~21시)' },
+      { value: 'anytime', label: '언제든지' },
+    ],
+  },
+]
+
 const DEFAULT_FIELD: FormFieldSchema = {
   name: '',
   label: '',
@@ -39,15 +123,46 @@ const DEFAULT_FIELD: FormFieldSchema = {
 
 export function FormSchemaEditor({ schema, onChange, disabled }: FormSchemaEditorProps) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  const [showPresets, setShowPresets] = useState(false)
+
+  // 타입 기반 시퀀스 ID 생성
+  const generateFieldId = (type: FormFieldType): string => {
+    const existingOfType = schema.filter(f => f.name.startsWith(`${type}_`)).length
+    return `${type}_${existingOfType + 1}`
+  }
 
   const handleAddField = () => {
+    const type: FormFieldType = 'text'
     const newField: FormFieldSchema = {
       ...DEFAULT_FIELD,
-      name: `field_${Date.now()}`,
+      name: generateFieldId(type),
       label: '새 필드',
+      type,
     }
     onChange([...schema, newField])
     setExpandedIndex(schema.length)
+  }
+
+  // 프리셋 필드 추가
+  const handleAddPreset = (preset: FormFieldSchema) => {
+    // 이미 같은 ID가 있으면 숫자 붙이기
+    let fieldName = preset.name
+    const existingNames = schema.map(f => f.name)
+    if (existingNames.includes(fieldName)) {
+      let counter = 2
+      while (existingNames.includes(`${preset.name}_${counter}`)) {
+        counter++
+      }
+      fieldName = `${preset.name}_${counter}`
+    }
+
+    const newField: FormFieldSchema = {
+      ...preset,
+      name: fieldName,
+    }
+    onChange([...schema, newField])
+    setExpandedIndex(schema.length)
+    setShowPresets(false)
   }
 
   const handleRemoveField = (index: number) => {
@@ -120,16 +235,67 @@ export function FormSchemaEditor({ schema, onChange, disabled }: FormSchemaEdito
           <h3 className="text-sm font-semibold text-gray-900">신청 폼 필드</h3>
           <p className="text-xs text-gray-500">상품 신청 시 추가로 입력받을 정보를 설정합니다</p>
         </div>
-        <button
-          type="button"
-          onClick={handleAddField}
-          disabled={disabled}
-          className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-        >
-          <Plus className="w-4 h-4" />
-          필드 추가
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowPresets(!showPresets)}
+            disabled={disabled}
+            className="flex items-center gap-1 px-3 py-1.5 text-sm border border-amber-500 text-amber-600 rounded-lg hover:bg-amber-50 disabled:opacity-50"
+          >
+            <Zap className="w-4 h-4" />
+            빠른 추가
+          </button>
+          <button
+            type="button"
+            onClick={handleAddField}
+            disabled={disabled}
+            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          >
+            <Plus className="w-4 h-4" />
+            필드 추가
+          </button>
+        </div>
       </div>
+
+      {/* Preset Selection */}
+      {showPresets && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-sm font-semibold text-amber-900">자주 사용하는 필드</h4>
+            <button
+              type="button"
+              onClick={() => setShowPresets(false)}
+              className="text-amber-600 hover:text-amber-800 text-xs"
+            >
+              닫기
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {COMMON_FIELD_PRESETS.map((preset) => {
+              const isAlreadyAdded = schema.some(f => f.name === preset.name)
+              return (
+                <button
+                  key={preset.name}
+                  type="button"
+                  onClick={() => handleAddPreset(preset)}
+                  disabled={disabled}
+                  className={`px-3 py-1.5 text-xs rounded-full border transition ${
+                    isAlreadyAdded
+                      ? 'bg-gray-100 border-gray-300 text-gray-500'
+                      : 'bg-white border-amber-300 text-amber-800 hover:bg-amber-100'
+                  }`}
+                >
+                  {preset.label}
+                  {isAlreadyAdded && ' ✓'}
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-xs text-amber-700 mt-3">
+            클릭하면 필드가 추가됩니다. 이미 추가된 필드는 _2, _3 형태로 번호가 붙습니다.
+          </p>
+        </div>
+      )}
 
       {/* Field List */}
       {schema.length === 0 ? (
@@ -153,14 +319,19 @@ export function FormSchemaEditor({ schema, onChange, disabled }: FormSchemaEdito
                 onClick={() => setExpandedIndex(expandedIndex === index ? null : index)}
               >
                 <GripVertical className="w-4 h-4 text-gray-400" />
-                <div className="flex-1">
-                  <span className="font-medium text-gray-900">{field.label}</span>
-                  <span className="ml-2 text-xs text-gray-500">
-                    ({FIELD_TYPE_LABELS[field.type]})
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-gray-900">{field.label}</span>
+                    <span className="text-xs text-gray-500">
+                      ({FIELD_TYPE_LABELS[field.type]})
+                    </span>
+                    {field.required && (
+                      <span className="text-xs text-red-500">필수</span>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-400 font-mono truncate block">
+                    {field.name}
                   </span>
-                  {field.required && (
-                    <span className="ml-2 text-xs text-red-500">필수</span>
-                  )}
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -207,6 +378,7 @@ export function FormSchemaEditor({ schema, onChange, disabled }: FormSchemaEdito
                     <div>
                       <label className="block text-xs font-medium text-gray-700 mb-1">
                         필드 ID
+                        <span className="ml-1 text-gray-400 font-normal">(영문, 숫자, _만 사용)</span>
                       </label>
                       <input
                         type="text"
@@ -217,9 +389,12 @@ export function FormSchemaEditor({ schema, onChange, disabled }: FormSchemaEdito
                           })
                         }
                         disabled={disabled}
-                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
-                        placeholder="field_name"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg font-mono"
+                        placeholder="예: business_type, company_name"
                       />
+                      <p className="text-xs text-gray-400 mt-1">
+                        데이터 저장/검색에 사용됩니다. 의미 있는 ID 권장
+                      </p>
                     </div>
 
                     {/* Label */}
