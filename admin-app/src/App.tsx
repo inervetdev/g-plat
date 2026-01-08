@@ -11,6 +11,7 @@ import UserSidejobsPage from '@/pages/user-sidejobs/UserSidejobsPage'
 import { SidejobsPage } from '@/pages/sidejobs/SidejobsPage'
 import { QrCodesPage } from '@/pages/qr/QrCodesPage'
 import { ReportsPage } from '@/pages/reports/ReportsPage'
+import { ApplicationsPage } from '@/pages/applications/ApplicationsPage'
 import { Layout } from '@/components/layout/Layout'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
@@ -77,6 +78,9 @@ function App() {
 
           {/* Reports */}
           <Route path="reports" element={<ReportsPage />} />
+
+          {/* Product Applications */}
+          <Route path="applications" element={<ApplicationsPage />} />
 
           {/* Analytics */}
           <Route

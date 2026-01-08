@@ -39,6 +39,9 @@ const OptimizationTestPage = lazy(() => import('./pages/OptimizationTestPage'))
 const TermsPage = lazy(() => import('./pages/TermsPage'))
 const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
 
+// Product Application page
+const ProductApplicationPage = lazy(() => import('./pages/ProductApplicationPage'))
+
 // Auth pages
 const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
 
@@ -61,6 +64,10 @@ function App() {
 
               {/* Public card view */}
               <Route path="/card/:userId" element={<CardViewPage />} />
+
+              {/* Product application */}
+              <Route path="/apply/:templateId" element={<ProductApplicationPage />} />
+              <Route path="/apply/:templateId/:referrerUrl" element={<ProductApplicationPage />} />
 
               {/* QR code redirect - Edge Function으로 리다이렉트 */}
               <Route path="/q/:code" element={<QRRedirectPage />} />

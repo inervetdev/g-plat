@@ -1,6 +1,8 @@
 // Admin Sidejob Card Types
 // Template-Instance pattern for affiliate partnership sidejob cards
 
+import type { FormFieldSchema, ApplicationSettings } from './application'
+
 // ============================================================================
 // ENUMS (matching database)
 // ============================================================================
@@ -95,6 +97,10 @@ export interface AdminSidejobTemplate {
   created_by: string | null
   created_at: string
   updated_at: string
+  // Application fields
+  form_schema: FormFieldSchema[]
+  application_enabled: boolean
+  application_settings: ApplicationSettings
 }
 
 /**
@@ -114,6 +120,10 @@ export interface AdminSidejobTemplateInput {
   badge?: string | null
   display_priority?: number
   is_active?: boolean
+  // Application fields
+  form_schema?: FormFieldSchema[]
+  application_enabled?: boolean
+  application_settings?: ApplicationSettings
 }
 
 /**

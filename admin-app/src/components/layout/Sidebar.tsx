@@ -9,7 +9,8 @@ import {
   BarChart3,
   Megaphone,
   Settings,
-  History
+  History,
+  ClipboardList
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
@@ -90,6 +91,11 @@ export function Sidebar() {
           </p>
         </div>
 
+        <NavLink
+          to="/applications"
+          icon={<ClipboardList className="w-5 h-5" />}
+          label="상품 신청 관리"
+        />
         <NavLink
           to="/reports"
           icon={<Flag className="w-5 h-5" />}
