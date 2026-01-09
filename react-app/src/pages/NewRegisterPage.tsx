@@ -162,8 +162,23 @@ export default function NewRegisterPage() {
   }
 
   const handleSocialLogin = async (provider: string) => {
-    if (provider !== '구글') {
+    // 한글 provider를 OAuth provider로 매핑
+    const providerMap: Record<string, 'google' | 'kakao' | 'apple'> = {
+      '구글': 'google',
+      '카카오': 'kakao',
+      '애플': 'apple'
+    }
+
+    const oauthProvider = providerMap[provider]
+
+    // 애플은 아직 미지원
+    if (provider === '애플') {
       alert(`${provider} 로그인은 준비 중입니다`)
+      return
+    }
+
+    if (!oauthProvider) {
+      alert(`${provider} 로그인은 지원하지 않습니다`)
       return
     }
 
@@ -172,17 +187,17 @@ export default function NewRegisterPage() {
 
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: oauthProvider,
         options: {
           redirectTo: `${window.location.origin}/dashboard`
         }
       })
 
       if (error) {
-        setErrors({ general: 'Google 로그인에 실패했습니다' })
+        setErrors({ general: `${provider} 로그인에 실패했습니다` })
       }
     } catch (err) {
-      setErrors({ general: 'Google 로그인 중 오류가 발생했습니다' })
+      setErrors({ general: `${provider} 로그인 중 오류가 발생했습니다` })
     } finally {
       setLoading(false)
     }
@@ -314,23 +329,26 @@ export default function NewRegisterPage() {
               </div>
 
               <div className="space-y-3">
-                {['구글', '카카오', '애플'].map((provider) => (
-                  <button
-                    key={provider}
-                    type="button"
-                    onClick={() => handleSocialLogin(provider)}
-                    disabled={loading}
-                    className={`w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border-2 transition ${
-                      provider === '구글'
-                        ? 'border-gray-300 hover:bg-gray-50'
-                        : 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
-                    }`}
-                  >
-                    <span className="font-medium text-gray-700">
-                      {provider}로 계속하기
-                    </span>
-                  </button>
-                ))}
+                {['구글', '카카오', '애플'].map((provider) => {
+                  const isEnabled = provider === '구글' || provider === '카카오'
+                  return (
+                    <button
+                      key={provider}
+                      type="button"
+                      onClick={() => handleSocialLogin(provider)}
+                      disabled={loading || !isEnabled}
+                      className={`w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border-2 transition ${
+                        isEnabled
+                          ? 'border-gray-300 hover:bg-gray-50'
+                          : 'border-gray-200 bg-gray-50 cursor-not-allowed opacity-60'
+                      }`}
+                    >
+                      <span className="font-medium text-gray-700">
+                        {provider}로 계속하기
+                      </span>
+                    </button>
+                  )
+                })}
               </div>
             </form>
           ) : (
